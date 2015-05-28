@@ -1,12 +1,10 @@
 //#include "basicTest.h"
 #include "followLines.h"
 
-/*
+/**
  *@author: fbielejec
+ * All robot quotes from Goliath
  */
-
-
-
 
 
 int main(void) {

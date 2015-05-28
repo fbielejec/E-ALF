@@ -2,12 +2,12 @@
 #include "sensors.h"
 #include "globalDefines.h"
 
-//---CONSTANTS---//
+/**---CONSTANTS---*/
 
 const int MOTOR_LEFT  = 0;
 const int MOTOR_RIGHT = 1;
 
-// what robot is doing  stored here
+//  robot movement state stored here
 int moveState = MOV_STOP;
 // move speed stored here (0-100%)
 int  moveSpeed   = 0;
@@ -36,112 +36,136 @@ Adafruit_DCMotor *motors[2] = {
     AFMS.getMotor(2) // right is Motor #2
 };
 
+/**---MOVEMENT---*/
+
 void moveBegin() {
     AFMSBegin() ;
     motorBegin(MOTOR_LEFT);
     motorBegin(MOTOR_RIGHT);
     moveStop();
-}
+}//END: moveBegin
 
 void moveStop() {
     changeMoveState(MOV_STOP);
     motorStop(MOTOR_LEFT);
     motorStop(MOTOR_RIGHT);
-}
+}//END: moveStop
 
 void moveLeft() {
     changeMoveState(MOV_LEFT);
     motorForward(MOTOR_LEFT,  0);
     motorForward(MOTOR_RIGHT, moveSpeed);
-}
+}//END: moveLeft
 
 void moveRight() {
     changeMoveState(MOV_RIGHT);
     motorForward(MOTOR_LEFT,  moveSpeed);
     motorForward(MOTOR_RIGHT, 0);
-}
+}//END: moveRight
 
 void moveForward() {
     changeMoveState(MOV_FORWARD);
     motorForward(MOTOR_LEFT,  moveSpeed);
     motorForward(MOTOR_RIGHT, moveSpeed);
-}
+}//END: moveForward
 
 void moveBackward() {
     changeMoveState(MOV_BACK);
     motorReverse(MOTOR_LEFT, moveSpeed);
     motorReverse(MOTOR_RIGHT, moveSpeed);
-}
+}//END: moveBackward
 
 void moveRotate(int angle) {
+
     changeMoveState(MOV_ROTATE);
+
     Serial.print("Rotating ");
     Serial.println(angle);
     if(angle < 0) {
+
         Serial.println(" (left)");
         motorReverse(MOTOR_LEFT,  moveSpeed);
         motorForward(MOTOR_RIGHT, moveSpeed);
         angle = -angle;
+
     } else if(angle > 0) {
+
         Serial.println(" (right)");
         motorForward(MOTOR_LEFT,  moveSpeed);
         motorReverse(MOTOR_RIGHT, moveSpeed);
     }
+
     int ms = rotationAngleToTime(angle, moveSpeed);
     movingDelay(ms);
     moveBrake();
-}
+}//END: moveRotate
 
 void moveBrake() {
     changeMoveState(MOV_STOP);
     motorBrake(MOTOR_LEFT);
     motorBrake(MOTOR_RIGHT);
-}
+}//END: moveBrake
 
 void setMoveSpeed(int speed) {
     motorSetSpeed(MOTOR_LEFT, speed) ;
     motorSetSpeed(MOTOR_RIGHT, speed) ;
     moveSpeed = speed;
-}
+}//END: setMoveSpeed
 
 void moveSlower(int decrement) {
+
     Serial.print(" Slower: ");
-    if( moveSpeed >= speedIncrement + MIN_SPEED)
+    if( moveSpeed >= speedIncrement + MIN_SPEED) {
+
         moveSpeed -= speedIncrement;
-    else moveSpeed = MIN_SPEED;
+
+    } else {
+
+        moveSpeed = MIN_SPEED;
+
+    }
+
     setMoveSpeed(moveSpeed);
-}
+}//END: moveSlower
 
 void moveFaster(int increment) {
+
     Serial.print(" Faster: ");
     moveSpeed += speedIncrement;
-    if(moveSpeed > 100)
+    if(moveSpeed > 100) {
         moveSpeed = 100;
+    }
+
     setMoveSpeed(moveSpeed);
-}
+}//END: moveFaster
+
 
 int getMoveState() {
     return moveState;
-}
+}//END: getMoveState
+
 
 void movingDelay(long duration) {
-    /**check for obstacles while delaying the given duration in ms**/
+
+    /**
+    * check for obstacles while delaying the given duration in ms
+    */
+
     long startTime = millis();
     while(millis() - startTime < duration) {
+
         // function in Look module checks for obstacle in direction of movement
         if(checkMovement() == false) {
-            if( moveState != MOV_ROTATE) { // rotate is only valid movement
+
+            // rotate is only valid movement
+            if( moveState != MOV_ROTATE) {
                 Serial.println("Stopping in moving Delay()");
                 moveBrake();
-            }
-        }
-    }
-}
+            }//END: moveState check
 
-
-
-
-
+        }//END: movementCheck
+    }//END: time loop
+}//END: movingDelay
 
 
 void changeMoveState(int newState) {
@@ -151,8 +175,10 @@ void changeMoveState(int newState) {
         Serial.print(" to ");
         Serial.println(states[newState]);
         moveState = newState;
-    }
-}
+    }//END: moveState change check
+}//END: changeMoveState
+
+/**---MOTORS---*/
 
 void AFMSBegin() {
     AFMS.begin(1000);

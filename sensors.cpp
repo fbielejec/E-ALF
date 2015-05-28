@@ -24,27 +24,7 @@ const int irEdgeThreshold    = 90;
 // for initial detection
 boolean isDetected[NBR_SENSORS] = { false, false, false };
 
-void irSensorBegin() {
-
-    for(int sensor = 0; sensor < NBR_SENSORS; sensor++) {
-        irSensorCalibrate(sensor);
-    }//END: sensor loop
-
-}//END: irSensorBegin
-
-
-void irSensorCalibrate(byte sensor) {
-    /**
-    * Calibrate thresholds for ambient light
-    */
-    // get ambient level
-    int ambient = analogRead(IR_SENSOR[sensor]);
-    irSensorAmbient[sensor] = ambient;
-    // precalculate the levels for object and edge detection
-    irSensorReflect[sensor] = (ambient * (long)(100 - irReflectThreshold)) / 100;
-    irSensorEdge[sensor]    = (ambient * (long)(100 + irEdgeThreshold)) / 100;
-}//END: irSensorCalibrate
-
+/**SENSORS*/
 
 boolean lookForObstacle(int obstacle) {
 
@@ -65,6 +45,27 @@ boolean lookForObstacle(int obstacle) {
 
     return false;
 }//END: lookForObstacle
+
+void irSensorBegin() {
+
+    for(int sensor = 0; sensor < NBR_SENSORS; sensor++) {
+        irSensorCalibrate(sensor);
+    }//END: sensor loop
+
+}//END: irSensorBegin
+
+
+void irSensorCalibrate(byte sensor) {
+    /**
+    * Calibrate thresholds for ambient light
+    */
+    // get ambient level
+    int ambient = analogRead(IR_SENSOR[sensor]);
+    irSensorAmbient[sensor] = ambient;
+    // precalculate the levels for object and edge detection
+    irSensorReflect[sensor] = (ambient * (long)(100 - irReflectThreshold)) / 100;
+    irSensorEdge[sensor]    = (ambient * (long)(100 + irEdgeThreshold)) / 100;
+}//END: irSensorCalibrate
 
 boolean irSensorDetect(int sensor) {
     /**
