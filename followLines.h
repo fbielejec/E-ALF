@@ -1,9 +1,9 @@
 
-//---CONSTANTS---//
+/**---CONSTANTS---*/
 
 
 
-//---PROTOTYPES---//
+/**---PROTOTYPES---*/
 
 void followLines() ;
 

@@ -37,7 +37,6 @@ void init_io(void) {
     blinkNumber(8);
     Serial.println("\t Comm-link online.");
 
-//    irSensorBegin();
     motorsBegin();
     dataDisplayBegin(DATA_nbrItems, labels, minRange, maxRange );
 

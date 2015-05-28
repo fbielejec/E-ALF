@@ -57,12 +57,16 @@
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.cpp" />
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.h" />
 		<Unit filename="Makefile" />
+		<Unit filename="display.cpp" />
+		<Unit filename="display.h" />
+		<Unit filename="followLines.cpp" />
+		<Unit filename="followLines.h" />
+		<Unit filename="globalDefines.h" />
 		<Unit filename="main.cpp">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
-		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
 		<Extensions>
 			<code_completion />
