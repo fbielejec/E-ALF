@@ -1,25 +1,10 @@
 #include <Arduino.h>
 
-//---CONSTANTS---//
+/**---CONSTANTS---*/
 
-extern const byte NBR_SENSORS;
+// defines to identify sensors
+const int SENSE_IR_LEFT = 0;
+const int SENSE_IR_RIGHT = 1;
+const int SENSE_IR_CENTER = 2;
 
-// % level below ambient to trigger reflection
-extern const int irReflectThreshold ;
-
-// % level above ambient to trigger edge
-extern const int irEdgeThreshold ;
-
-//---PROTOTYPES---//
-
-void irSensorBegin() ;
-
-void irSensorCalibrate(byte sensor);
-
-boolean lookForObstacle(int obstacle);
-
-boolean irEdgeDetect(int sensor);
-
-boolean irSensorDetect(int sensor);
-
-boolean checkMovement() ;
+/**---PROTOTYPES---*/

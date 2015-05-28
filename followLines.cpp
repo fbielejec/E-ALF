@@ -9,18 +9,22 @@
 #include "followLines.h"
 #include "globalDefines.h"
 
+/**---CONSTANTS---*/
+
 //1 is most sensitive, range 1 to 1023
 int damping =  5;
 
 int speed = MIN_SPEED;
 
-enum { DATA_start,DATA_LEFT,DATA_CENTER,DATA_RIGHT,DATA_DRIFT,DATA_L_SPEED,DATA_R_SPEED, DATA_DAMPING, DATA_nbrItems };
+enum { DATA_start, DATA_LEFT, DATA_CENTER, DATA_RIGHT, DATA_DRIFT, DATA_L_SPEED, DATA_R_SPEED, DATA_DAMPING, DATA_nbrItems };
 
 char* labels[] = {"", "Left Line", "Center Line", "Right Line","Drift", "Left Speed", "Right Speed", "Damping"};
 
 int minRange[] = { 0, 0, 0, 0, -1023, 0, 0, 0 };
 
 int maxRange[] = { 0, 1023, 1023, 1023, 1023, 100, 100, 40 };
+
+/**---METHODS---*/
 
 void init_io(void) {
 
@@ -33,13 +37,14 @@ void init_io(void) {
     blinkNumber(8);
     Serial.println("\t Comm-link online.");
 
-    irSensorBegin();
-    moveBegin();
+//    irSensorBegin();
+    motorsBegin();
     dataDisplayBegin(DATA_nbrItems, labels, minRange, maxRange );
 
     Serial.println("\t Systems functional.");
 
 }//END: init_io
+
 
 void followLines() {
 
@@ -76,6 +81,7 @@ int lineSense() {
 
     return drift;
 }//END: lineSense
+
 
 int lineFollow(int drift, int speed) {
     int leftSpeed   =  constrain(speed - (drift / damping), 0, 100);

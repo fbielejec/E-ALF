@@ -1,10 +1,9 @@
 #include <Arduino.h>
 
-//---CONSTANTS---//
+/**---CONSTANTS---*/
 
 
-
-//---PROTOTYPES---//
+/**---PROTOTYPES---*/
 
 void blinkNumber( byte number) ;
 
@@ -19,5 +18,3 @@ void sendData(int row, int val) ;
 void sendValue( int value) ;
 
 void sendString(char *string);
-
-

@@ -1,19 +1,13 @@
-//#include "basicTest.h"
 #include "followLines.h"
 
 /**
  *@author: fbielejec
- * All robot quotes from Goliath
+ * All robot quotes from StarCraft's Goliath
  */
-
 
 int main(void) {
 
-//    runBasicTest();
     followLines();
 
     return 0;
 }//END: main
-
-
-

@@ -1,6 +1,11 @@
 #include "display.h"
 #include "globalDefines.h"
 
+/**---CONSTANTS---*/
+
+
+/**---METHODS---*/
+
 void dataDisplayBegin(int nbrItems, char* labels[], int minRange[], int maxRange[] ) {
     for(int i = 1; i < nbrItems; i++) {
         sendLabel(i, labels[i]);
@@ -8,12 +13,14 @@ void dataDisplayBegin(int nbrItems, char* labels[], int minRange[], int maxRange
     }
 }
 
+
 void sendLabel( int row, char *label) {
     sendString("Label");
     sendValue(row);
     sendString(label);
     Serial.println();
 }
+
 
 void sendRange( int row, int min, int max) {
     sendString("Range");
@@ -31,19 +38,22 @@ void sendData(int row, int val) {
     Serial.println();
 }
 
+
 void sendValue( int value) {
     Serial.print(value);
     Serial.print(",");
 }
+
 
 void sendString(char *string) {
     Serial.print(string);
     Serial.print(",");
 }
 
+
 void blinkNumber( byte number) {
     /**
-    * indicate numbers by flashing the built-in LED
+    * Indicate numbers by flashing LED
     */
     pinMode(LED_PIN, OUTPUT);
 
