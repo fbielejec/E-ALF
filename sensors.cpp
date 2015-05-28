@@ -1,6 +1,5 @@
 #include "sensors.h"
-#include "motors.h"
-//#include "utils.h"
+#include "globalDefines.h"
 
 //---CONSTANTS---//
 
@@ -9,7 +8,7 @@ const byte NBR_SENSORS = 3;
 const byte IR_SENSOR[NBR_SENSORS] = { 0, 1, 2 };
 
 // debug labels
-const char* locationString[] = { "Right", "Center", "Left" };
+const char* locationString[] = { "Left", "Right", "Center" };
 
 // values considered no reflection
 int irSensorAmbient[NBR_SENSORS];
@@ -24,16 +23,6 @@ const int irEdgeThreshold    = 90;
 
 // for initial detection
 boolean isDetected[NBR_SENSORS] = { false, false, false };
-
-// no obstacle detected
-const int OBST_NONE       = 0;
-// left edge detected
-const int OBST_LEFT_EDGE  = 1;
-// right edge detected
-const int OBST_RIGHT_EDGE = 2;
-// edge detect at both left and right sensors
-const int OBST_FRONT_EDGE = 3;
-
 
 void irSensorBegin() {
 
@@ -62,16 +51,16 @@ boolean lookForObstacle(int obstacle) {
     switch(obstacle) {
 
     case  OBST_FRONT_EDGE:
-//        return irEdgeDetect(DIR_LEFT) || irEdgeDetect(DIR_RIGHT);
- return irSensorDetect(DIR_LEFT) || irSensorDetect(DIR_RIGHT);
+        return irEdgeDetect(DIR_LEFT) || irEdgeDetect(DIR_RIGHT);
+//        return irSensorDetect(DIR_LEFT) || irSensorDetect(DIR_RIGHT);
 
     case  OBST_LEFT_EDGE:
-//        return irEdgeDetect(DIR_LEFT);
- return irSensorDetect(DIR_LEFT);
+        return irEdgeDetect(DIR_LEFT);
+//        return irSensorDetect(DIR_LEFT);
 
     case  OBST_RIGHT_EDGE:
-//        return irEdgeDetect(DIR_RIGHT);
- return irSensorDetect(DIR_RIGHT);
+        return irEdgeDetect(DIR_RIGHT);
+//        return irSensorDetect(DIR_RIGHT);
     }//END: switch
 
     return false;
@@ -145,3 +134,7 @@ boolean irEdgeDetect(int sensor) {
 
     return result;
 }//END: irEdgeDetect
+
+boolean checkMovement() {
+    return true;
+}

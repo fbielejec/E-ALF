@@ -60,6 +60,10 @@
 		<Unit filename="main.cpp">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="motors.cpp" />
+		<Unit filename="motors.h" />
+		<Unit filename="sensors.cpp" />
+		<Unit filename="sensors.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

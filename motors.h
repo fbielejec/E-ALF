@@ -6,22 +6,37 @@
 extern const int MOTOR_LEFT ;
 extern const int MOTOR_RIGHT;
 
-// first table entry is 40% speed
 extern const int MIN_SPEED ;
-// each table entry is 10% faster speed
 extern const int SPEED_TABLE_INTERVAL;
 extern const int NBR_SPEEDS  ;
-// speeds
-//extern int speedTable[NBR_SPEEDS];
-// time
-//extern int rotationTime[NBR_SPEEDS];
-
-// defines for directions
-extern const int DIR_LEFT;
-extern const int DIR_CENTER;
-extern const int DIR_RIGHT;
 
 //---PROTOTYPES---//
+
+void moveBegin();
+
+void moveStop();
+
+void moveLeft();
+
+void moveRight();
+
+void moveForward() ;
+
+void moveBackward() ;
+
+void moveRotate(int angle) ;
+
+void moveBrake();
+
+void setMoveSpeed(int speed);
+
+void moveSlower(int decrement);
+
+void moveFaster(int increment);
+
+void movingDelay(long duration) ;
+
+void changeMoveState(int newState);
 
 void AFMSBegin();
 
@@ -34,6 +49,8 @@ void motorForward(int motor, int speed);
 void motorStop(int motor);
 
 void motorBrake(int motor);
+
+void motorSetSpeed(int motor, int speed);
 
 void calibrateRotationRate(int sensor, int angle) ;
 

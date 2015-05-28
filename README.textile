@@ -24,6 +24,5 @@ h1. LICENSE
    "GNU Lesser General Public License":http://www.gnu.org/licenses/lgpl.html for more details.
 
 h1. TODO
-* Split the code for motors and sensors
-* Calibrate the motors
-
+* Line Following code
+* Neural Network for 2WD control

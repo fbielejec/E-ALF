@@ -1,27 +1,33 @@
 #include "motors.h"
 #include "sensors.h"
-//#include "utils.h"
-
+#include "globalDefines.h"
 
 //---CONSTANTS---//
 
-const int MOTOR_LEFT  = 1;
-const int MOTOR_RIGHT = 0;
+const int MOTOR_LEFT  = 0;
+const int MOTOR_RIGHT = 1;
+
+// what robot is doing  stored here
+int moveState = MOV_STOP;
+// move speed stored here (0-100%)
+int  moveSpeed   = 0;
+// percent to increase or decrease speed
+int  speedIncrement = 10;
 
 // first table entry is 40% speed
 const int MIN_SPEED = 40;
+
 // each table entry is 10% faster speed
 const int SPEED_TABLE_INTERVAL = 10;
 const int NBR_SPEEDS =  1 + (100 - MIN_SPEED) / SPEED_TABLE_INTERVAL;
+
 // speeds
-int speedTable[NBR_SPEEDS]  =  {40,     50,   60,   70,   80,   90,  100};
+int speedTable[NBR_SPEEDS]  =  {40, 50, 60, 70, 80, 90, 100};
+
 // time
 int rotationTime[NBR_SPEEDS] = {5500, 3300, 2400, 2000, 1750, 1550, 1150};
 
-// defines for directions
-const int DIR_LEFT   = 0;
-const int DIR_CENTER = 1;
-const int DIR_RIGHT  = 2;
+const char* states[] = {"Left", "Right", "Forward", "Back", "Rotate", "Stop"};
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
@@ -29,6 +35,124 @@ Adafruit_DCMotor *motors[2] = {
     AFMS.getMotor(1), // left is Motor #1
     AFMS.getMotor(2) // right is Motor #2
 };
+
+void moveBegin() {
+    AFMSBegin() ;
+    motorBegin(MOTOR_LEFT);
+    motorBegin(MOTOR_RIGHT);
+    moveStop();
+}
+
+void moveStop() {
+    changeMoveState(MOV_STOP);
+    motorStop(MOTOR_LEFT);
+    motorStop(MOTOR_RIGHT);
+}
+
+void moveLeft() {
+    changeMoveState(MOV_LEFT);
+    motorForward(MOTOR_LEFT,  0);
+    motorForward(MOTOR_RIGHT, moveSpeed);
+}
+
+void moveRight() {
+    changeMoveState(MOV_RIGHT);
+    motorForward(MOTOR_LEFT,  moveSpeed);
+    motorForward(MOTOR_RIGHT, 0);
+}
+
+void moveForward() {
+    changeMoveState(MOV_FORWARD);
+    motorForward(MOTOR_LEFT,  moveSpeed);
+    motorForward(MOTOR_RIGHT, moveSpeed);
+}
+
+void moveBackward() {
+    changeMoveState(MOV_BACK);
+    motorReverse(MOTOR_LEFT, moveSpeed);
+    motorReverse(MOTOR_RIGHT, moveSpeed);
+}
+
+void moveRotate(int angle) {
+    changeMoveState(MOV_ROTATE);
+    Serial.print("Rotating ");
+    Serial.println(angle);
+    if(angle < 0) {
+        Serial.println(" (left)");
+        motorReverse(MOTOR_LEFT,  moveSpeed);
+        motorForward(MOTOR_RIGHT, moveSpeed);
+        angle = -angle;
+    } else if(angle > 0) {
+        Serial.println(" (right)");
+        motorForward(MOTOR_LEFT,  moveSpeed);
+        motorReverse(MOTOR_RIGHT, moveSpeed);
+    }
+    int ms = rotationAngleToTime(angle, moveSpeed);
+    movingDelay(ms);
+    moveBrake();
+}
+
+void moveBrake() {
+    changeMoveState(MOV_STOP);
+    motorBrake(MOTOR_LEFT);
+    motorBrake(MOTOR_RIGHT);
+}
+
+void setMoveSpeed(int speed) {
+    motorSetSpeed(MOTOR_LEFT, speed) ;
+    motorSetSpeed(MOTOR_RIGHT, speed) ;
+    moveSpeed = speed;
+}
+
+void moveSlower(int decrement) {
+    Serial.print(" Slower: ");
+    if( moveSpeed >= speedIncrement + MIN_SPEED)
+        moveSpeed -= speedIncrement;
+    else moveSpeed = MIN_SPEED;
+    setMoveSpeed(moveSpeed);
+}
+
+void moveFaster(int increment) {
+    Serial.print(" Faster: ");
+    moveSpeed += speedIncrement;
+    if(moveSpeed > 100)
+        moveSpeed = 100;
+    setMoveSpeed(moveSpeed);
+}
+
+int getMoveState() {
+    return moveState;
+}
+
+void movingDelay(long duration) {
+    /**check for obstacles while delaying the given duration in ms**/
+    long startTime = millis();
+    while(millis() - startTime < duration) {
+        // function in Look module checks for obstacle in direction of movement
+        if(checkMovement() == false) {
+            if( moveState != MOV_ROTATE) { // rotate is only valid movement
+                Serial.println("Stopping in moving Delay()");
+                moveBrake();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+void changeMoveState(int newState) {
+    if(newState != moveState) {
+        Serial.print("Changing move state from ");
+        Serial.print( states[moveState]);
+        Serial.print(" to ");
+        Serial.println(states[newState]);
+        moveState = newState;
+    }
+}
 
 void AFMSBegin() {
     AFMS.begin(1000);
@@ -57,6 +181,9 @@ void motorBrake(int motor) {
     motors[motor]->run(BRAKE);
 }//END: motorBrake
 
+void motorSetSpeed(int motor, int speed) {
+    motors[motor]->setSpeed(speed);
+}//END: motorSetSpeed
 
 void calibrateRotationRate(int sensor, int angle) {
 
@@ -64,8 +191,6 @@ void calibrateRotationRate(int sensor, int angle) {
     Serial.println(" calibration" );
 
     for(int speed = MIN_SPEED; speed <= 100; speed += SPEED_TABLE_INTERVAL) {
-
-//        blinkNumber(speed / 10);
 
         if( sensor == DIR_LEFT) {
 
@@ -103,7 +228,7 @@ void calibrateRotationRate(int sensor, int angle) {
         motorStop(MOTOR_RIGHT);
 
         // delay between speeds
-//        delay(1000);
+        delay(1000);
     }//END: speed loop
 
 }//END: calibrateRotationRate
