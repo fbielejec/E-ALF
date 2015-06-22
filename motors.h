@@ -7,6 +7,13 @@ extern const int MOTOR_LEFT ;
 extern const int MOTOR_RIGHT;
 
 extern const int MIN_SPEED ;
+extern const int SPEED_TABLE_INTERVAL;
+extern const int NBR_SPEEDS  ;
+
+// defines for directions
+//extern const int DIR_LEFT;
+//extern const int DIR_CENTER;
+//extern const int DIR_RIGHT;
 
 /**---PROTOTYPES---*/
 
@@ -22,4 +29,10 @@ void motorBegin(int motor) ;
 
 void motorForward(int motor, int speed);
 
+void motorReverse(int motor, int speed) ;
+
 void motorStop(int motor);
+
+void calibrateRotationRate(int sensor, int angle) ;
+
+long rotationAngleToTime( int angle, int speed);

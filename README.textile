@@ -9,7 +9,9 @@ License: LGPL
 
 h1. PURPOSE
 
-Code for evolving autonomous line following robots inspired by evolutionary robotics.
+Robot control code for evolving autonomous line followers inspired by evolutionary robotics.
+
+Scratch that. To enslave humanity.
 
 h1. LICENSE
 
@@ -24,5 +26,6 @@ h1. LICENSE
    "GNU Lesser General Public License":http://www.gnu.org/licenses/lgpl.html for more details.
 
 h1. TODO
-* Line Following code
-* Neural Network for 2WD control
+* Debug java simulator
+* NeuralNetwork for 2WD 
+* Touch sensors (outside of NN)

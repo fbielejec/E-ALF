@@ -67,7 +67,10 @@
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
+		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
+		<Unit filename="testSystems.cpp" />
+		<Unit filename="testSystems.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
