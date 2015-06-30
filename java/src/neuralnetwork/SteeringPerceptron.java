@@ -1,6 +1,5 @@
 package neuralnetwork;
 
-import processing.core.PApplet;
 import processing.core.PVector;
 import utils.Utils;
 
@@ -8,7 +7,6 @@ public class SteeringPerceptron {
 
 	// weights are genes
 	private double[] genes;
-//	private double fitness;
 
 	public SteeringPerceptron(int n) {
 
@@ -19,18 +17,32 @@ public class SteeringPerceptron {
 
 	}// END: Constructor
 
+//	  PVector feedforward(PVector[] forces) {
+//		    
+//	    // Sum all values
+//	    PVector sum = new PVector();
+//	    for (int i = 0; i < genes.length; i++) {
+//	      forces[i].mult(genes[i]);
+//	      sum.add(forces[i]);
+//	    }
+//	    
+//	    return sum;
+//	  }
+	
 	public double[] feedforward(double[] input) {
+		
 		double[] sum = new double[genes.length];
 		for (int i = 0; i < genes.length; i++) {
-		      sum[i] += (input[i] * genes[i]);
+			
+			for(int j = 0; j < sum.length; j++) {
+				input[j] = input[j] * genes[i]; 
+				sum[j] = sum[j] + input[j]; 
+			}
+			
 		}
+		
 		return sum;
-	}//END: feedforward
-	
-	
-//	public void calculateFitness(double score) {
-//		this.fitness = score;
-//	}// END: calculateFitness
+	}// END: feedforward
 
 	public SteeringPerceptron crossover(SteeringPerceptron partner) {
 
@@ -61,10 +73,6 @@ public class SteeringPerceptron {
 		}// END: i loop
 
 	}// END: mutate
-
-//	public double getFitness() {
-//		return fitness;
-//	}// END: getFitness
 
 	public double[] getWeights() {
 		return genes;

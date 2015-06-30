@@ -1,4 +1,4 @@
-//#include "followLines.h"
+#include "followLines.h"
 #include "testSystems.h"
 
 /**
@@ -8,8 +8,8 @@
 
 int main(void) {
 
-//    followLines();
-testSystems();
+    followLines();
+//testSystems();
 
     return 0;
 }//END: main

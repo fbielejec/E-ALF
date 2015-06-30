@@ -17,7 +17,6 @@ public class Utils {
 		double randomNumber = scaled + lower;
 
 		return randomNumber;
-
 	}// END: random
 	
 	public static int randomInt(int lower, int upper) {
