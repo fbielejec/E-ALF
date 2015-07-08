@@ -1,7 +1,7 @@
 package app;
 
 import linefollowing.Line;
-import genetic.AutonomousPopulation;
+import genetic.LineFollowersPopulation;
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -13,7 +13,7 @@ public class AutonomousLineFollowing extends PApplet {
 	private PFont f;
 
 	private Line line;
-	private AutonomousPopulation population;
+	private LineFollowersPopulation population;
 
 	public static void main(String[] args) {
 
@@ -30,7 +30,7 @@ public class AutonomousLineFollowing extends PApplet {
 
 		float radius = 200;
 		this.line = new Line(this, radius);
-		population = new AutonomousPopulation(this, line);
+		population = new LineFollowersPopulation(this, line);
 
 	}// END setup
 
@@ -76,10 +76,10 @@ public class AutonomousLineFollowing extends PApplet {
 				+ ADJUST, VMOVE + 2 * ADJUST);
 
 		String message = "";
-		double[] weights = population.getCurrentWeights();
-		for (int i = 0; i < weights.length; i++) {
-			message = message.concat(String.format("%.4g", weights[i]) + " ");
-		}
+//		double[] weights = population.getCurrentWeights();
+//		for (int i = 0; i < weights.length; i++) {
+//			message = message.concat(String.format("%.4g", weights[i]) + " ");
+//		}
 
 		text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
 

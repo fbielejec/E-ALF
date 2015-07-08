@@ -2,13 +2,13 @@ package genetic;
 
 import java.util.ArrayList;
 
-import linefollowing.Autonom;
+import linefollowing.LineFollower;
 import linefollowing.Line;
 import processing.core.PApplet;
 import processing.core.PVector;
 import utils.Utils;
 
-public class AutonomousPopulation {
+public class LineFollowersPopulation {
 
 	private PApplet parent;
 	private Line line;
@@ -16,30 +16,30 @@ public class AutonomousPopulation {
 	private int populationSize = 5;
 	private double mutationRate = 0.1;
 	private int nFittest = 100;
-	private Autonom[] population;
-	private ArrayList<Autonom> matingPool;
+	private LineFollower[] population;
+	private ArrayList<LineFollower> matingPool;
 
 	private int currentIndex;
 	private int generationNumber;
 	private double bestFitness;
 
-	public AutonomousPopulation(PApplet p, Line line) {
+	public LineFollowersPopulation(PApplet p, Line line) {
 
 		this.parent = p;
 		this.line = line;
 
-		this.population = new Autonom[this.populationSize];
+		this.population = new LineFollower[this.populationSize];
 		for (int i = 0; i < populationSize; i++) {
 
 			float xpos = parent.width / 2;
 			float ypos = parent.height / 2;
 			PVector startLocation = new PVector(xpos, ypos);
 
-			population[i] = new Autonom(parent, startLocation, this.line);
+			population[i] = new LineFollower(parent, startLocation, this.line);
 
 		}// END: population loop
 
-		this.matingPool = new ArrayList<Autonom>();
+		this.matingPool = new ArrayList<LineFollower>();
 
 		this.currentIndex = 0;
 		this.generationNumber = 0;
@@ -49,7 +49,7 @@ public class AutonomousPopulation {
 	public void calculateFitness() {
 
 		// let them live one by one and score them
-		Autonom autonom = population[currentIndex];
+		LineFollower autonom = population[currentIndex];
 		if (autonom.isAlive()) {
 
 			autonom.performTask( );
@@ -106,10 +106,10 @@ public class AutonomousPopulation {
 			int a = (int) Utils.randomInt(0, matingPool.size() - 1);
 			int b = (int) Utils.randomInt(0, matingPool.size() - 1);
 
-			Autonom parentA = matingPool.get(a);
-			Autonom parentB = matingPool.get(b);
+			LineFollower parentA = matingPool.get(a);
+			LineFollower parentB = matingPool.get(b);
 
-			Autonom child = parentA.crossover(parentB);
+			LineFollower child = parentA.crossover(parentB);
 			child.mutate(mutationRate);
 
 			population[i] = child;
@@ -137,9 +137,9 @@ public class AutonomousPopulation {
 		return population[currentIndex].getFitness();
 	}// END: getCurrentFitness
 
-	public double[] getCurrentWeights() {
-		return population[currentIndex].getPerceptron().getWeights();
-	}//END: getCurrentWeights
+//	public double[] getCurrentWeights() {
+//		return population[currentIndex].getNeuralNetwork().getWeights();
+//	}//END: getCurrentWeights
 	
 	public double getBestFitness() {
 		return bestFitness;

@@ -1,29 +1,36 @@
 package linefollowing;
 
-import neuralnetwork.SteeringPerceptron;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import neuralnetwork.NeuralNetwork;
+import neuralnetwork.Neuron;
 import processing.core.PApplet;
 import processing.core.PVector;
 import utils.Utils;
 
-public class Autonom {
+public class LineFollower {
 
 	public boolean DEBUG = true;
 
 	private boolean alive = true;
 	private double score = 0;
 
-	private final int NBR_SENSORS = 3;
+	private final int NBR_SENSORS = 2;
+	private final int NBR_DRIVE = 2;
+
 	private final int SENSOR_LEFT = 0;
 	private final int SENSOR_RIGHT = 1;
 	private final int SENSOR_CENTER = 2;
 	private final int X = 0;
 	private final int Y = 1;
 
-	private SteeringPerceptron perceptron;
+	// private Neuron perceptron;
+	private NeuralNetwork neuralnet;
 
 	private PApplet parent;
-    private Line line;
-	
+	private Line line;
+
 	private PVector location;
 	private PVector velocity;
 
@@ -31,15 +38,16 @@ public class Autonom {
 	private float maxspeed = 3;
 	private float[][] sensorMount;
 
-	public Autonom(PApplet p, PVector location, Line line) {
+	public LineFollower(PApplet p, PVector location, Line line) {
 
 		this.parent = p;
 		this.location = location;
 		this.line = line;
 		this.velocity = new PVector(maxspeed, 0);
 
-		this.perceptron = new SteeringPerceptron(NBR_SENSORS);
-		
+//		this.perceptron = new Neuron(NBR_SENSORS + NBR_DRIVE);
+		this.neuralnet = new NeuralNetwork();
+
 		this.sensorMount = new float[NBR_SENSORS][2];
 
 		this.sensorMount[SENSOR_LEFT][X] = 10;
@@ -53,31 +61,32 @@ public class Autonom {
 
 	}// END: Constructor
 
-	public void performTask( ) {
+	public void performTask() {
 
-//		 double[] readings = senseLine();
-		double[] readings = senseCenter();
-        
-		scoreTask(readings);
-		double[] speeds = perceptron.feedforward(readings);
-		
-		velocity.x = (float) (velocity.x + speeds[SENSOR_LEFT]);
-		velocity.y = (float) (velocity.y + speeds[SENSOR_RIGHT]);
+		// double[] readings = senseLine();
+		LinkedList<Double> readings = senseCenter();
+
+//		scoreTask(readings);
+
+		LinkedList<Double> speeds = neuralnet.update(readings);
+
+		velocity.x = (float) (velocity.x + speeds.get(SENSOR_LEFT));
+		velocity.y = (float) (velocity.y + speeds.get(SENSOR_RIGHT));
 
 	}// END: lineFollow
-	
+
 	public void run() {
 		updateLocation();
 		checkBorders();
 		render();
 	}// END: run
 
-	public double[] senseCenter( ) {
+	public LinkedList<Double> senseCenter() {
 		/**
 		 * Try to stay at the center of circle
 		 * */
 
-		double[] readings = new double[NBR_SENSORS];
+		LinkedList<Double> distances = new LinkedList<Double>();//new double[NBR_SENSORS];
 
 		// calculate distance from the center for each sensor
 		float cX = line.getCenter().x;
@@ -123,13 +132,13 @@ public class Autonom {
 
 		}// END: DEBUG check
 
-		readings[SENSOR_LEFT] = leftDist;
-		readings[SENSOR_RIGHT] = rightDist;
+		distances.add(SENSOR_LEFT, (double) leftDist); 
+		distances.add(SENSOR_RIGHT, (double) rightDist);
 
-		return readings;
+		return distances;
 	}// END: centerSense
 
-	public double[] senseLine( ) {
+	public double[] senseLine() {
 		/**
 		 * Try to follow the path
 		 * */
@@ -185,7 +194,8 @@ public class Autonom {
 					location.x + sensorMount[SENSOR_CENTER][X],
 					location.y + sensorMount[SENSOR_CENTER][Y] };
 			rotatePoint(location.x, location.y, radians, p);
-//			float centerDist = PApplet.dist((float) p[X], (float) p[Y], aX, aY);
+			// float centerDist = PApplet.dist((float) p[X], (float) p[Y], aX,
+			// aY);
 
 			parent.line((float) p[X], //
 					(float) p[Y], //
@@ -217,7 +227,7 @@ public class Autonom {
 		p[X] = xnew + cx;
 		p[Y] = ynew + cy;
 
-	}//END: rotatePoint
+	}// END: rotatePoint
 
 	private void updateLocation() {
 
@@ -265,6 +275,8 @@ public class Autonom {
 		parent.ellipse(0, 0, robotSize, robotSize);
 		parent.popMatrix();
 
+		// TODO: wheels
+
 		// sensors
 		parent.pushMatrix();
 		parent.translate(location.x, location.y);
@@ -292,33 +304,35 @@ public class Autonom {
 		return score;
 	}// END: getScore
 
-	public double[] getVelocities(){
-		return new double[] {velocity.x, velocity.y};
+	public double[] getVelocities() {
+		return new double[] { velocity.x, velocity.y };
 	}
-	
-	public SteeringPerceptron getPerceptron() {
-		return perceptron;
-	}// END: getPerceptron
 
-	public void setPerceptron(SteeringPerceptron perceptron) {
-		this.perceptron = perceptron;
+	public NeuralNetwork getNeuralNetwork() {
+		return neuralnet;
+	}// END: 
+
+	public void setNeuralNetwork(NeuralNetwork neuralnet) {
+		this.neuralnet = neuralnet;
 	}// END: setPerceptron
 
-	public Autonom crossover(Autonom parentB) {
+	public LineFollower crossover(LineFollower parentB) {
 
-		SteeringPerceptron pChild = this.getPerceptron().crossover(parentB.getPerceptron());
+//		Neuron child = this.getPerceptron().crossover(parentB.getPerceptron());
+
+		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(parentB.getNeuralNetwork());
 		
-		float xpos = parent.width/2;
-		float ypos = parent.height/2;
-		
-		Autonom child = new Autonom(parent, new PVector(xpos, ypos), line);
-		child.setPerceptron(pChild);
-		
+		float xpos = parent.width / 2;
+		float ypos = parent.height / 2;
+
+		LineFollower child = new LineFollower(parent, new PVector(xpos, ypos), line);
+		child.setNeuralNetwork(childNeuralNetwork);
+
 		return child;
-	}//END: crossover
+	}// END: crossover
 
 	public void mutate(double mutationRate) {
-		this.getPerceptron().mutate(mutationRate);
-	}//END: mutate
+		this.getNeuralNetwork().mutate(mutationRate);
+	}// END: mutate
 
 }// END: class
