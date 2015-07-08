@@ -14,14 +14,14 @@ public class LineFollower {
 	public boolean DEBUG = true;
 
 	private boolean alive = true;
-	private double score = 0;
+	private double fitness = 0;
 
 	private final int NBR_SENSORS = 2;
 	private final int NBR_DRIVE = 2;
 
 	private final int SENSOR_LEFT = 0;
 	private final int SENSOR_RIGHT = 1;
-	private final int SENSOR_CENTER = 2;
+//	private final int SENSOR_CENTER = 2;
 	private final int X = 0;
 	private final int Y = 1;
 
@@ -45,7 +45,6 @@ public class LineFollower {
 		this.line = line;
 		this.velocity = new PVector(maxspeed, 0);
 
-//		this.perceptron = new Neuron(NBR_SENSORS + NBR_DRIVE);
 		this.neuralnet = new NeuralNetwork();
 
 		this.sensorMount = new float[NBR_SENSORS][2];
@@ -53,8 +52,8 @@ public class LineFollower {
 		this.sensorMount[SENSOR_LEFT][X] = 10;
 		this.sensorMount[SENSOR_LEFT][Y] = -(robotSize + 5);
 
-		this.sensorMount[SENSOR_CENTER][X] = 0;
-		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize + 5);
+//		this.sensorMount[SENSOR_CENTER][X] = 0;
+//		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize + 5);
 
 		this.sensorMount[SENSOR_RIGHT][X] = -10;
 		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize + 5);
@@ -63,10 +62,9 @@ public class LineFollower {
 
 	public void performTask() {
 
-		// double[] readings = senseLine();
 		LinkedList<Double> readings = senseCenter();
 
-//		scoreTask(readings);
+		updateFitness(readings);
 
 		LinkedList<Double> speeds = neuralnet.update(readings);
 
@@ -138,78 +136,78 @@ public class LineFollower {
 		return distances;
 	}// END: centerSense
 
-	public double[] senseLine() {
-		/**
-		 * Try to follow the path
-		 * */
-		double[] readings = new double[NBR_SENSORS];
-
-		// calculate distance from line for each sensor
-		float pX = location.x;
-		float pY = location.y;
-		float cX = line.getCenter().x;
-		float cY = line.getCenter().y;
-		float R = line.getRadius() / 2;
-
-		float vX = pX - cX;
-		float vY = pY - cY;
-		float magV = (float) Math.sqrt(vX * vX + vY * vY);
-		float aX = cX + vX / magV * R;
-		float aY = cY + vY / magV * R;
-
-		float radians = velocity.heading() + PApplet.radians(90);
-
-		double[] leftSensorPosition = new double[] {
-				location.x + sensorMount[SENSOR_LEFT][X],
-				location.y + sensorMount[SENSOR_LEFT][Y] };
-		rotatePoint(location.x, location.y, radians, leftSensorPosition);
-		float leftDist = PApplet.dist((float) leftSensorPosition[X],
-				(float) leftSensorPosition[Y], aX, aY);
-
-		if (Double.valueOf(leftDist).isNaN()) {
-
-			leftDist = 0;
-
-		}
-
-		double[] rightSensorPosition = new double[] {
-				location.x + sensorMount[SENSOR_RIGHT][X],
-				location.y + sensorMount[SENSOR_RIGHT][Y] };
-		rotatePoint(location.x, location.y, radians, rightSensorPosition);
-		float rightDist = PApplet.dist((float) rightSensorPosition[X],
-				(float) rightSensorPosition[Y], aX, aY);
-
-		if (Double.valueOf(rightDist).isNaN()) {
-
-			rightDist = 0;
-
-		}
-
-		if (DEBUG) {
-
-			parent.stroke(0);
-			parent.strokeWeight(1);
-
-			double[] p = new double[] {
-					location.x + sensorMount[SENSOR_CENTER][X],
-					location.y + sensorMount[SENSOR_CENTER][Y] };
-			rotatePoint(location.x, location.y, radians, p);
-			// float centerDist = PApplet.dist((float) p[X], (float) p[Y], aX,
-			// aY);
-
-			parent.line((float) p[X], //
-					(float) p[Y], //
-					aX, //
-					aY //
-			);
-
-		}
-
-		readings[SENSOR_LEFT] = leftDist;
-		readings[SENSOR_RIGHT] = rightDist;
-
-		return readings;
-	}// END: lineSense;
+//	public double[] senseLine() {
+//		/**
+//		 * Try to follow the path
+//		 * */
+//		double[] readings = new double[NBR_SENSORS];
+//
+//		// calculate distance from line for each sensor
+//		float pX = location.x;
+//		float pY = location.y;
+//		float cX = line.getCenter().x;
+//		float cY = line.getCenter().y;
+//		float R = line.getRadius() / 2;
+//
+//		float vX = pX - cX;
+//		float vY = pY - cY;
+//		float magV = (float) Math.sqrt(vX * vX + vY * vY);
+//		float aX = cX + vX / magV * R;
+//		float aY = cY + vY / magV * R;
+//
+//		float radians = velocity.heading() + PApplet.radians(90);
+//
+//		double[] leftSensorPosition = new double[] {
+//				location.x + sensorMount[SENSOR_LEFT][X],
+//				location.y + sensorMount[SENSOR_LEFT][Y] };
+//		rotatePoint(location.x, location.y, radians, leftSensorPosition);
+//		float leftDist = PApplet.dist((float) leftSensorPosition[X],
+//				(float) leftSensorPosition[Y], aX, aY);
+//
+//		if (Double.valueOf(leftDist).isNaN()) {
+//
+//			leftDist = 0;
+//
+//		}
+//
+//		double[] rightSensorPosition = new double[] {
+//				location.x + sensorMount[SENSOR_RIGHT][X],
+//				location.y + sensorMount[SENSOR_RIGHT][Y] };
+//		rotatePoint(location.x, location.y, radians, rightSensorPosition);
+//		float rightDist = PApplet.dist((float) rightSensorPosition[X],
+//				(float) rightSensorPosition[Y], aX, aY);
+//
+//		if (Double.valueOf(rightDist).isNaN()) {
+//
+//			rightDist = 0;
+//
+//		}
+//
+////		if (DEBUG) {
+////
+////			parent.stroke(0);
+////			parent.strokeWeight(1);
+////
+////			double[] p = new double[] {
+////					location.x + sensorMount[SENSOR_CENTER][X],
+////					location.y + sensorMount[SENSOR_CENTER][Y] };
+////			rotatePoint(location.x, location.y, radians, p);
+////			// float centerDist = PApplet.dist((float) p[X], (float) p[Y], aX,
+////			// aY);
+////
+////			parent.line((float) p[X], //
+////					(float) p[Y], //
+////					aX, //
+////					aY //
+////			);
+////
+////		}
+//
+//		readings[SENSOR_LEFT] = leftDist;
+//		readings[SENSOR_RIGHT] = rightDist;
+//
+//		return readings;
+//	}// END: lineSense;
 
 	private void rotatePoint(float cx, double cy, double angle, double[] p) {
 		double s = Math.sin(angle);
@@ -236,17 +234,17 @@ public class LineFollower {
 
 	}// END: updateLocation
 
-	private void scoreTask(double[] readings) {
+	private void updateFitness(LinkedList<Double> readings) {
 
-		if (readings[SENSOR_LEFT] <= line.getRadius()) {
-			score += 1;
+		if (readings.get(SENSOR_LEFT) <= line.getRadius()) {
+			fitness += 1;
 		}
 
-		if (readings[SENSOR_RIGHT] <= line.getRadius()) {
-			score += 1;
+		if (readings.get(SENSOR_RIGHT) <= line.getRadius()) {
+			fitness += 1;
 		}
 
-	}// END: checkCircle
+	}// END: updateFitness
 
 	private void checkBorders() {
 
@@ -286,9 +284,9 @@ public class LineFollower {
 
 		// left sensor
 		parent.point(sensorMount[SENSOR_LEFT][X], sensorMount[SENSOR_LEFT][Y]);
-		// central sensor
-		parent.point(sensorMount[SENSOR_CENTER][X],
-				sensorMount[SENSOR_CENTER][Y]);
+//		// central sensor
+//		parent.point(sensorMount[SENSOR_CENTER][X],
+//				sensorMount[SENSOR_CENTER][Y]);
 		// right sensor
 		parent.point(sensorMount[SENSOR_RIGHT][X], sensorMount[SENSOR_RIGHT][Y]);
 
@@ -301,7 +299,7 @@ public class LineFollower {
 	}// END: isAlive
 
 	public double getFitness() {
-		return score;
+		return fitness;
 	}// END: getScore
 
 	public double[] getVelocities() {
@@ -317,8 +315,6 @@ public class LineFollower {
 	}// END: setPerceptron
 
 	public LineFollower crossover(LineFollower parentB) {
-
-//		Neuron child = this.getPerceptron().crossover(parentB.getPerceptron());
 
 		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(parentB.getNeuralNetwork());
 		

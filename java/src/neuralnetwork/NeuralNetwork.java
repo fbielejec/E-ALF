@@ -173,7 +173,11 @@ public class NeuralNetwork {
 	}// END: sigmoid
 
 	public NeuralNetwork crossover(NeuralNetwork neuralNetwork) {
-		// TODO Auto-generated method stub
+
+		
+		
+		
+		
 		return null;
 	}
 
