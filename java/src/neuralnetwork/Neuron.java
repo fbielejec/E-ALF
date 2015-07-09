@@ -58,44 +58,44 @@ public class Neuron {
 //		return sum;
 //	}// END: feedforward
 
-//	public Neuron crossover(Neuron partner) {
-//
-//		Neuron child = new Neuron(weights.size());
-//
-//		int midpoint = Utils.randomInt(0, weights.size());
-//		for (int i = 0; i < weights.size(); i++) {
-//
-//			if (i > midpoint) {
-//				
-//				// TODO: via set weights
-//				child.getWeights().set(i, this.weights.get(i));
-//				
-//			} else {
-//
-//				// TODO: via set weights
-//				child.getWeights().set(i, partner.getWeights().get(i));
-//				
-//			}// END: midpoint check
-//
-//		}// END: i loop
-//
-//		return child;
-//	}// END: crossover
+	public Neuron crossover(Neuron partner) {
 
-//	public void mutate(double mutationRate) {
-//
-//		for (int i = 0; i < weights.size(); i++) {
-//
-//			if (Utils.runif() < mutationRate) {
-//				
-//				Double rWeight = Utils.randomDouble(-1, 1);
-//				weights.set(i, rWeight);
-//			
-//			}// END: mutationRate check
-//
-//		}// END: i loop
-//
-//	}// END: mutate
+		Neuron child = new Neuron(weights.size());
+
+		int midpoint = Utils.randomInt(0, weights.size());
+		for (int i = 0; i < weights.size(); i++) {
+
+			if (i > midpoint) {
+				
+				// TODO: via set weights
+				child.getWeights().set(i, this.weights.get(i));
+				
+			} else {
+
+				// TODO: via set weights
+				child.getWeights().set(i, partner.getWeights().get(i));
+				
+			}// END: midpoint check
+
+		}// END: i loop
+
+		return child;
+	}// END: crossover
+
+	public void mutate(double mutationRate) {
+
+		for (int i = 0; i < weights.size(); i++) {
+
+			if (Utils.runif() < mutationRate) {
+				
+				Double rWeight = Utils.randomDouble(-1, 1);
+				weights.set(i, rWeight);
+			
+			}// END: mutationRate check
+
+		}// END: i loop
+
+	}// END: mutate
 
 	public LinkedList<Double> getWeights() {
 		return weights;

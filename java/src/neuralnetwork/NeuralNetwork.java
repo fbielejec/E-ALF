@@ -2,6 +2,8 @@ package neuralnetwork;
 
 import java.util.LinkedList;
 
+import utils.Utils;
+
 public class NeuralNetwork {
 
 	private int numInputs;
@@ -71,7 +73,7 @@ public class NeuralNetwork {
 		return weights;
 	}// END: getWeights
 
-	public void putWeights(LinkedList<Double> weights) {
+	public void setWeights(LinkedList<Double> weights) {
 
 		/**
 		 * Replace the weights with new ones
@@ -172,18 +174,50 @@ public class NeuralNetwork {
 		return (1 / (1 + Math.exp(-activation / response)));
 	}// END: sigmoid
 
-	public NeuralNetwork crossover(NeuralNetwork neuralNetwork) {
+	public NeuralNetwork crossover(NeuralNetwork partner) {
 
-		
-		
-		
-		
-		return null;
-	}
+		LinkedList<Double> weights = this.getWeights();
+		LinkedList<Double> partnerWeights = partner.getWeights();
+		LinkedList<Double> childWeights = new LinkedList<Double>();
+
+		int midpoint = Utils.randomInt(0, weights.size());
+		for (int i = 0; i < weights.size(); i++) {
+
+			if (i > midpoint) {
+
+				childWeights.set(i, weights.get(i));
+
+			} else {
+
+				childWeights.set(i, partnerWeights.get(i));
+
+			}// END: midpoint check
+
+		}// END: i loop
+
+		NeuralNetwork child = new NeuralNetwork();
+		child.setWeights(childWeights);
+
+		return child;
+	}// END: crossover
 
 	public void mutate(double mutationRate) {
-		// TODO Auto-generated method stub
 
-	};
+		LinkedList<Double> weights = this.getWeights();
+		for (int i = 0; i < getNumberOfWeights(); i++) {
+
+			if (Utils.runif() < mutationRate) {
+
+				Double rWeight = Utils.randomDouble(-1, 1);
+
+				weights.set(i, rWeight);
+
+			}// END: mutationRate check
+
+		}// END: i loop
+
+		this.setWeights(weights);
+
+	}// END: mutate
 
 }// END: class
