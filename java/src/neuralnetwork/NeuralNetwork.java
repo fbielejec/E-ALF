@@ -10,15 +10,18 @@ public class NeuralNetwork {
 	private int numOutputs;
 	private int numHiddenLayers;
 	private int neuronsPerHiddenLayer;
-
 	private LinkedList<NeuronLayer> layers;
+
+	private double fitness;
 
 	public NeuralNetwork() {
 
 		this.numInputs = Parameters.numInputs;
 		this.numOutputs = Parameters.numOutputs;
+
 		this.numHiddenLayers = Parameters.numHiddenLayers;
 		this.neuronsPerHiddenLayer = Parameters.neuronsPerHiddenLayer;
+		this.layers = new LinkedList<NeuronLayer>();
 
 		createNetwork();
 
@@ -70,6 +73,8 @@ public class NeuralNetwork {
 
 		}// END: layers loop
 
+		// System.out.println(weights.size());
+
 		return weights;
 	}// END: getWeights
 
@@ -89,15 +94,17 @@ public class NeuralNetwork {
 			for (Neuron neuron : layer.getNeurons()) {
 
 				// for each weight
+				LinkedList<Double> neuronWeights = neuron.getWeights();
 				for (int k = 0; k < neuron.getnInputs(); k++) {
-					// TODO: via set weights
-					neuron.getWeights().set(k, weights.get(weight++));
-				}
+					neuronWeights.set(k, weights.get(weight++));
+				}// END: inputs loop
+
+				neuron.setWeights(neuronWeights);
 
 			}// END: neurons loop
 		}// END: layers loop
 
-	}// END: putWeights
+	}// END: setWeights
 
 	public int getNumberOfWeights() {
 
@@ -115,7 +122,8 @@ public class NeuralNetwork {
 			for (Neuron neuron : layer.getNeurons()) {
 
 				// for each weight
-				for (int k = 0; k < neuron.getnInputs(); k++) {
+				// for (int k = 0; k < neuron.getnInputs(); k++) {
+				for (int k = 0; k < neuron.getnWeights(); k++) {
 
 					nWeights++;
 
@@ -139,6 +147,9 @@ public class NeuralNetwork {
 		// first check that we have the correct amount of inputs
 		if (inputs.size() != this.numInputs) {
 
+			// TODO
+			// System.out.println(inputs.size() + " " + this.numInputs);
+
 			// just return an empty vector if incorrect.
 			return outputs;
 
@@ -160,7 +171,7 @@ public class NeuralNetwork {
 			for (Neuron neuron : layer.getNeurons()) {
 
 				double netinput = neuron.feedforward(inputs);
-				outputs.add(sigmoid(netinput, Parameters.response));
+				outputs.add(netinput);
 
 			}// END: neurons loop
 
@@ -169,16 +180,24 @@ public class NeuralNetwork {
 		return outputs;
 	}// END: update
 
-	// sigmoid response curve
-	public double sigmoid(double activation, double response) {
-		return (1 / (1 + Math.exp(-activation / response)));
-	}// END: sigmoid
+	public double getFitness() {
+		return fitness;
+	}// END: getFitness
+
+	public void setFitness(double fitness) {
+		this.fitness = fitness;
+	}// END: getFitness
 
 	public NeuralNetwork crossover(NeuralNetwork partner) {
 
 		LinkedList<Double> weights = this.getWeights();
 		LinkedList<Double> partnerWeights = partner.getWeights();
+
 		LinkedList<Double> childWeights = new LinkedList<Double>();
+		// TODO: hack
+		for (int i = 0; i < weights.size(); i++) {
+			childWeights.add(Double.NaN);
+		}
 
 		int midpoint = Utils.randomInt(0, weights.size());
 		for (int i = 0; i < weights.size(); i++) {
@@ -209,8 +228,8 @@ public class NeuralNetwork {
 			if (Utils.runif() < mutationRate) {
 
 				Double rWeight = Utils.randomDouble(-1, 1);
-
 				weights.set(i, rWeight);
+				// this.getWeights().set(i, rWeight);
 
 			}// END: mutationRate check
 

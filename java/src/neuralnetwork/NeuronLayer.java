@@ -14,6 +14,7 @@ public class NeuronLayer {
 
 		this.numNeurons = numNeurons;
 		this.numInputsPerNeuron = numInputsPerNeuron;
+		this.neurons = new LinkedList<Neuron>();
 
 		createLayer();
 

@@ -10,24 +10,22 @@ public class Neuron {
 	private LinkedList<Double> weights;
     private int nInputs;
 	
-	public int getnInputs() {
-		return nInputs;
-	}
+	public Neuron(int nInputs) {
 
-	public Neuron(int n) {
-
+		this.nInputs = nInputs;
+		this.weights = new LinkedList<Double>();
+		
 		// additional weight for bias [a threshold]
-		for (int i = 0; i < nInputs + 1; i++) {
+		for (int i = 0; i < this.nInputs + 1; i++) {
 			
 			Double rWeight = Utils.randomDouble(-1, 1);
-			weights.add(i, rWeight);
+			this.weights.add(i, rWeight);
 
 		}//END: weights loop
 
 	}// END: Constructor
 
 	public double feedforward(LinkedList<Double> inputs) {
-		
 		
 		double sum = 0;
 		for (int i = 0; i < nInputs - 1; i++) {
@@ -42,63 +40,20 @@ public class Neuron {
 		return sum;
 	}//END: feedforward
 	
+	public int getnInputs() {
+		return nInputs;
+	}
 	
-//	public double[] feedforward(double[] input) {
-//		
-//		double[] sum = new double[genes.length];
-//		for (int i = 0; i < genes.length; i++) {
-//			
-//			for(int j = 0; j < sum.length; j++) {
-//				input[j] = input[j] * genes[i]; 
-//				sum[j] = sum[j] + input[j]; 
-//			}
-//			
-//		}
-//		
-//		return sum;
-//	}// END: feedforward
-
-	public Neuron crossover(Neuron partner) {
-
-		Neuron child = new Neuron(weights.size());
-
-		int midpoint = Utils.randomInt(0, weights.size());
-		for (int i = 0; i < weights.size(); i++) {
-
-			if (i > midpoint) {
-				
-				// TODO: via set weights
-				child.getWeights().set(i, this.weights.get(i));
-				
-			} else {
-
-				// TODO: via set weights
-				child.getWeights().set(i, partner.getWeights().get(i));
-				
-			}// END: midpoint check
-
-		}// END: i loop
-
-		return child;
-	}// END: crossover
-
-	public void mutate(double mutationRate) {
-
-		for (int i = 0; i < weights.size(); i++) {
-
-			if (Utils.runif() < mutationRate) {
-				
-				Double rWeight = Utils.randomDouble(-1, 1);
-				weights.set(i, rWeight);
-			
-			}// END: mutationRate check
-
-		}// END: i loop
-
-	}// END: mutate
-
+	public int getnWeights() {
+		return weights.size();
+	}
+	
 	public LinkedList<Double> getWeights() {
 		return weights;
 	}// END: getWeights
 
+	public void setWeights(LinkedList<Double> weights) {
+		this.weights = weights;
+	}//END: setWeights
+	
 }// END: class
