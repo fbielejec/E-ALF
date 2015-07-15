@@ -4,41 +4,50 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import neuralnetwork.NeuralNetwork;
+import neuralnetwork.Parameters;
 import utils.Utils;
 
 public class NeuralNetworkPopulation {
 
-	private double[][] inputs;
-	// private int[] target;
-	private double mutationRate;
+	// Genetic Algorithm
 	private int populationSize;
 	private int nFittest;
-
-	private NeuralNetwork[] population;
+	private double mutationRate;
 	private ArrayList<NeuralNetwork> matingPool;
+	private NeuralNetwork[] population;
 
+	// inputs
+	private double[][] inputs;
+
+	// reporting
 	private int nGenerations;
 	private int bestIndex;
 	private double perfectScore;
 	private boolean finished = false;
 
-	public NeuralNetworkPopulation(int nWeights, int populationSize,
-			int nFittest, double mutationRate, double[][] inputs) {
+	public NeuralNetworkPopulation(int populationSize, //
+			int nFittest, //
+			double mutationRate, //
+			double[][] inputs
+
+	) {
+
+		this.populationSize = populationSize;
+		this.nFittest = nFittest;
+		this.mutationRate = mutationRate;
+
+		this.matingPool = new ArrayList<NeuralNetwork>();
+		this.population = new NeuralNetwork[this.populationSize];
+
+		for (int i = 0; i < this.populationSize; i++) {
+			this.population[i] = new NeuralNetwork();
+		}// END: i loop
 
 		this.inputs = inputs;
 		// this.target = target;
-		this.populationSize = populationSize;
-		this.mutationRate = mutationRate;
-		this.nFittest = nFittest;
+
 		this.nGenerations = 0;
 		this.perfectScore = 2000;
-
-		matingPool = new ArrayList<NeuralNetwork>();
-		population = new NeuralNetwork[this.populationSize];
-
-		for (int i = 0; i < this.populationSize; i++) {
-			population[i] = new NeuralNetwork();
-		}// END: i loop
 
 	}// END: Constructor
 
@@ -96,27 +105,6 @@ public class NeuralNetworkPopulation {
 		nGenerations++;
 	}// END: generate
 
-	private static int activate(double sum) {
-		if (sum > 0) {
-			return 1;
-		} else {
-			return -1;
-		}
-	}// END: activate
-
-	public static int guess(NeuralNetwork neuralNetwork, double[] inputs) {
-
-		LinkedList<Double> in = new LinkedList<Double>();
-		in.add(0, inputs[0]);
-		in.add(1, inputs[1]);
-
-		LinkedList<Double> output = neuralNetwork.update(in);
-
-		int guess = activate(output.get(0));
-
-		return guess;
-	}// END: guess
-
 	public void calculateFitness(int[] targets) {
 
 		for (int i = 0; i < populationSize; i++) {
@@ -140,6 +128,28 @@ public class NeuralNetworkPopulation {
 		}// END: individuals loop
 
 	}// END: calculateFitness
+
+	public static int guess(NeuralNetwork neuralNetwork, double[] inputs) {
+
+		LinkedList<Double> in = new LinkedList<Double>();
+		in.add(0, inputs[0]);
+		in.add(1, inputs[1]);
+        in.add(2, Parameters.bias);
+		
+		LinkedList<Double> output = neuralNetwork.update(in);
+
+		int guess = activate(output.get(0));
+
+		return guess;
+	}// END: guess
+
+	private static int activate(double sum) {
+		if (sum > 0) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}// END: activate
 
 	public NeuralNetwork getBestIndividual() {
 		return population[bestIndex];

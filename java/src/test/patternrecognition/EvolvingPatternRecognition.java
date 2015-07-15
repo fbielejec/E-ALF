@@ -3,6 +3,7 @@ package test.patternrecognition;
 import java.util.LinkedList;
 
 import neuralnetwork.NeuralNetwork;
+import neuralnetwork.Parameters;
 import processing.core.PApplet;
 import processing.core.PFont;
 import utils.Utils;
@@ -15,13 +16,15 @@ public class EvolvingPatternRecognition extends PApplet {
 	private double xmax = 400;
 	private double ymax = 100;
 
-	private int dataSize = 2000;
-	private int nWeights = 3;
+	private int inputRows = 2000;
+	// 2 + 1 bias
+	private int inputColumns = 3; 
+
+	private NeuralNetworkPopulation population;	
 	private int populationSize = 150;
 	private int nFittest = 100;
 	private double mutationRate = 0.01;
 
-	private NeuralNetworkPopulation population;
 	private double[][] inputs;
 	private int[] target;
 
@@ -30,7 +33,7 @@ public class EvolvingPatternRecognition extends PApplet {
 
 	public static void main(String[] args) {
 
-			PApplet.main(new String[] { "test.patternrecognition.EvolvingPatternRecognition" });
+		PApplet.main(new String[] { "test.patternrecognition.EvolvingPatternRecognition" });
 
 	}// END: main
 
@@ -41,14 +44,14 @@ public class EvolvingPatternRecognition extends PApplet {
 		f = createFont("Courier", 12, true);
 		smooth();
 
-		inputs = new double[dataSize][nWeights];
-		target = new int[dataSize];
+		inputs = new double[inputRows][inputColumns];
+		target = new int[inputRows];
 
-		for (int i = 0; i < dataSize; i++) {
+		for (int i = 0; i < inputRows; i++) {
 
 			double x = Utils.randomDouble(xmin, xmax);
 			double y = Utils.randomDouble(ymin, ymax);
-			// double bias = 1;
+//			double bias = 1;
 
 			int answer = 1;
 			if (y < f(x)) {
@@ -57,13 +60,18 @@ public class EvolvingPatternRecognition extends PApplet {
 
 			inputs[i][0] = x;
 			inputs[i][1] = y;
-			// inputs[i][2] = bias;
+			// last input is the fixed bias
+			inputs[i][2] = Parameters.bias;
 
 			target[i] = answer;
 		}// END: i loop
 
-		population = new NeuralNetworkPopulation(nWeights, populationSize,
-				nFittest, mutationRate, inputs);
+		population = new NeuralNetworkPopulation(
+				populationSize,//
+				nFittest, //
+				mutationRate, //
+				inputs //
+				);
 
 		// calculate fitness of the initial population
 		population.calculateFitness(target);
@@ -96,10 +104,6 @@ public class EvolvingPatternRecognition extends PApplet {
 
 	private void displayInfo(NeuralNetwork nn) {
 
-		//TODO
-//		System.out.println(nn.getNumberOfWeights());
-		
-		
 		background(255);
 		LinkedList<Double> weights = nn.getWeights();
 
@@ -122,7 +126,7 @@ public class EvolvingPatternRecognition extends PApplet {
 		line(x1, y1, x2, y2);
 
 		// Draw the points
-		count = (count + 1) % dataSize;
+		count = (count + 1) % inputRows;
 		for (int i = 0; i < count; i++) {
 
 			stroke(0);

@@ -48,6 +48,8 @@ public class NeuralNetwork {
 
 		} else {
 
+//			System.out.println(numOutputs + " " + numInputs);
+			
 			// create output layer
 			layers.add(new NeuronLayer(numOutputs, numInputs));
 
@@ -73,8 +75,6 @@ public class NeuralNetwork {
 
 		}// END: layers loop
 
-		// System.out.println(weights.size());
-
 		return weights;
 	}// END: getWeights
 
@@ -96,7 +96,9 @@ public class NeuralNetwork {
 				// for each weight
 				LinkedList<Double> neuronWeights = neuron.getWeights();
 				for (int k = 0; k < neuron.getnInputs(); k++) {
+					
 					neuronWeights.set(k, weights.get(weight++));
+					
 				}// END: inputs loop
 
 				neuron.setWeights(neuronWeights);
@@ -147,12 +149,11 @@ public class NeuralNetwork {
 		// first check that we have the correct amount of inputs
 		if (inputs.size() != this.numInputs) {
 
-			// TODO
-			// System.out.println(inputs.size() + " " + this.numInputs);
-
 			// just return an empty vector if incorrect.
-			return outputs;
 
+			System.err.println("Input size (" +inputs.size() +")" + " is different than number of inputs declared (" + this.numInputs +")!");
+			return outputs;
+			
 		}// END: input size check
 
 		// For each layer
@@ -223,7 +224,7 @@ public class NeuralNetwork {
 	public void mutate(double mutationRate) {
 
 		LinkedList<Double> weights = this.getWeights();
-		for (int i = 0; i < getNumberOfWeights(); i++) {
+		for (int i = 0; i < this.getNumberOfWeights(); i++) {
 
 			if (Utils.runif() < mutationRate) {
 
