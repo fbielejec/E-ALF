@@ -51,7 +51,6 @@ public class EvolvingPatternRecognition extends PApplet {
 
 			double x = Utils.randomDouble(xmin, xmax);
 			double y = Utils.randomDouble(ymin, ymax);
-//			double bias = 1;
 
 			int answer = 1;
 			if (y < f(x)) {

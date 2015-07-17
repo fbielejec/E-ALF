@@ -48,8 +48,6 @@ public class NeuralNetwork {
 
 		} else {
 
-//			System.out.println(numOutputs + " " + numInputs);
-			
 			// create output layer
 			layers.add(new NeuronLayer(numOutputs, numInputs));
 
@@ -160,17 +158,21 @@ public class NeuralNetwork {
 		for (int i = 0; i < numHiddenLayers + 1; i++) {
 
 			if (i > 0) {
-
+				
+//				inputs.clear();
+//				inputs.addAll(outputs);
+				
 				inputs = outputs;
 
 			}
 
-			outputs.clear();
+//			outputs.clear();
 
 			// for each neuron in layer
 			NeuronLayer layer = layers.get(i);
 			for (Neuron neuron : layer.getNeurons()) {
 
+				
 				double netinput = neuron.feedforward(inputs);
 				outputs.add(netinput);
 
@@ -195,7 +197,6 @@ public class NeuralNetwork {
 		LinkedList<Double> partnerWeights = partner.getWeights();
 
 		LinkedList<Double> childWeights = new LinkedList<Double>();
-		// TODO: hack
 		for (int i = 0; i < weights.size(); i++) {
 			childWeights.add(Double.NaN);
 		}
