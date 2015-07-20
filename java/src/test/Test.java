@@ -1,7 +1,7 @@
 package test;
 
 import linefollowing.Line;
-import genetic.LineFollowersPopulation;
+import genetic.EAutonomPopulation;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;

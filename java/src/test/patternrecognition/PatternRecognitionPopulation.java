@@ -7,7 +7,7 @@ import neuralnetwork.NeuralNetwork;
 import neuralnetwork.Parameters;
 import utils.Utils;
 
-public class NeuralNetworkPopulation {
+public class PatternRecognitionPopulation {
 
 	// Genetic Algorithm
 	private int populationSize;
@@ -25,7 +25,7 @@ public class NeuralNetworkPopulation {
 	private double perfectScore;
 	private boolean finished = false;
 
-	public NeuralNetworkPopulation(int populationSize, //
+	public PatternRecognitionPopulation(int populationSize, //
 			int nFittest, //
 			double mutationRate, //
 			double[][] inputs

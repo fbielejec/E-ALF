@@ -1,45 +1,46 @@
 package genetic;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import linefollowing.LineFollower;
+import neuralnetwork.Parameters;
+import linefollowing.EAutonom;
 import linefollowing.Line;
 import processing.core.PApplet;
 import processing.core.PVector;
 import utils.Utils;
 
-public class LineFollowersPopulation {
+public class EAutonomPopulation {
 
 	private PApplet parent;
 	private Line line;
 
-	private int populationSize = 5;
-	private double mutationRate = 0.1;
+	private int populationSize = 10;
 	private int nFittest = 100;
-	private LineFollower[] population;
-	private ArrayList<LineFollower> matingPool;
+	private EAutonom[] population;
+	private ArrayList<EAutonom> matingPool;
 
 	private int currentIndex;
 	private int generationNumber;
 	private double bestFitness;
 
-	public LineFollowersPopulation(PApplet p, Line line) {
+	public EAutonomPopulation(PApplet p, Line line) {
 
 		this.parent = p;
 		this.line = line;
 
-		this.population = new LineFollower[this.populationSize];
+		this.population = new EAutonom[this.populationSize];
 		for (int i = 0; i < populationSize; i++) {
 
 			float xpos = parent.width / 2;
 			float ypos = parent.height / 2;
 			PVector startLocation = new PVector(xpos, ypos);
 
-			population[i] = new LineFollower(parent, startLocation, this.line);
+			population[i] = new EAutonom(parent, startLocation, this.line);
 
 		}// END: population loop
 
-		this.matingPool = new ArrayList<LineFollower>();
+		this.matingPool = new ArrayList<EAutonom>();
 
 		this.currentIndex = 0;
 		this.generationNumber = 0;
@@ -49,13 +50,18 @@ public class LineFollowersPopulation {
 	public void calculateFitness() {
 
 		// let them live one by one and score them
-		LineFollower autonom = population[currentIndex];
+		EAutonom autonom = population[currentIndex];
 		if (autonom.isAlive()) {
 
-			autonom.performTask( );
+			
 			autonom.run();
+            autonom.performTask( );
 
 			double currentFitness = autonom.getFitness();
+			
+			// TODO
+//			currentFitness = Math.exp(currentFitness);
+			
 			if(currentFitness > bestFitness) {
 				bestFitness = currentFitness;
 			}
@@ -106,11 +112,11 @@ public class LineFollowersPopulation {
 			int a = (int) Utils.randomInt(0, matingPool.size() - 1);
 			int b = (int) Utils.randomInt(0, matingPool.size() - 1);
 
-			LineFollower parentA = matingPool.get(a);
-			LineFollower parentB = matingPool.get(b);
+			EAutonom parentA = matingPool.get(a);
+			EAutonom parentB = matingPool.get(b);
 
-			LineFollower child = parentA.crossover(parentB);
-			child.mutate(mutationRate);
+			EAutonom child = parentA.crossover(parentB);
+			child.mutate(Parameters.mutationRate);
 
 			population[i] = child;
 
@@ -137,9 +143,9 @@ public class LineFollowersPopulation {
 		return population[currentIndex].getFitness();
 	}// END: getCurrentFitness
 
-//	public double[] getCurrentWeights() {
-//		return population[currentIndex].getNeuralNetwork().getWeights();
-//	}//END: getCurrentWeights
+	public LinkedList<Double> getCurrentWeights() {
+		return population[currentIndex].getNeuralNetwork().getWeights();
+	}//END: getCurrentWeights
 	
 	public double getBestFitness() {
 		return bestFitness;

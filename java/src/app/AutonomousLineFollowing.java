@@ -1,7 +1,7 @@
 package app;
 
 import linefollowing.Line;
-import genetic.LineFollowersPopulation;
+import genetic.EAutonomPopulation;
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -13,7 +13,7 @@ public class AutonomousLineFollowing extends PApplet {
 	private PFont f;
 
 	private Line line;
-	private LineFollowersPopulation population;
+	private EAutonomPopulation population;
 
 	public static void main(String[] args) {
 
@@ -30,7 +30,7 @@ public class AutonomousLineFollowing extends PApplet {
 
 		float radius = 200;
 		this.line = new Line(this, radius);
-		population = new LineFollowersPopulation(this, line);
+		population = new EAutonomPopulation(this, line);
 
 	}// END setup
 
@@ -76,12 +76,13 @@ public class AutonomousLineFollowing extends PApplet {
 				+ ADJUST, VMOVE + 2 * ADJUST);
 
 		String message = "";
+		// TODO: format to display network
 //		double[] weights = population.getCurrentWeights();
 //		for (int i = 0; i < weights.length; i++) {
 //			message = message.concat(String.format("%.4g", weights[i]) + " ");
 //		}
 
-		text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
+//		text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
 
 		message = "";
 		double[] velocities = population.getCurrentVelocity();

@@ -20,7 +20,7 @@ public class EvolvingPatternRecognition extends PApplet {
 	// 2 + 1 bias
 	private int inputColumns = 3; 
 
-	private NeuralNetworkPopulation population;	
+	private PatternRecognitionPopulation population;	
 	private int populationSize = 150;
 	private int nFittest = 100;
 	private double mutationRate = 0.01;
@@ -65,7 +65,7 @@ public class EvolvingPatternRecognition extends PApplet {
 			target[i] = answer;
 		}// END: i loop
 
-		population = new NeuralNetworkPopulation(
+		population = new PatternRecognitionPopulation(
 				populationSize,//
 				nFittest, //
 				mutationRate, //
@@ -130,7 +130,7 @@ public class EvolvingPatternRecognition extends PApplet {
 
 			stroke(0);
 
-			int guess = NeuralNetworkPopulation.guess(nn, inputs[i]);
+			int guess = PatternRecognitionPopulation.guess(nn, inputs[i]);
 
 			if (guess > 0) {
 				noFill();
