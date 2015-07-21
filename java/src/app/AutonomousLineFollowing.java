@@ -39,17 +39,19 @@ public class AutonomousLineFollowing extends PApplet {
 
 		background(255);
 		line.display();
-		
+
 		// Let them live and score them
 		population.calculateFitness();
-		
-		if(population.getCurrentIndex() > population.getPopulationSize()-1) {
-		// Generate mating pool
-		population.naturalSelection();
-		// Create next generation
-		population.generate();
-		}
-		
+
+		if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
+
+			// Generate mating pool
+			population.naturalSelection();
+			// Create next generation
+			population.generate();
+
+		}// END: pop size check
+
 		// ---REPORTING---//
 
 		displayInfo();
@@ -66,6 +68,7 @@ public class AutonomousLineFollowing extends PApplet {
 		textAlign(LEFT);
 
 		fill(0);
+		stroke(0);
 		rect(HMOVE, VMOVE, 250, 100, 7);
 		fill(255);
 		textSize(12);
@@ -77,28 +80,29 @@ public class AutonomousLineFollowing extends PApplet {
 
 		String message = "";
 		// TODO: format to display network
-//		double[] weights = population.getCurrentWeights();
-//		for (int i = 0; i < weights.length; i++) {
-//			message = message.concat(String.format("%.4g", weights[i]) + " ");
-//		}
+		// double[] weights = population.getCurrentWeights();
+		// for (int i = 0; i < weights.length; i++) {
+		// message = message.concat(String.format("%.4g", weights[i]) + " ");
+		// }
 
-//		text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
+		// text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
 
 		message = "";
 		double[] velocities = population.getCurrentVelocity();
 		for (int i = 0; i < velocities.length; i++) {
-			message = message.concat(String.format("%.4g", velocities[i]) + " ");
+			message = message
+					.concat(String.format("%.4g", velocities[i]) + " ");
 		}
-		
+
 		text("Velocities:   " + message, HMOVE + ADJUST, VMOVE + 4 * ADJUST);
-		
+
 		text("Current fitness: " + population.getCurrentFitness(), HMOVE
 				+ ADJUST, VMOVE + 5 * ADJUST);
 
-//		if (population.getGenerationNumber() > 0) {
-			text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
-					VMOVE + 6 * ADJUST);
-//		}
+		// if (population.getGenerationNumber() > 0) {
+		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
+				VMOVE + 6 * ADJUST);
+		// }
 
 	}// END: displayInfo
 

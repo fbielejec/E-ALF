@@ -7,20 +7,22 @@ import com.sun.java.swing.plaf.windows.resources.windows;
 import neuralnetwork.NeuralNetwork;
 import neuralnetwork.Parameters;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
+import utils.Utils;
 
 public class EAutonom {
 
 	public boolean DEBUG = true;
 
 	private boolean alive = true;
-//	private double fitness = 0;
-    private double framesAlive = 0;
-    private double topSpeed = 0;
+	// private double fitness = 0;
+	private double framesAlive = 0;
+	private double topSpeed = 0;
 	private double lineDist = Integer.MAX_VALUE;
-	
-	private float maxspeed = 10;
-	
+
+	private float maxspeed = 3;
+
 	private final int NBR_SENSORS = 3;
 	private final int NBR_DRIVE = 2;
 
@@ -69,100 +71,41 @@ public class EAutonom {
 		LinkedList<Double> readings = senseLine();
 		// add the bias
 		readings.add(readings.size(), Parameters.bias);
-		
+
 		scoreTask(readings);
 
 		LinkedList<Double> output = neuralnet.update(readings);
-		
-//		System.out.println(sigmoid(output.get(SENSOR_LEFT), Parameters.response ));
-//		System.out.println(sigmoid(output.get(SENSOR_RIGHT), Parameters.response ));
-		
-		
-		velocity.x = (float) (velocity.x + sigmoid(output.get(SENSOR_LEFT), Parameters.response ) );
-		velocity.y = (float) (velocity.y + sigmoid(output.get(SENSOR_RIGHT), Parameters.response));
+
+		velocity.x = (float) (velocity.x + sigmoid(output.get(SENSOR_LEFT),
+				Parameters.response));
+		velocity.y = (float) (velocity.y + sigmoid(output.get(SENSOR_RIGHT),
+				Parameters.response));
 
 	}// END: lineFollow
 
 	private double sigmoid(double input, double response) {
-	    return ( 1 / ( 1 + Math.exp(-input / response)));
-	}//END: sigmoid
-	
+		return (1 / (1 + Math.exp(-input / response)));
+	}// END: sigmoid
+
 	public void run() {
 		updateLocation();
 		checkBorders();
 		render();
 	}// END: run
 
-//	public LinkedList<Double> senseCenter() {
-//		/**
-//		 * Try to stay at the center of circle
-//		 * */
-//
-//		LinkedList<Double> distances = new LinkedList<Double>();//new double[NBR_SENSORS];
-//
-//		// calculate distance from the center for each sensor
-//		float cX = line.getCenter().x;
-//		float cY = line.getCenter().y;
-//
-//		float radians = velocity.heading() + PApplet.radians(90);
-//
-//		double[] leftSensorPosition = new double[] {
-//				location.x + sensorMount[SENSOR_LEFT][X],
-//				location.y + sensorMount[SENSOR_LEFT][Y] };
-//		rotatePoint(location.x, location.y, radians, leftSensorPosition);
-//		float leftDist = PApplet.dist((float) leftSensorPosition[X],
-//				(float) leftSensorPosition[Y], cX, cY);
-//
-//		if (DEBUG) {
-//			parent.stroke(0);
-//			parent.strokeWeight(1);
-//
-//			parent.line((float) leftSensorPosition[X], //
-//					(float) leftSensorPosition[Y], //
-//					cX, //
-//					cY //
-//			);
-//
-//		}// END: DEBUG check
-//
-//		double[] rightSensorPosition = new double[] {
-//				location.x + sensorMount[SENSOR_RIGHT][X],
-//				location.y + sensorMount[SENSOR_RIGHT][Y] };
-//		rotatePoint(location.x, location.y, radians, rightSensorPosition);
-//		float rightDist = PApplet.dist((float) rightSensorPosition[X],
-//				(float) rightSensorPosition[Y], cX, cY);
-//
-//		if (DEBUG) {
-//			parent.stroke(0);
-//			parent.strokeWeight(1);
-//
-//			parent.line((float) rightSensorPosition[X], //
-//					(float) rightSensorPosition[Y], //
-//					cX, //
-//					cY //
-//			);
-//
-//		}// END: DEBUG check
-//
-//		distances.add(SENSOR_LEFT, (double) leftDist); 
-//		distances.add(SENSOR_RIGHT, (double) rightDist);
-//
-//		return distances;
-//	}// END: centerSense
-
 	public LinkedList<Double> senseLine() {
 		/**
 		 * Try to follow the path
 		 * */
-//		double[] readings = new double[NBR_SENSORS];
+
 		LinkedList<Double> readings = new LinkedList<Double>();
-		
+
 		// calculate distance from line for each sensor
 		float pX = location.x;
 		float pY = location.y;
 		float cX = line.getCenter().x;
 		float cY = line.getCenter().y;
-		float R = line.getRadius() ;
+		float R = line.getRadius();
 
 		float vX = pX - cX;
 		float vY = pY - cY;
@@ -175,50 +118,53 @@ public class EAutonom {
 		double[] leftSensorPosition = new double[] {
 				location.x + sensorMount[SENSOR_LEFT][X],
 				location.y + sensorMount[SENSOR_LEFT][Y] };
+
 		rotatePoint(location.x, location.y, radians, leftSensorPosition);
+
 		float leftDist = PApplet.dist((float) leftSensorPosition[X],
 				(float) leftSensorPosition[Y], aX, aY);
 
-		if (Double.valueOf(leftDist).isNaN()) {
+		if (DEBUG) {
+			parent.stroke(255, 0, 0);
+			parent.strokeWeight(1);
 
-			leftDist = 0;
+			Utils.dashline((float) leftSensorPosition[X], //
+					(float) leftSensorPosition[Y], //
+					aX, //
+					aY, //
+					(float) 3.0, (float) 5.0, parent);
 
-		}
+		}// END: DEBUG check
 
-		
 		double[] rightSensorPosition = new double[] {
 				location.x + sensorMount[SENSOR_RIGHT][X],
 				location.y + sensorMount[SENSOR_RIGHT][Y] };
+
 		rotatePoint(location.x, location.y, radians, rightSensorPosition);
+
 		float rightDist = PApplet.dist((float) rightSensorPosition[X],
 				(float) rightSensorPosition[Y], aX, aY);
 
-		if (Double.valueOf(rightDist).isNaN()) {
-
-			rightDist = 0;
-
-		}
-
-		
 		if (DEBUG) {
-
-			parent.stroke(0);
+			parent.stroke(255, 0, 0);
 			parent.strokeWeight(1);
 
-			double[] p = new double[] {
-					location.x + sensorMount[SENSOR_CENTER][X],
-					location.y + sensorMount[SENSOR_CENTER][Y] };
-			rotatePoint(location.x, location.y, radians, p);
-			// float centerDist = PApplet.dist((float) p[X], (float) p[Y], aX,
-			// aY);
-
-			parent.line((float) p[X], //
-					(float) p[Y], //
+			Utils.dashline((float) rightSensorPosition[X], //
+					(float) rightSensorPosition[Y], //
 					aX, //
-					aY //
-			);
+					aY, //
+					(float) 3.0, (float) 5.0, parent);
 
-		}
+		}// END: DEBUG check
+
+		double[] centerSensorPosition = new double[] {
+				location.x + sensorMount[SENSOR_CENTER][X],
+				location.y + sensorMount[SENSOR_CENTER][Y] };
+
+		rotatePoint(location.x, location.y, radians, centerSensorPosition);
+
+		float centerDist = PApplet.dist((float) centerSensorPosition[X],
+				(float) centerSensorPosition[Y], aX, aY);
 
 		readings.add(SENSOR_LEFT, (double) leftDist);
 		readings.add(SENSOR_RIGHT, (double) rightDist);
@@ -227,6 +173,7 @@ public class EAutonom {
 	}// END: lineSense;
 
 	private void rotatePoint(float cx, double cy, double angle, double[] p) {
+
 		double s = Math.sin(angle);
 		double c = Math.cos(angle);
 
@@ -253,45 +200,42 @@ public class EAutonom {
 
 	private void scoreTask(LinkedList<Double> readings) {
 
-		//TODO: on the line component
-		
+		// TODO: on the line component
+
 		framesAlive += 1;
-		
+
 		double V = Math.abs(velocity.x) + Math.abs(velocity.y);
-		if(V > topSpeed) {
+		if (V > topSpeed) {
 			topSpeed = V;
 		}
-		
+
 		double leftVal = readings.get(SENSOR_LEFT);
 		double righVal = readings.get(SENSOR_RIGHT);
-		
+
 		double dist = leftVal < righVal ? leftVal : righVal;
-		
-		if(dist < lineDist) {
+
+		if (dist < lineDist) {
 			lineDist = dist;
 		}
-		
-		
+
 	}// END: updateFitness
 
 	public double getFitness() {
-		double fitness = Math.exp(1 - lineDist/(2*line.getRadius()))* Math.exp(framesAlive) * topSpeed;
+		double fitness = Math.exp(1 - lineDist / (2 * line.getRadius()))
+				* Math.pow(topSpeed, 2) * framesAlive;
 		fitness = Math.log(fitness);
-		
+
 		return fitness;
 	}// END: getScore
-	
+
 	private void checkBorders() {
 
 		if (location.x > parent.width || location.x < 0) {
-			
 			this.alive = false;
 		}
 
 		if (location.y > parent.height || location.y < 0) {
-			
 			this.alive = false;
-		
 		}
 
 	}// END: checkBorders
@@ -311,8 +255,31 @@ public class EAutonom {
 		parent.ellipse(0, 0, robotSize, robotSize);
 		parent.popMatrix();
 
-		// TODO: wheels
+		// wheels
+		parent.pushMatrix();
+		parent.translate(location.x, location.y);
+		parent.rotate(theta);
 
+		parent.fill(150);
+		parent.rectMode(PConstants.CENTER);
+
+		parent.rect(robotSize / 2, // left wheel
+				robotSize / 7, //
+				robotSize / 7, //
+				robotSize / 3, //
+				robotSize / (robotSize / 10) //
+		);
+
+		parent.rect(-robotSize / 2, // right wheel
+				robotSize / 7, //
+				robotSize / 7, //
+				robotSize / 3, //
+				robotSize / (robotSize / 10) //
+		);
+		parent.popMatrix();
+
+		// TODO: sensor mount plate
+		
 		// sensors
 		parent.pushMatrix();
 		parent.translate(location.x, location.y);
@@ -322,14 +289,13 @@ public class EAutonom {
 
 		// left sensor
 		parent.point(sensorMount[SENSOR_LEFT][X], sensorMount[SENSOR_LEFT][Y]);
-//		// central sensor
+		// central sensor
 		parent.point(sensorMount[SENSOR_CENTER][X],
 				sensorMount[SENSOR_CENTER][Y]);
 		// right sensor
 		parent.point(sensorMount[SENSOR_RIGHT][X], sensorMount[SENSOR_RIGHT][Y]);
 
 		parent.popMatrix();
-
 	}// END: render
 
 	public boolean isAlive() {
@@ -342,7 +308,7 @@ public class EAutonom {
 
 	public NeuralNetwork getNeuralNetwork() {
 		return neuralnet;
-	}// END: 
+	}// END:
 
 	public void setNeuralNetwork(NeuralNetwork neuralnet) {
 		this.neuralnet = neuralnet;
@@ -350,8 +316,9 @@ public class EAutonom {
 
 	public EAutonom crossover(EAutonom parentB) {
 
-		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(parentB.getNeuralNetwork());
-		
+		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(
+				parentB.getNeuralNetwork());
+
 		float xpos = parent.width / 2;
 		float ypos = parent.height / 2;
 
