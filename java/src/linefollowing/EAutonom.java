@@ -56,13 +56,13 @@ public class EAutonom {
 		this.sensorMount = new float[NBR_SENSORS][2];
 
 		this.sensorMount[SENSOR_LEFT][X] = 10;
-		this.sensorMount[SENSOR_LEFT][Y] = -(robotSize + 5);
+		this.sensorMount[SENSOR_LEFT][Y] = -(robotSize/2 + 10);
 
 		this.sensorMount[SENSOR_CENTER][X] = 0;
-		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize + 5);
+		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize/2 + 5);
 
 		this.sensorMount[SENSOR_RIGHT][X] = -10;
-		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize + 5);
+		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize/2 + 10);
 
 	}// END: Constructor
 
@@ -221,6 +221,7 @@ public class EAutonom {
 	}// END: updateFitness
 
 	public double getFitness() {
+		
 		double fitness = Math.exp(1 - lineDist / (2 * line.getRadius()))
 				* Math.pow(topSpeed, 2) * framesAlive;
 		fitness = Math.log(fitness);
@@ -245,53 +246,55 @@ public class EAutonom {
 		// Rotate in the direction of velocity
 		float theta = velocity.heading() + PApplet.radians(90);
 
-		// chassis
 		parent.pushMatrix();
 		parent.translate(location.x, location.y);
 		parent.rotate(theta);
 
+		// chassis
 		parent.strokeWeight(2);
 		parent.stroke(0);
+		parent.fill(255);
 		parent.ellipse(0, 0, robotSize, robotSize);
-		parent.popMatrix();
 
 		// wheels
-		parent.pushMatrix();
-		parent.translate(location.x, location.y);
-		parent.rotate(theta);
-
+		parent.stroke(0);
 		parent.fill(150);
 		parent.rectMode(PConstants.CENTER);
 
 		parent.rect(robotSize / 2, // left wheel
-				robotSize / 7, //
+				robotSize / 7, // 
 				robotSize / 7, //
 				robotSize / 3, //
 				robotSize / (robotSize / 10) //
 		);
 
 		parent.rect(-robotSize / 2, // right wheel
-				robotSize / 7, //
+				robotSize / 7, // 
 				robotSize / 7, //
 				robotSize / 3, //
 				robotSize / (robotSize / 10) //
 		);
-		parent.popMatrix();
 
 		// TODO: sensor mount plate
+		parent.fill(255);
+		parent.stroke(0);
+		parent.rectMode(PConstants.CENTER);
+		parent.rect(
+				sensorMount[SENSOR_CENTER][X], 
+				sensorMount[SENSOR_CENTER][Y],
+				(float) (0.7*robotSize),
+				robotSize/2
+				);
 		
 		// sensors
-		parent.pushMatrix();
-		parent.translate(location.x, location.y);
-		parent.rotate(theta);
 		parent.strokeWeight(5);
 		parent.stroke(0);
 
 		// left sensor
 		parent.point(sensorMount[SENSOR_LEFT][X], sensorMount[SENSOR_LEFT][Y]);
 		// central sensor
-		parent.point(sensorMount[SENSOR_CENTER][X],
-				sensorMount[SENSOR_CENTER][Y]);
+//		parent.point(sensorMount[SENSOR_CENTER][X],
+//				sensorMount[SENSOR_CENTER][Y]);
 		// right sensor
 		parent.point(sensorMount[SENSOR_RIGHT][X], sensorMount[SENSOR_RIGHT][Y]);
 

@@ -67,9 +67,13 @@ public class AutonomousLineFollowing extends PApplet {
 		textFont(f);
 		textAlign(LEFT);
 
+		translate(0, 0);
+		
 		fill(0);
 		stroke(0);
-		rect(HMOVE, VMOVE, 250, 100, 7);
+		
+		rectMode(CORNER);
+		rect(HMOVE, VMOVE, 300, 100, 7);
 		fill(255);
 		textSize(12);
 
