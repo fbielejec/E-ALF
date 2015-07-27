@@ -39,7 +39,8 @@ public class EAutonom {
 
 	private PVector location;
 	private PVector velocity;
-
+    private double[] sensorReadings;
+	
 	private float robotSize = 40;
 	private float[][] sensorMount;
 
@@ -48,10 +49,10 @@ public class EAutonom {
 
 		this.parent = p;
 
-		float xpos = parent.width / 2; 
-		float ypos = parent.height / 2;
-//		float xpos = (float) Utils.randomDouble(0, parent.width); 
-//		float ypos = (float) Utils.randomDouble(0, parent.height);
+//		float xpos = parent.width / 2; 
+//		float ypos = parent.height / 2;
+		float xpos = (float) Utils.randomDouble(0, parent.width); 
+		float ypos = (float) Utils.randomDouble(0, parent.height);
 		this.location = new PVector(xpos, ypos);
 		
 		this.line = line;
@@ -70,6 +71,8 @@ public class EAutonom {
 		this.sensorMount[SENSOR_RIGHT][X] = -10;
 		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize / 2 + 10);
 
+		this.sensorReadings = new double[NBR_SENSORS];
+		
 	}// END: Constructor
 
 	public void lineFollow() {
@@ -144,6 +147,8 @@ public class EAutonom {
 		float leftDist = PApplet.dist((float) leftSensorPosition[X],
 				(float) leftSensorPosition[Y], aX, aY);
 		
+		sensorReadings[SENSOR_LEFT] = (double) leftDist;
+		
 		if (DEBUG) {
 			parent.stroke(255, 0, 0);
 			parent.strokeWeight(1);
@@ -165,6 +170,8 @@ public class EAutonom {
 		float rightDist = PApplet.dist((float) rightSensorPosition[X],
 				(float) rightSensorPosition[Y], aX, aY);
 
+		sensorReadings[SENSOR_RIGHT] = (double) rightDist;
+		
 		if (DEBUG) {
 			parent.stroke(255, 0, 0);
 			parent.strokeWeight(1);
@@ -185,6 +192,8 @@ public class EAutonom {
 
 		float centerDist = PApplet.dist((float) centerSensorPosition[X],
 				(float) centerSensorPosition[Y], aX, aY);
+
+		sensorReadings[SENSOR_CENTER] = (double) centerDist;
 		
 		if (DEBUG) {
 			parent.stroke(255, 0, 0);
@@ -255,7 +264,7 @@ public class EAutonom {
 	public double getFitness() {
 //		double phi = (fitness) / ((double) framesAlive);
 		double phi = framesAlive;
-		return  (phi);
+		return (phi);
 	}// END: getScore
 
 	private void checkBorders() {
@@ -268,9 +277,9 @@ public class EAutonom {
 			this.alive = false;
 		}
 		
-		if(framesAlive > lifespan) {
+//		if(framesAlive > lifespan) {
 //			this.alive = false;
-		}
+//		}
 		
 	}// END: checkBorders
 
@@ -380,5 +389,9 @@ public class EAutonom {
 	public void mutate(double mutationRate) {
 		this.getNeuralNetwork().mutate(mutationRate);
 	}// END: mutate
+
+	public double[] getSensorReadings() {
+		return sensorReadings;
+	}
 
 }// END: class

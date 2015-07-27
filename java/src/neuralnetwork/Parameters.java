@@ -14,11 +14,11 @@ public class Parameters {
 //	public static double bias = 1.0;
 	public static double bias = -1.0;
 
-	public static int populationSize = 10;
-	public static int nFittest = 150;	
+	public static int populationSize = 20;
+	public static int nFittest = 100;	
 	public static double mutationRate = 0.01;
 	
 	public static float maxspeed = 1;
-	public static int lifespan = 100;
+	public static int lifespan = 200;
 	
 }// END: class

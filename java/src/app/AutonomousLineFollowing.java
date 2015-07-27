@@ -46,12 +46,12 @@ public class AutonomousLineFollowing extends PApplet {
 		controller = new ControlP5(this);
 
 		controller.addSlider("maxspeed")
-				.setPosition(HMOVE + ADJUST, VMOVE + 7 * ADJUST)
+				.setPosition(HMOVE + ADJUST, VMOVE + 8 * ADJUST)
 				.setRange(0, 50)
 				.setValue(maxspeed);
 
 		controller.addSlider("lifespan")
-				.setPosition(HMOVE + ADJUST, VMOVE + 9 * ADJUST)
+				.setPosition(HMOVE + ADJUST, VMOVE + 10 * ADJUST)
 				.setRange(50, 800)
 				.setValue(lifespan);
 
@@ -95,7 +95,7 @@ public class AutonomousLineFollowing extends PApplet {
 		stroke(0);
 
 		rectMode(CORNER);
-		rect(HMOVE, VMOVE, 300, 110, 7);
+		rect(HMOVE, VMOVE, 300, 120, 7);
 		fill(255);
 		textSize(12);
 
@@ -113,11 +113,20 @@ public class AutonomousLineFollowing extends PApplet {
 
 		text("Velocities:   " + message, HMOVE + ADJUST, VMOVE + 4 * ADJUST);
 
+		message = "";
+		double[] sensorReadings = population.getCurrentSensorReadings();
+		for (int i = 0; i < sensorReadings.length; i++) {
+			message = message
+					.concat(String.format("%.4g", sensorReadings[i]) + " ");
+		}
+		
+		text("Sensors:   " + message, HMOVE + ADJUST, VMOVE + 5 * ADJUST);
+		
 		text("Current fitness: " + population.getCurrentFitness(), HMOVE
-				+ ADJUST, VMOVE + 5 * ADJUST);
+				+ ADJUST, VMOVE + 6 * ADJUST);
 
 		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
-				VMOVE + 6 * ADJUST);
+				VMOVE + 7 * ADJUST);
 
 	}// END: displayInfo
 

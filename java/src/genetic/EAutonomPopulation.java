@@ -172,4 +172,8 @@ public class EAutonomPopulation {
 		 return population[currentIndex].getVelocities();
 	}
 
+	public double[] getCurrentSensorReadings() {
+		return population[currentIndex].getSensorReadings();
+	}
+
 }// END: class
