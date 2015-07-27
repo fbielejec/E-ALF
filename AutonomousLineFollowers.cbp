@@ -57,6 +57,8 @@
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.cpp" />
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.h" />
 		<Unit filename="Makefile" />
+		<Unit filename="Parameters.cpp" />
+		<Unit filename="Parameters.h" />
 		<Unit filename="display.cpp" />
 		<Unit filename="display.h" />
 		<Unit filename="followLines.cpp" />
@@ -67,14 +69,26 @@
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
+		<Unit filename="neuralnet.cpp" />
+		<Unit filename="neuralnet.h" />
 		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
 		<Unit filename="testSystems.cpp" />
 		<Unit filename="testSystems.h" />
+		<Unit filename="utils.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

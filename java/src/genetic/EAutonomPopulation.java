@@ -3,11 +3,10 @@ package genetic;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import neuralnetwork.Parameters;
 import linefollowing.EAutonom;
 import linefollowing.Line;
+import neuralnetwork.Parameters;
 import processing.core.PApplet;
-import processing.core.PVector;
 import utils.Utils;
 
 public class EAutonomPopulation {
@@ -15,11 +14,12 @@ public class EAutonomPopulation {
 	private PApplet parent;
 	private Line line;
 
-	private int populationSize = 10;
-	private int nFittest = 100;
+	private int populationSize = Parameters.populationSize;
+	private int nFittest = Parameters.nFittest;
 	private EAutonom[] population;
 	private ArrayList<EAutonom> matingPool;
-
+//	private int lifespan;
+	
 	private int currentIndex;
 	private int generationNumber;
 	private double bestFitness;
@@ -32,11 +32,8 @@ public class EAutonomPopulation {
 		this.population = new EAutonom[this.populationSize];
 		for (int i = 0; i < populationSize; i++) {
 
-			float xpos = parent.width / 2;
-			float ypos = parent.height / 2;
-			PVector startLocation = new PVector(xpos, ypos);
-
-			population[i] = new EAutonom(parent, startLocation, this.line);
+			population[i] = new EAutonom(parent, 
+					this.line);
 
 		}// END: population loop
 
@@ -52,16 +49,11 @@ public class EAutonomPopulation {
 		// let them live one by one and score them
 		EAutonom autonom = population[currentIndex];
 		if (autonom.isAlive()) {
-
 			
 			autonom.run();
             autonom.performTask( );
 
 			double currentFitness = autonom.getFitness();
-			
-			// TODO
-//			currentFitness = Math.exp(currentFitness);
-			
 			if(currentFitness > bestFitness) {
 				bestFitness = currentFitness;
 			}
@@ -70,7 +62,7 @@ public class EAutonomPopulation {
 
 			currentIndex++;
 
-		}
+		}//END: alive check
 
 	}// END: calculateFitness
 
@@ -93,13 +85,24 @@ public class EAutonomPopulation {
 
 			double iFitness = Utils.map(population[i].getFitness(), 0,
 					maxFitness, 0, 1);
-			int n = (int) iFitness * nFittest;
+			
+//			System.out.println("fitness: " + iFitness);
+			
+			int n = (int) Math.floor(iFitness * nFittest);
+			
+//			System.out.println("n: " + n);
+			
 			for (int j = 0; j < n; j++) {
 				matingPool.add(population[i]);
+				
+//				System.out.println(Utils.displayWeights(population[i]));
+				
 			}// END: j loop
 
 		}// END: i loop
 
+//		System.out.println("mating pool: " + matingPool.size());
+		
 	}// END: naturalSelection
 
 	public void generate() {
@@ -107,8 +110,6 @@ public class EAutonomPopulation {
 		// Refill the population with children from the mating pool
 		for (int i = 0; i < populationSize ; i++) {
 
-//			System.out.println(matingPool.size());
-			
 			int a = (int) Utils.randomInt(0, matingPool.size() - 1);
 			int b = (int) Utils.randomInt(0, matingPool.size() - 1);
 
@@ -118,6 +119,10 @@ public class EAutonomPopulation {
 			EAutonom child = parentA.crossover(parentB);
 			child.mutate(Parameters.mutationRate);
 
+//			System.out.println("A: " + Utils.displayWeights(parentA));;
+//			System.out.println("B: " + Utils.displayWeights(parentB));
+//			System.out.println("C: " + Utils.displayWeights(child));
+			
 			population[i] = child;
 
 		}// END: i loop
@@ -127,6 +132,31 @@ public class EAutonomPopulation {
 		generationNumber++;
 	}// END: generate
 
+	public void setMaxspeed(float maxspeed) {
+		
+		for (int i = 0; i < populationSize ; i++) {
+			
+			EAutonom autonom = population[i];
+			if(autonom.isAlive()) {
+				
+				autonom.setMaxspeed(maxspeed);
+				
+			}//END: alive check
+		}//END: population loop
+	}//END: setMaxspeed
+	
+	public void setLifespan(int lifespan) {
+		for (int i = 0; i < populationSize ; i++) {
+			
+			EAutonom autonom = population[i];
+			if(autonom.isAlive()) {
+				
+				autonom.setLifespan(lifespan);
+				
+			}//END: alive check
+		}//END: population loop
+	}//END: setLifespan
+	
 	public int getCurrentIndex() {
 		return currentIndex;
 	}

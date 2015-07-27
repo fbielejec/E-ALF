@@ -1,7 +1,9 @@
 package utils;
 
+import java.util.LinkedList;
 import java.util.Random;
 
+import linefollowing.EAutonom;
 import processing.core.PApplet;
 
 public class Utils {
@@ -69,9 +71,25 @@ public class Utils {
 				+ toLow;
 	}// END: map
 
-	// /////////////////////////
+	// /////////////////
+	// ---GA UTILS---//
+	// ////////////////
+
+	public static String displayWeights(EAutonom autonom) {
+		// TODO: format to display network
+
+		String message = "";
+		LinkedList<Double> weights = autonom.getNeuralNetwork().getWeights();
+		for (double w : weights) {
+			message = message.concat(String.format("%.4g", w) + " ");
+		}
+
+		return message;
+	}// END: displayWeights
+	
+	// ////////////////////////
 	// ---PROCESSING UTILS---//
-	// /////////////////////////
+	// ////////////////////////
 
 	public static void dashline(float x0, float y0, float x1, float y1, float[] spacing,
 			PApplet p) {

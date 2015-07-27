@@ -1,9 +1,11 @@
 package app;
 
-import linefollowing.Line;
 import genetic.EAutonomPopulation;
+import linefollowing.Line;
+import neuralnetwork.Parameters;
 import processing.core.PApplet;
 import processing.core.PFont;
+import controlP5.ControlP5;
 
 @SuppressWarnings("serial")
 public class AutonomousLineFollowing extends PApplet {
@@ -14,6 +16,15 @@ public class AutonomousLineFollowing extends PApplet {
 
 	private Line line;
 	private EAutonomPopulation population;
+
+	// Controllers
+	private float ADJUST = 10;
+	private float HMOVE = 15;
+	private float VMOVE = 15;
+	
+	private ControlP5 controller;
+	private float maxspeed = Parameters.maxspeed;
+	private int lifespan = Parameters.lifespan;
 
 	public static void main(String[] args) {
 
@@ -32,6 +43,18 @@ public class AutonomousLineFollowing extends PApplet {
 		this.line = new Line(this, radius);
 		population = new EAutonomPopulation(this, line);
 
+		controller = new ControlP5(this);
+
+		controller.addSlider("maxspeed")
+				.setPosition(HMOVE + ADJUST, VMOVE + 7 * ADJUST)
+				.setSize(100, 10).setRange(0, 50)
+				.setValue(maxspeed);
+
+		controller.addSlider("lifespan")
+				.setPosition(HMOVE + ADJUST, VMOVE + 9 * ADJUST)
+				.setSize(100, 10).setRange(100, 400)
+				.setValue(lifespan);
+
 	}// END setup
 
 	@Override
@@ -40,6 +63,9 @@ public class AutonomousLineFollowing extends PApplet {
 		background(255);
 		line.display();
 
+		population.setMaxspeed(maxspeed);
+		population.setLifespan(lifespan);
+		
 		// Let them live and score them
 		population.calculateFitness();
 
@@ -60,20 +86,16 @@ public class AutonomousLineFollowing extends PApplet {
 
 	private void displayInfo() {
 
-		float ADJUST = 10;
-		float HMOVE = 15;
-		float VMOVE = 15;
-
 		textFont(f);
 		textAlign(LEFT);
 
 		translate(0, 0);
-		
+
 		fill(0);
 		stroke(0);
-		
+
 		rectMode(CORNER);
-		rect(HMOVE, VMOVE, 300, 100, 7);
+		rect(HMOVE, VMOVE, 300, 110, 7);
 		fill(255);
 		textSize(12);
 
@@ -83,15 +105,6 @@ public class AutonomousLineFollowing extends PApplet {
 				+ ADJUST, VMOVE + 2 * ADJUST);
 
 		String message = "";
-		// TODO: format to display network
-		// double[] weights = population.getCurrentWeights();
-		// for (int i = 0; i < weights.length; i++) {
-		// message = message.concat(String.format("%.4g", weights[i]) + " ");
-		// }
-
-		// text("Weights:   " + message, HMOVE + ADJUST, VMOVE + 3 * ADJUST);
-
-		message = "";
 		double[] velocities = population.getCurrentVelocity();
 		for (int i = 0; i < velocities.length; i++) {
 			message = message
@@ -103,10 +116,8 @@ public class AutonomousLineFollowing extends PApplet {
 		text("Current fitness: " + population.getCurrentFitness(), HMOVE
 				+ ADJUST, VMOVE + 5 * ADJUST);
 
-		// if (population.getGenerationNumber() > 0) {
 		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
 				VMOVE + 6 * ADJUST);
-		// }
 
 	}// END: displayInfo
 

@@ -2,8 +2,6 @@ package linefollowing;
 
 import java.util.LinkedList;
 
-import com.sun.java.swing.plaf.windows.resources.windows;
-
 import neuralnetwork.NeuralNetwork;
 import neuralnetwork.Parameters;
 import processing.core.PApplet;
@@ -14,17 +12,14 @@ import utils.Utils;
 public class EAutonom {
 
 	public boolean DEBUG = true;
-
+	private float maxspeed  = Parameters.maxspeed;
+	private int lifespan = Parameters.lifespan;
+	
 	private boolean alive = true;
-	// private double fitness = 0;
-	private double framesAlive = 0;
-	private double topSpeed = 0;
-	private double lineDist = Integer.MAX_VALUE;
-
-	private float maxspeed = 3;
+	private double fitness = 0;
+	private int framesAlive = 0;
 
 	private final int NBR_SENSORS = 3;
-	private final int NBR_DRIVE = 2;
 
 	private final int SENSOR_LEFT = 0;
 	private final int SENSOR_RIGHT = 1;
@@ -32,6 +27,10 @@ public class EAutonom {
 	private final int X = 0;
 	private final int Y = 1;
 
+//	private final int NBR_DRIVE = 2;
+	private final int DRIVE_LEFT = 0;
+	private final int DRIVE_RIGHT = 1;
+	
 	// private Neuron perceptron;
 	private NeuralNetwork neuralnet;
 
@@ -44,25 +43,32 @@ public class EAutonom {
 	private float robotSize = 40;
 	private float[][] sensorMount;
 
-	public EAutonom(PApplet p, PVector location, Line line) {
+	public EAutonom(PApplet p, 
+			Line line ) {
 
 		this.parent = p;
-		this.location = location;
+
+//		float xpos = parent.width / 2; 
+//		float ypos = parent.height / 2;
+		float xpos = (float) Utils.randomDouble(0, parent.width); 
+		float ypos = (float) Utils.randomDouble(0, parent.height);
+		this.location = new PVector(xpos, ypos);
+		
 		this.line = line;
-		this.velocity = new PVector(-maxspeed, -maxspeed);
+		this.velocity = new PVector(this.maxspeed, this.maxspeed);
 
 		this.neuralnet = new NeuralNetwork();
 
 		this.sensorMount = new float[NBR_SENSORS][2];
 
 		this.sensorMount[SENSOR_LEFT][X] = 10;
-		this.sensorMount[SENSOR_LEFT][Y] = -(robotSize/2 + 10);
+		this.sensorMount[SENSOR_LEFT][Y] = -(robotSize / 2 + 10);
 
 		this.sensorMount[SENSOR_CENTER][X] = 0;
-		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize/2 + 5);
+		this.sensorMount[SENSOR_CENTER][Y] = -(robotSize / 2 + 10);
 
 		this.sensorMount[SENSOR_RIGHT][X] = -10;
-		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize/2 + 10);
+		this.sensorMount[SENSOR_RIGHT][Y] = -(robotSize / 2 + 10);
 
 	}// END: Constructor
 
@@ -76,11 +82,11 @@ public class EAutonom {
 
 		LinkedList<Double> output = neuralnet.update(readings);
 
-		velocity.x = (float) (velocity.x + sigmoid(output.get(SENSOR_LEFT),
+		velocity.x = (float) (velocity.x + sigmoid(output.get(DRIVE_LEFT),
 				Parameters.response));
-		velocity.y = (float) (velocity.y + sigmoid(output.get(SENSOR_RIGHT),
+		velocity.y = (float) (velocity.y + sigmoid(output.get(DRIVE_RIGHT),
 				Parameters.response));
-
+		
 	}// END: lineFollow
 
 	private double sigmoid(double input, double response) {
@@ -124,6 +130,7 @@ public class EAutonom {
 		float leftDist = PApplet.dist((float) leftSensorPosition[X],
 				(float) leftSensorPosition[Y], aX, aY);
 
+		
 		if (DEBUG) {
 			parent.stroke(255, 0, 0);
 			parent.strokeWeight(1);
@@ -165,10 +172,23 @@ public class EAutonom {
 
 		float centerDist = PApplet.dist((float) centerSensorPosition[X],
 				(float) centerSensorPosition[Y], aX, aY);
+		
+		if (DEBUG) {
+			parent.stroke(255, 0, 0);
+			parent.strokeWeight(1);
 
+			Utils.dashline((float) centerSensorPosition[X], //
+					(float) centerSensorPosition[Y], //
+					aX, //
+					aY, //
+					(float) 3.0, (float) 5.0, parent);
+
+		}// END: DEBUG check
+		
 		readings.add(SENSOR_LEFT, (double) leftDist);
 		readings.add(SENSOR_RIGHT, (double) rightDist);
-
+		readings.add(SENSOR_CENTER, (double) centerDist);
+		
 		return readings;
 	}// END: lineSense;
 
@@ -189,7 +209,7 @@ public class EAutonom {
 		p[X] = xnew + cx;
 		p[Y] = ynew + cy;
 
-	}// END: rotatePoint
+	}// END: rotatePointsens
 
 	private void updateLocation() {
 
@@ -200,45 +220,48 @@ public class EAutonom {
 
 	private void scoreTask(LinkedList<Double> readings) {
 
-		// TODO: on the line component
-
-		framesAlive += 1;
-
-		double V = Math.abs(velocity.x) + Math.abs(velocity.y);
-		if (V > topSpeed) {
-			topSpeed = V;
-		}
-
 		double leftVal = readings.get(SENSOR_LEFT);
-		double righVal = readings.get(SENSOR_RIGHT);
+		double rightVal = readings.get(SENSOR_RIGHT);
+		double centerVal = readings.get(SENSOR_CENTER);
+		
+		double C1 = 50;
+		double C2 = 10;
+		double C3 = 50;
 
-		double dist = leftVal < righVal ? leftVal : righVal;
-
-		if (dist < lineDist) {
-			lineDist = dist;
+		if(centerVal > C2-1 && centerVal < C2 + 1) {
+			centerVal = C2-1;
 		}
 
+		
+		double s = //
+//				1/Math.pow((leftVal  - C1 ), 2) + //
+				1/Math.pow((centerVal - C2), 2) //+  //
+//				1/Math.pow((rightVal - C3), 2) //
+				;
+		
+//		double	s =  (1 - (leftVal / (parent.width ))) * //
+//				 (1 - (centerVal / (parent.width )))  * // 
+//				 (1 - (rightVal / (parent.width))); 
+		
+		
+		fitness += s ;
+
+//		System.out.println("centerVal: " + centerVal + " s: " + s + " fitness: " +fitness);
+		
+		framesAlive ++;
 	}// END: updateFitness
 
 	public double getFitness() {
-		
-		double fitness = Math.exp(1 - lineDist / (2 * line.getRadius()))
-				* Math.pow(topSpeed, 2) * framesAlive;
-		fitness = Math.log(fitness);
-
-		return fitness;
+		double phi = (fitness) / ((double) framesAlive);
+		return phi;
 	}// END: getScore
 
 	private void checkBorders() {
 
-		if (location.x > parent.width || location.x < 0) {
+		if(framesAlive > lifespan) {
 			this.alive = false;
 		}
-
-		if (location.y > parent.height || location.y < 0) {
-			this.alive = false;
-		}
-
+		
 	}// END: checkBorders
 
 	public void render() {
@@ -262,30 +285,29 @@ public class EAutonom {
 		parent.rectMode(PConstants.CENTER);
 
 		parent.rect(robotSize / 2, // left wheel
-				robotSize / 7, // 
+				robotSize / 7, //
 				robotSize / 7, //
 				robotSize / 3, //
 				robotSize / (robotSize / 10) //
 		);
 
 		parent.rect(-robotSize / 2, // right wheel
-				robotSize / 7, // 
+				robotSize / 7, //
 				robotSize / 7, //
 				robotSize / 3, //
 				robotSize / (robotSize / 10) //
 		);
 
-		// TODO: sensor mount plate
+		// sensor mount plate
 		parent.fill(255);
 		parent.stroke(0);
 		parent.rectMode(PConstants.CENTER);
-		parent.rect(
-				sensorMount[SENSOR_CENTER][X], 
-				sensorMount[SENSOR_CENTER][Y],
-				(float) (0.7*robotSize),
-				robotSize/2
-				);
-		
+		parent.rect(0, //
+				-(robotSize / 2 + 5), //
+				(float) (0.7 * robotSize), //
+				robotSize / 2 //
+		);
+
 		// sensors
 		parent.strokeWeight(5);
 		parent.stroke(0);
@@ -293,25 +315,41 @@ public class EAutonom {
 		// left sensor
 		parent.point(sensorMount[SENSOR_LEFT][X], sensorMount[SENSOR_LEFT][Y]);
 		// central sensor
-//		parent.point(sensorMount[SENSOR_CENTER][X],
-//				sensorMount[SENSOR_CENTER][Y]);
+		 parent.point(sensorMount[SENSOR_CENTER][X],
+		 sensorMount[SENSOR_CENTER][Y]);
 		// right sensor
 		parent.point(sensorMount[SENSOR_RIGHT][X], sensorMount[SENSOR_RIGHT][Y]);
 
 		parent.popMatrix();
 	}// END: render
 
+	public void setMaxspeed(float maxspeed) {
+		this.maxspeed = maxspeed;
+	}//END: setMaxspeed
+	
+	public float getMaxspeed( ) {
+		return maxspeed;
+	}//END: setMaxspeed
+
+	public int getLifespan() {
+		return lifespan;
+	}
+
+	public void setLifespan(int lifespan) {
+		this.lifespan = lifespan;
+	}
+	
 	public boolean isAlive() {
 		return alive;
 	}// END: isAlive
 
 	public double[] getVelocities() {
 		return new double[] { velocity.x, velocity.y };
-	}
+	}//END: getVelocities
 
 	public NeuralNetwork getNeuralNetwork() {
 		return neuralnet;
-	}// END:
+	}// END: getNeuralNetwork
 
 	public void setNeuralNetwork(NeuralNetwork neuralnet) {
 		this.neuralnet = neuralnet;
@@ -322,10 +360,8 @@ public class EAutonom {
 		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(
 				parentB.getNeuralNetwork());
 
-		float xpos = parent.width / 2;
-		float ypos = parent.height / 2;
-
-		EAutonom child = new EAutonom(parent, new PVector(xpos, ypos), line);
+		EAutonom child = new EAutonom(parent, 
+				line);
 		child.setNeuralNetwork(childNeuralNetwork);
 
 		return child;
