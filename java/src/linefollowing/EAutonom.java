@@ -48,10 +48,10 @@ public class EAutonom {
 
 		this.parent = p;
 
-//		float xpos = parent.width / 2; 
-//		float ypos = parent.height / 2;
-		float xpos = (float) Utils.randomDouble(0, parent.width); 
-		float ypos = (float) Utils.randomDouble(0, parent.height);
+		float xpos = parent.width / 2; 
+		float ypos = parent.height / 2;
+//		float xpos = (float) Utils.randomDouble(0, parent.width); 
+//		float ypos = (float) Utils.randomDouble(0, parent.height);
 		this.location = new PVector(xpos, ypos);
 		
 		this.line = line;
@@ -72,7 +72,7 @@ public class EAutonom {
 
 	}// END: Constructor
 
-	public void performTask() {
+	public void lineFollow() {
 
 		LinkedList<Double> readings = senseLine();
 		// add the bias
@@ -82,13 +82,20 @@ public class EAutonom {
 
 		LinkedList<Double> output = neuralnet.update(readings);
 
-		velocity.x = (float) (velocity.x + sigmoid(output.get(DRIVE_LEFT),
-				Parameters.response));
-		velocity.y = (float) (velocity.y + sigmoid(output.get(DRIVE_RIGHT),
-				Parameters.response));
+//		velocity.x = (float) (velocity.x + sigmoid(output.get(DRIVE_LEFT),
+//				Parameters.response));
+//		velocity.y = (float) (velocity.y + sigmoid(output.get(DRIVE_RIGHT),
+//				Parameters.response));
+		
+//		double drift = sigmoid(output.get(DRIVE_RIGHT),
+//				Parameters.response) - sigmoid(output.get(DRIVE_LEFT),
+//				Parameters.response);
+//		
+		velocity.x = (float) (velocity.x + output.get(DRIVE_LEFT));
+		velocity.y = (float) (velocity.y + output.get(DRIVE_RIGHT));
 		
 	}// END: lineFollow
-
+	
 	private double sigmoid(double input, double response) {
 		return (1 / (1 + Math.exp(-input / response)));
 	}// END: sigmoid
@@ -129,7 +136,6 @@ public class EAutonom {
 
 		float leftDist = PApplet.dist((float) leftSensorPosition[X],
 				(float) leftSensorPosition[Y], aX, aY);
-
 		
 		if (DEBUG) {
 			parent.stroke(255, 0, 0);
@@ -224,42 +230,39 @@ public class EAutonom {
 		double rightVal = readings.get(SENSOR_RIGHT);
 		double centerVal = readings.get(SENSOR_CENTER);
 		
-		double C1 = 50;
-		double C2 = 10;
-		double C3 = 50;
+		double C_LEFT = 30;
+		double C_CENTER = 20;
+		double C_RIGHT = 10;
 
-		if(centerVal > C2-1 && centerVal < C2 + 1) {
-			centerVal = C2-1;
-		}
-
-		
 		double s = //
-//				1/Math.pow((leftVal  - C1 ), 2) + //
-				1/Math.pow((centerVal - C2), 2) //+  //
-//				1/Math.pow((rightVal - C3), 2) //
+				1/Math.pow((leftVal  - C_LEFT ), 2) + //
+				1/Math.pow((centerVal - C_CENTER), 2) +  //
+				1/Math.pow((rightVal - C_RIGHT), 2) //
 				;
-		
-//		double	s =  (1 - (leftVal / (parent.width ))) * //
-//				 (1 - (centerVal / (parent.width )))  * // 
-//				 (1 - (rightVal / (parent.width))); 
-		
 		
 		fitness += s ;
 
-//		System.out.println("centerVal: " + centerVal + " s: " + s + " fitness: " +fitness);
-		
 		framesAlive ++;
 	}// END: updateFitness
 
 	public double getFitness() {
-		double phi = (fitness) / ((double) framesAlive);
-		return phi;
+//		double phi = (fitness) / ((double) framesAlive);
+		double phi = framesAlive;
+		return  (phi);
 	}// END: getScore
 
 	private void checkBorders() {
 
-		if(framesAlive > lifespan) {
+		if (location.x > parent.width || location.x < 0) {
 			this.alive = false;
+		}
+
+		if (location.y > parent.height || location.y < 0) {
+			this.alive = false;
+		}
+		
+		if(framesAlive > lifespan) {
+//			this.alive = false;
 		}
 		
 	}// END: checkBorders

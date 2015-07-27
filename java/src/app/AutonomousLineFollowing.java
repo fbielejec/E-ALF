@@ -47,12 +47,12 @@ public class AutonomousLineFollowing extends PApplet {
 
 		controller.addSlider("maxspeed")
 				.setPosition(HMOVE + ADJUST, VMOVE + 7 * ADJUST)
-				.setSize(100, 10).setRange(0, 50)
+				.setRange(0, 50)
 				.setValue(maxspeed);
 
 		controller.addSlider("lifespan")
 				.setPosition(HMOVE + ADJUST, VMOVE + 9 * ADJUST)
-				.setSize(100, 10).setRange(100, 400)
+				.setRange(50, 800)
 				.setValue(lifespan);
 
 	}// END setup

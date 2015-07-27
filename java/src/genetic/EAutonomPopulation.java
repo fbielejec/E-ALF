@@ -18,7 +18,6 @@ public class EAutonomPopulation {
 	private int nFittest = Parameters.nFittest;
 	private EAutonom[] population;
 	private ArrayList<EAutonom> matingPool;
-//	private int lifespan;
 	
 	private int currentIndex;
 	private int generationNumber;
@@ -51,9 +50,10 @@ public class EAutonomPopulation {
 		if (autonom.isAlive()) {
 			
 			autonom.run();
-            autonom.performTask( );
-
+			autonom.lineFollow();
+			
 			double currentFitness = autonom.getFitness();
+			System.out.println(currentFitness);
 			if(currentFitness > bestFitness) {
 				bestFitness = currentFitness;
 			}
@@ -86,23 +86,15 @@ public class EAutonomPopulation {
 			double iFitness = Utils.map(population[i].getFitness(), 0,
 					maxFitness, 0, 1);
 			
-//			System.out.println("fitness: " + iFitness);
-			
 			int n = (int) Math.floor(iFitness * nFittest);
-			
-//			System.out.println("n: " + n);
-			
 			for (int j = 0; j < n; j++) {
+
 				matingPool.add(population[i]);
-				
-//				System.out.println(Utils.displayWeights(population[i]));
 				
 			}// END: j loop
 
 		}// END: i loop
 
-//		System.out.println("mating pool: " + matingPool.size());
-		
 	}// END: naturalSelection
 
 	public void generate() {
@@ -119,10 +111,6 @@ public class EAutonomPopulation {
 			EAutonom child = parentA.crossover(parentB);
 			child.mutate(Parameters.mutationRate);
 
-//			System.out.println("A: " + Utils.displayWeights(parentA));;
-//			System.out.println("B: " + Utils.displayWeights(parentB));
-//			System.out.println("C: " + Utils.displayWeights(child));
-			
 			population[i] = child;
 
 		}// END: i loop
