@@ -91,7 +91,7 @@ public class AutonomousLineFollowing extends PApplet {
 
 		translate(0, 0);
 
-		fill(0);
+		fill(0,0,0,100);
 		stroke(0);
 
 		rectMode(CORNER);

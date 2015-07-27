@@ -82,28 +82,29 @@ public class EAutonom {
 
 		LinkedList<Double> output = neuralnet.update(readings);
 
-//		System.out.println("left:" + sigmoid(output.get(DRIVE_LEFT),
-//				Parameters.response) + " right: "+ sigmoid(output.get(DRIVE_RIGHT),
-//						Parameters.response));
+//		double drift = sigmoid(output.get(DRIVE_RIGHT)) - sigmoid(output.get(DRIVE_LEFT));
+//		velocity.x = (float) (velocity.x - drift);
+//		velocity.y = (float) (velocity.y + drift);
 		
-		double drift = sigmoid(output.get(DRIVE_RIGHT),
-				Parameters.response) -  sigmoid(output.get(DRIVE_LEFT),
-						Parameters.response);
+		double leftSpeed = Utils.map(sigmoid(output.get(DRIVE_LEFT)), //
+				0, //
+				1, //
+				-maxspeed, //
+				maxspeed);
 		
+		double rightSpeed = Utils.map(sigmoid(output.get(DRIVE_RIGHT)), //
+				0, //
+				1, //
+				-maxspeed, //
+				maxspeed);
 		
-		
-//		velocity.x = (float) (velocity.x + sigmoid(output.get(DRIVE_LEFT),
-//				Parameters.response));
-//		velocity.y = (float) (velocity.y + sigmoid(output.get(DRIVE_RIGHT),
-//				Parameters.response));
-		
-		velocity.x = (float) (velocity.x - drift);
-		velocity.y = (float) (velocity.y + drift);
+		velocity.x = (float) (velocity.x + leftSpeed);
+		velocity.y = (float) (velocity.y + rightSpeed);
 		
 	}// END: lineFollow
 	
-	private double sigmoid(double input, double response) {
-		return (1 / (1 + Math.exp(-input / response)));
+	private double sigmoid(double input) {
+		return (1 / (1 + Math.exp(-input)) );
 	}// END: sigmoid
 
 	public void run() {
