@@ -53,7 +53,6 @@ public class EAutonomPopulation {
 			autonom.lineFollow();
 			
 			double currentFitness = autonom.getFitness();
-			System.out.println(currentFitness);
 			if(currentFitness > bestFitness) {
 				bestFitness = currentFitness;
 			}

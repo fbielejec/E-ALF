@@ -16,7 +16,7 @@ public class Parameters {
 
 	public static int populationSize = 10;
 	public static int nFittest = 150;	
-	public static double mutationRate = 0.01;
+	public static double mutationRate = 0.1;
 	
 	public static float maxspeed = 1;
 	public static int lifespan = 100;

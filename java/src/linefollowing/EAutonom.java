@@ -55,7 +55,7 @@ public class EAutonom {
 		this.location = new PVector(xpos, ypos);
 		
 		this.line = line;
-		this.velocity = new PVector(this.maxspeed, this.maxspeed);
+		this.velocity = new PVector(this.maxspeed, 0);
 
 		this.neuralnet = new NeuralNetwork();
 
@@ -82,17 +82,23 @@ public class EAutonom {
 
 		LinkedList<Double> output = neuralnet.update(readings);
 
+//		System.out.println("left:" + sigmoid(output.get(DRIVE_LEFT),
+//				Parameters.response) + " right: "+ sigmoid(output.get(DRIVE_RIGHT),
+//						Parameters.response));
+		
+		double drift = sigmoid(output.get(DRIVE_RIGHT),
+				Parameters.response) -  sigmoid(output.get(DRIVE_LEFT),
+						Parameters.response);
+		
+		
+		
 //		velocity.x = (float) (velocity.x + sigmoid(output.get(DRIVE_LEFT),
 //				Parameters.response));
 //		velocity.y = (float) (velocity.y + sigmoid(output.get(DRIVE_RIGHT),
 //				Parameters.response));
 		
-//		double drift = sigmoid(output.get(DRIVE_RIGHT),
-//				Parameters.response) - sigmoid(output.get(DRIVE_LEFT),
-//				Parameters.response);
-//		
-		velocity.x = (float) (velocity.x + output.get(DRIVE_LEFT));
-		velocity.y = (float) (velocity.y + output.get(DRIVE_RIGHT));
+		velocity.x = (float) (velocity.x - drift);
+		velocity.y = (float) (velocity.y + drift);
 		
 	}// END: lineFollow
 	
