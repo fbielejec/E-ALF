@@ -3,6 +3,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-void lineFollow(int speed);
+/**---CONSTANTS---*/
 
-void followLines();
+
+
+/**---PROTOTYPES---*/
+
+void run() ;
+

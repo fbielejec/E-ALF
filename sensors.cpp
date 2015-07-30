@@ -1,5 +1,6 @@
-#include "globalDefines.h"
 #include "sensors.h"
+
+#include "globalDefines.h"
 
 /**---CONSTANTS---*/
 
@@ -36,6 +37,22 @@ const int OBST_FRONT_EDGE = 3;
 
 
 /**---METHODS---*/
+
+
+std::vector<double> senseLine() {
+
+    std::vector<double> readings;
+
+    int leftVal = analogRead(SENSE_IR_LEFT);
+    int centerVal = analogRead(SENSE_IR_CENTER);
+    int rightVal = analogRead(SENSE_IR_RIGHT);
+
+    readings.push_back(leftVal);
+    readings.push_back(centerVal);
+    readings.push_back(rightVal);
+
+    return readings;
+}//END: senseLine
 
 
 void irSensorBegin() {

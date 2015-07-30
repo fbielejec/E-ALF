@@ -57,8 +57,6 @@
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.cpp" />
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.h" />
 		<Unit filename="Makefile" />
-		<Unit filename="Parameters.cpp" />
-		<Unit filename="Parameters.h" />
 		<Unit filename="display.cpp" />
 		<Unit filename="display.h" />
 		<Unit filename="followLines.cpp" />
@@ -71,10 +69,13 @@
 		<Unit filename="motors.h" />
 		<Unit filename="neuralnet.cpp" />
 		<Unit filename="neuralnet.h" />
+		<Unit filename="parameters.cpp" />
+		<Unit filename="parameters.h" />
 		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
 		<Unit filename="testSystems.cpp" />
 		<Unit filename="testSystems.h" />
+		<Unit filename="utils.cpp" />
 		<Unit filename="utils.h" />
 		<Extensions>
 			<code_completion />

@@ -22,8 +22,9 @@ public class EAutonom {
 	private final int NBR_SENSORS = 3;
 
 	private final int SENSOR_LEFT = 0;
-	private final int SENSOR_RIGHT = 1;
-	private final int SENSOR_CENTER = 2;
+	private final int SENSOR_CENTER = 1;
+	private final int SENSOR_RIGHT = 2;
+	
 	private final int X = 0;
 	private final int Y = 1;
 
@@ -85,10 +86,6 @@ public class EAutonom {
 
 		LinkedList<Double> output = neuralnet.update(readings);
 
-//		double drift = sigmoid(output.get(DRIVE_RIGHT)) - sigmoid(output.get(DRIVE_LEFT));
-//		velocity.x = (float) (velocity.x - drift);
-//		velocity.y = (float) (velocity.y + drift);
-		
 		double leftSpeed = Utils.map(sigmoid(output.get(DRIVE_LEFT)), //
 				0, //
 				1, //
@@ -121,6 +118,7 @@ public class EAutonom {
 		 * Try to follow the path
 		 * */
 
+		float maxDist = 100;
 		LinkedList<Double> readings = new LinkedList<Double>();
 
 		// calculate distance from line for each sensor
@@ -146,6 +144,10 @@ public class EAutonom {
 
 		float leftDist = PApplet.dist((float) leftSensorPosition[X],
 				(float) leftSensorPosition[Y], aX, aY);
+
+		if (leftDist > maxDist) {
+			leftDist = maxDist;
+		}
 		
 		sensorReadings[SENSOR_LEFT] = (double) leftDist;
 		
@@ -161,6 +163,40 @@ public class EAutonom {
 
 		}// END: DEBUG check
 
+		double[] centerSensorPosition = new double[] {
+				location.x + sensorMount[SENSOR_CENTER][X],
+				location.y + sensorMount[SENSOR_CENTER][Y] };
+
+		rotatePoint(location.x, location.y, radians, centerSensorPosition);
+
+		float centerDist = PApplet.dist((float) centerSensorPosition[X],
+				(float) centerSensorPosition[Y], aX, aY);
+
+		if (centerDist > maxDist) {
+			centerDist = maxDist;
+		}
+		
+//		float locDist = PApplet.dist(location.x, location.y, aX, aY);
+//		if(locDist > maxDist) {
+//			locDist = maxDist;
+//		}
+		
+//		sensorReadings[SENSOR_CENTER] = (double) locDist;
+		
+		sensorReadings[SENSOR_CENTER] = (double) centerDist;
+		
+		if (DEBUG) {
+			parent.stroke(255, 0, 0);
+			parent.strokeWeight(1);
+
+			Utils.dashline((float) centerSensorPosition[X], //
+					(float) centerSensorPosition[Y], //
+					aX, //
+					aY, //
+					(float) 3.0, (float) 5.0, parent);
+
+		}// END: DEBUG check
+
 		double[] rightSensorPosition = new double[] {
 				location.x + sensorMount[SENSOR_RIGHT][X],
 				location.y + sensorMount[SENSOR_RIGHT][Y] };
@@ -170,6 +206,10 @@ public class EAutonom {
 		float rightDist = PApplet.dist((float) rightSensorPosition[X],
 				(float) rightSensorPosition[Y], aX, aY);
 
+		if (rightDist > maxDist) {
+			rightDist = maxDist;
+		}
+		
 		sensorReadings[SENSOR_RIGHT] = (double) rightDist;
 		
 		if (DEBUG) {
@@ -184,32 +224,10 @@ public class EAutonom {
 
 		}// END: DEBUG check
 
-		double[] centerSensorPosition = new double[] {
-				location.x + sensorMount[SENSOR_CENTER][X],
-				location.y + sensorMount[SENSOR_CENTER][Y] };
-
-		rotatePoint(location.x, location.y, radians, centerSensorPosition);
-
-		float centerDist = PApplet.dist((float) centerSensorPosition[X],
-				(float) centerSensorPosition[Y], aX, aY);
-
-		sensorReadings[SENSOR_CENTER] = (double) centerDist;
-		
-		if (DEBUG) {
-			parent.stroke(255, 0, 0);
-			parent.strokeWeight(1);
-
-			Utils.dashline((float) centerSensorPosition[X], //
-					(float) centerSensorPosition[Y], //
-					aX, //
-					aY, //
-					(float) 3.0, (float) 5.0, parent);
-
-		}// END: DEBUG check
-		
 		readings.add(SENSOR_LEFT, (double) leftDist);
-		readings.add(SENSOR_RIGHT, (double) rightDist);
 		readings.add(SENSOR_CENTER, (double) centerDist);
+//		readings.add(SENSOR_CENTER, (double) locDist);
+		readings.add(SENSOR_RIGHT, (double) rightDist);
 		
 		return readings;
 	}// END: lineSense;
@@ -242,28 +260,42 @@ public class EAutonom {
 
 	private void scoreTask(LinkedList<Double> readings) {
 
-		double leftVal = readings.get(SENSOR_LEFT);
-		double rightVal = readings.get(SENSOR_RIGHT);
-		double centerVal = readings.get(SENSOR_CENTER);
+//		double leftVal = readings.get(SENSOR_LEFT);
+//		double centerVal = readings.get(SENSOR_CENTER);
+//		double rightVal = readings.get(SENSOR_RIGHT);
+//		
+//		double C_LEFT = 35;
+//		double C_CENTER = 35;
+//		double C_RIGHT = 35;
+//
+//		double s = //
+//				1/Math.pow((leftVal  - C_LEFT ), 2) + //
+//				1/Math.pow((centerVal - C_CENTER), 2) +  //
+//				1/Math.pow((rightVal - C_RIGHT), 2) //
+//				;
 		
-		double C_LEFT = 30;
-		double C_CENTER = 20;
-		double C_RIGHT = 10;
+//		double vl = velocity.x;
+//		double vr = velocity.y;
+//		double v = Math.abs(vl)+Math.abs(vr);
 
-		double s = //
-				1/Math.pow((leftVal  - C_LEFT ), 2) + //
-				1/Math.pow((centerVal - C_CENTER), 2) +  //
-				1/Math.pow((rightVal - C_RIGHT), 2) //
-				;
 		
-		fitness += s ;
+		double leftVal = readings.get(SENSOR_LEFT);
+		double dl = Utils.map(leftVal, 0, 100, 0, 1);
+		
+		double centerVal = readings.get(SENSOR_CENTER);
+		double dc = Utils.map(centerVal, 0, 100, 0, 1);
+		
+		double rightVal = readings.get(SENSOR_RIGHT);		
+		double dr = Utils.map(rightVal, 0, 100, 0, 1);
+		
+		fitness += (1 - dc) * (1 - dl) * (1 - dr);
 
 		framesAlive ++;
 	}// END: updateFitness
 
 	public double getFitness() {
-//		double phi = (fitness) / ((double) framesAlive);
-		double phi = framesAlive;
+		double phi = (fitness * (double) framesAlive) ;
+//		double phi = framesAlive;
 		return (phi);
 	}// END: getScore
 
@@ -277,9 +309,9 @@ public class EAutonom {
 			this.alive = false;
 		}
 		
-//		if(framesAlive > lifespan) {
-//			this.alive = false;
-//		}
+		if(framesAlive > lifespan) {
+			this.alive = false;
+		}
 		
 	}// END: checkBorders
 

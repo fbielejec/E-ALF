@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <StandardCplusplus.h>
+#include <vector>
 
 /**---CONSTANTS---*/
 
@@ -31,6 +33,7 @@ extern const int OBST_FRONT_EDGE;
 
 /**---PROTOTYPES---*/
 
+std::vector<double> senseLine();
 
 void irSensorBegin() ;
 

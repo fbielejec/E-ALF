@@ -1,22 +1,18 @@
-#include <avr/io.h>
-#include <util/delay.h>
-#include <Arduino.h>
-#include <Wire.h>
+#include "followLines.h"
 
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
-#include "followLines.h"
+#include "autonom.h"
 #include "globalDefines.h"
+#include "parameters.h"
 
 /**---CONSTANTS---*/
 
 //1 is most sensitive, range 1 to 1023
 int damping =  5;
 
-int speed = MIN_SPEED;
-
-enum { DATA_start, DATA_LEFT, DATA_CENTER, DATA_RIGHT, DATA_DRIFT, DATA_L_SPEED, DATA_R_SPEED, DATA_DAMPING, DATA_nbrItems };
+int c_speed = MIN_SPEED;
 
 char* labels[] = {"", "Left Line", "Center Line", "Right Line","Drift", "Left Speed", "Right Speed", "Damping"};
 
@@ -24,9 +20,11 @@ int minRange[] = { 0, 0, 0, 0, -1023, 0, 0, 0 };
 
 int maxRange[] = { 0, 1023, 1023, 1023, 1023, 100, 100, 40 };
 
+enum { DATA_start, DATA_LEFT, DATA_CENTER, DATA_RIGHT, DATA_DRIFT, DATA_L_SPEED, DATA_R_SPEED, DATA_DAMPING, DATA_nbrItems };
+
 /**---METHODS---*/
 
-void init_io(void) {
+void init_follower(void) {
 
     init();
 
@@ -37,6 +35,7 @@ void init_io(void) {
     blinkNumber(8);
     Serial.println("\t Comm-link online.");
 
+    // initialize motors
     motorsBegin();
     dataDisplayBegin(DATA_nbrItems, labels, minRange, maxRange );
 
@@ -47,23 +46,19 @@ void init_io(void) {
 
 void followLines() {
 
-    init_io();
+    init_follower();
 
     while (1) {
 
-        int drift = lineSense();
-        lineFollow(drift, speed);
+        lineFollow(c_speed);
         delay(1);
 
     }//END: loop
 
 }//END: followLines
 
+void lineFollow( int speed ) {
 
-int lineSense() {
-    /**
-      * @return drift: 0 if over line, minus value if left, plus if right
-    */
     int leftVal = analogRead(SENSE_IR_LEFT);
     int centerVal = analogRead(SENSE_IR_CENTER);
     int rightVal = analogRead(SENSE_IR_RIGHT);
@@ -72,17 +67,11 @@ int lineSense() {
     sendData(DATA_CENTER, centerVal);
     sendData(DATA_RIGHT, rightVal);
 
-    int leftSense = centerVal - leftVal;
-    int rightSense = rightVal - centerVal;
+    // drift: 0 if over line, minus value if left, plus if right
     int drift = rightVal - leftVal ;
 
     sendData(DATA_DRIFT, drift);
 
-    return drift;
-}//END: lineSense
-
-
-int lineFollow(int drift, int speed) {
     int leftSpeed   =  constrain(speed - (drift / damping), 0, 100);
     int rightSpeed  =  constrain(speed + (drift / damping), 0, 100);
 
@@ -92,3 +81,4 @@ int lineFollow(int drift, int speed) {
     motorForward(MOTOR_LEFT, leftSpeed);
     motorForward(MOTOR_RIGHT, rightSpeed);
 }//END: lineFollow
+
