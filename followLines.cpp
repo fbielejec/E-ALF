@@ -3,7 +3,6 @@
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
-#include "autonom.h"
 #include "globalDefines.h"
 #include "parameters.h"
 
@@ -80,5 +79,6 @@ void lineFollow( int speed ) {
 
     motorForward(MOTOR_LEFT, leftSpeed);
     motorForward(MOTOR_RIGHT, rightSpeed);
+
 }//END: lineFollow
 

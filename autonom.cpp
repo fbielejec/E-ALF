@@ -9,7 +9,7 @@
 
 /**---CONSTANTS---*/
 
-int speed = MIN_SPEED;
+int MAX_SPEED = 100;
 
 NeuralNetwork neuralnet;
 
@@ -28,6 +28,7 @@ void init_io(void) {
 
     // initialize motors
     motorsBegin();
+
     // initialize nn
     neuralnet.createNetwork();
 
@@ -42,20 +43,30 @@ void run() {
 
     while (1) {
 
-// TODO: pass the weights
+        // TODO: set nn weights over serial
 
         std::vector<double> readings = senseLine();
         readings.push_back(Parameters::bias);
+
         std::vector<double> output = neuralnet.update(readings);
 
-        double leftSpeed = sigmoid(output.at(MOTOR_LEFT));
-        double rightSpeed = sigmoid(output.at(MOTOR_RIGHT));
+        int leftSpeed = sigmoid(output.at(MOTOR_LEFT));
+        int rightSpeed = sigmoid(output.at(MOTOR_RIGHT));
 
-        leftSpeed = constrain(speed + leftSpeed, 0, 100);
-        rightSpeed = constrain(speed + rightSpeed, 0, 100);
+//int leftSpeed = 40;
+//int rightSpeed = 80;
+
+        leftSpeed = map(leftSpeed, 0, 1, -MAX_SPEED, MAX_SPEED);
+        rightSpeed = map(rightSpeed, 0, 1, -MAX_SPEED, MAX_SPEED);
+
+        leftSpeed = constrain(MIN_SPEED + leftSpeed, 0, MAX_SPEED);
+        rightSpeed = constrain(MIN_SPEED + rightSpeed, 0, MAX_SPEED);
+
+        motorForward(MOTOR_LEFT, leftSpeed);
+        motorForward(MOTOR_RIGHT, rightSpeed);
 
     }//END: loop
 
-}//END: followLines
+}//END: run
 
 

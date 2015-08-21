@@ -1,22 +1,35 @@
 #include <StandardCplusplus.h>
 #include <vector>
+#include <Arduino.h>
 #include "utils.h"
 
-struct Neuron {
+
+class Neuron {
+
+private :
 
     // inputs including bias
     int numInputs;
 
     // weights are genes
-    std:: vector<double> weights;
+    std::vector<double> weights;
+
+
+public:
 
     // Constructor
     Neuron(int numInputs);
 
+    int getnInputs();
+
+    std::vector<double> getWeights();
+
 };
 
 
-struct NeuronLayer {
+class NeuronLayer {
+
+private:
 
     // the number of neurons in this layer
     int numNeurons;
@@ -24,11 +37,18 @@ struct NeuronLayer {
     // the layer of neurons
     std::vector<Neuron> neurons;
 
+public:
+
     // Constructor
     NeuronLayer(int numNeurons, int numInputsPerNeuron);
 
-};
+    void createLayer();
 
+    int getNumNeurons();
+
+    std::vector<Neuron>  getNeurons();
+
+};
 
 class NeuralNetwork {
 
@@ -42,6 +62,7 @@ private:
 
 public:
 
+    // Constructor
     NeuralNetwork();
 
     void createNetwork();

@@ -1,6 +1,7 @@
-#include "followLines.h"
-#include "testSystems.h"
-
+//#include "followLines.h"
+//#include "testSystems.h"
+//#include "autonom.h"
+#include "testnn.h"
 
 /**
  *@author: fbielejec
@@ -9,9 +10,10 @@
 
 int main(void) {
 
-    followLines();
-//testSystems();
-
+//  run();
+//  followLines();
+//  testSystems();
+    testnn();
 
     return 0;
 }//END: main

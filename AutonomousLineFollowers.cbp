@@ -57,6 +57,9 @@
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.cpp" />
 		<Unit filename="../libraries/Adafruit_Motorshield/Adafruit_MotorShield.h" />
 		<Unit filename="Makefile" />
+		<Unit filename="README.textile" />
+		<Unit filename="autonom.cpp" />
+		<Unit filename="autonom.h" />
 		<Unit filename="display.cpp" />
 		<Unit filename="display.h" />
 		<Unit filename="followLines.cpp" />
@@ -75,6 +78,8 @@
 		<Unit filename="sensors.h" />
 		<Unit filename="testSystems.cpp" />
 		<Unit filename="testSystems.h" />
+		<Unit filename="testnn.cpp" />
+		<Unit filename="testnn.h" />
 		<Unit filename="utils.cpp" />
 		<Unit filename="utils.h" />
 		<Extensions>

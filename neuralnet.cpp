@@ -1,8 +1,13 @@
 #include "neuralnet.h"
 #include "parameters.h"
 
+/**
+* Neuron methods
+*/
 
-Neuron::Neuron(int numInputs) {//} : in_numInputs(numInputs) {
+Neuron::Neuron(int numInputs) {
+
+    this->numInputs = numInputs;
 
     for (int i = 0; i < numInputs + 1; i++) {
 
@@ -12,7 +17,22 @@ Neuron::Neuron(int numInputs) {//} : in_numInputs(numInputs) {
 
 }//END: Neuron
 
-NeuronLayer::NeuronLayer(int numNeurons, int numInputsPerNeuron) {//} :	in_numNeurons(numNeurons) {
+int Neuron::getnInputs() {
+    return numInputs;
+}//END: getnInputs
+
+std::vector<double> Neuron::getWeights() {
+    return weights;
+}//END: getWeights
+
+/**
+* Neuron Layer methods
+*/
+
+NeuronLayer::NeuronLayer(int numNeurons, int numInputsPerNeuron) {
+
+    this->numNeurons = numNeurons;
+    this->numInputsPerNeuron = numInputsPerNeuron;
 
     for (int i = 0; i < numNeurons; i++) {
 
@@ -22,17 +42,29 @@ NeuronLayer::NeuronLayer(int numNeurons, int numInputsPerNeuron) {//} :	in_numNe
 
 }//END: NeuronLayer
 
+
+int NeuronLayer::getNumNeurons() {
+    return numNeurons;
+}//END: getNumNeurons
+
+
+std::vector<Neuron> NeuronLayer::getNeurons() {
+    return neurons;
+}//END: getNeurons
+
+
 /**
 * Neural Network methods
 */
 
 NeuralNetwork::NeuralNetwork() {
+
     numInputs	          =	Parameters::numInputs;
     numOutputs		      =	Parameters::numOutputs;
     numHiddenLayers	    =	Parameters::numHiddenLayers;
     neuronsPerHiddenLayer =	Parameters::neuronsPerHiddenLayer;
 
-    createNetwork();
+//    createNetwork();
 
 }//END: Constructor
 
@@ -63,26 +95,23 @@ void NeuralNetwork::createNetwork() {
 
 }//END: createNetwork
 
-
-
 std::vector<double> NeuralNetwork::getWeights()  {
 
     std::vector<double> weights;
 
-    //for each layer
     for (int i = 0; i < numHiddenLayers + 1; i++) {
 
-        //for each neuron
-        for (int j = 0; j < layers[i].numNeurons; j++) {
+        NeuronLayer layer = layers[i];
+        for (int j = 0; j < layer.getNumNeurons(); j++) {
 
-            //for each weight
-            for (int k = 0; k < layers[i].neurons[j].numInputs; k++) {
+            Neuron neuron = layer.getNeurons().at(j);
+            for (int k = 0; k < neuron.getnInputs(); k++) {
 
-                weights.push_back(layers[i].neurons[j].weights[k]);
+                weights.push_back(neuron.getWeights().at(k));
 
             }//END: weights loop
 
-        }//END: neuron loop
+        }//END: neurons loop
     }//END: layers loop
 
     return weights;
@@ -93,16 +122,16 @@ void NeuralNetwork::setWeights(std::vector<double> weights) {
 
     int cWeight = 0;
 
-    // for each layer
     for (int i = 0; i < numHiddenLayers + 1; i++) {
 
-        // for each neuron
-        for (int j = 0; j < layers[i].numNeurons; j++) {
+        NeuronLayer layer = layers[i];
+        for (int j = 0; j < layer.getNumNeurons(); j++) {
 
-            //for each weight
-            for (int k = 0; k < layers[i].neurons[j].numInputs; k++) {
+            Neuron neuron = layer.getNeurons().at(j);
+            for (int k = 0; k < neuron.getnInputs(); k++) {
 
-                layers[i].neurons[j].weights[k] = weights[cWeight++];
+//TODO: set weights
+                neuron.getWeights().at(k) = weights[cWeight++];
 
             }//END: weights loop
 
@@ -120,14 +149,13 @@ int NeuralNetwork::getNumberOfWeights() {
 
     int nWeights = 0;
 
-    // for each layer
     for (int i = 0; i < numHiddenLayers + 1; i++) {
 
-        // for each neuron
-        for (int j = 0; j < layers[i].numNeurons; j++) {
+        NeuronLayer layer = layers[i];
+        for (int j = 0; j < layer.getNumNeurons(); j++) {
 
-            //for each weight
-            for (int k = 0; k < layers[i].neurons[j].numInputs; k++) {
+            Neuron neuron = layer.getNeurons().at(j);
+            for (int k = 0; k < neuron.getnInputs(); k++) {
 
                 nWeights++;
 
@@ -140,7 +168,6 @@ int NeuralNetwork::getNumberOfWeights() {
 }// END: getNumberOfWeights
 
 
-
 std::vector<double> NeuralNetwork::update(std::vector<double> inputs) {
 
     std::vector<double> outputs;
@@ -148,7 +175,8 @@ std::vector<double> NeuralNetwork::update(std::vector<double> inputs) {
 
     if (inputs.size() != numInputs) {
 
-// System.err.println("Input size (" +inputs.size() +")" + " is different than number of inputs declared (" + this.numInputs +")!");
+        Serial.println("Input size is different than number of inputs declared!");
+
         return outputs;
 
     }// size check
@@ -163,38 +191,26 @@ std::vector<double> NeuralNetwork::update(std::vector<double> inputs) {
         outputs.clear();
         cWeight = 0;
 
-        // for each neuron
-        for (int j = 0; j < layers[i].numNeurons; j++) {
+        NeuronLayer layer = layers[i];
+        for (int j = 0; j < layer.getNumNeurons(); j++) {
 
             double netinput = 0;
-            int nInputs = layers[i].neurons[j].numInputs;
+            Neuron neuron = layer.getNeurons().at(j);
+            int nInputs = neuron.getnInputs();
 
-            //for each weight
             for (int k = 0; k < nInputs; k++) {
 
                 // weights x inputs
-                netinput += layers[i].neurons[j].weights[k] * inputs[cWeight++];
+                netinput += neuron.getWeights().at(k)  * inputs.at(cWeight++);
 
             }//END: weights loop
 
             outputs.push_back(netinput);
             cWeight = 0;
+
         }//END: neurons loop
     }//END: layers loop
 
     return outputs;
 }//END: feedforward
-
-
-
-
-
-
-
-
-
-
-
-
-
 
