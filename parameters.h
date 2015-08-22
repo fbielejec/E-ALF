@@ -3,21 +3,21 @@ class Parameters {
 
   public:
 
- static double response;
+ static float response;
 
  static int  numInputs;
 
  static int numOutputs;
 
-static double bias;
+static int bias;
 
  static int numHiddenLayers;
 
  static int neuronsPerHiddenLayer;
 
- static int populationSize;
-
-  static double mutationRate;
+// static int populationSize;
+//
+//  static double mutationRate;
 
  Parameters();
 

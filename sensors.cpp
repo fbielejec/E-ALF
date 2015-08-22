@@ -39,9 +39,9 @@ const int OBST_FRONT_EDGE = 3;
 /**---METHODS---*/
 
 
-std::vector<double> senseLine() {
+std::vector<float> senseLine() {
 
-    std::vector<double> readings;
+    std::vector<float> readings;
 
     int leftVal = analogRead(SENSE_IR_LEFT);
     int centerVal = analogRead(SENSE_IR_CENTER);

@@ -12,7 +12,7 @@ private :
     int numInputs;
 
     // weights are genes
-    std::vector<double> weights;
+    std::vector<float> weights;
 
 
 public:
@@ -22,7 +22,7 @@ public:
 
     int getnInputs();
 
-    std::vector<double> getWeights();
+    std::vector<float> getWeights();
 
 };
 
@@ -67,12 +67,12 @@ public:
 
     void createNetwork();
 
-    std::vector<double> getWeights();
+    std::vector<float> getWeights();
 
-    void setWeights(std::vector<double> weights);
+    void setWeights(std::vector<float> weights);
 
     int getNumberOfWeights();
 
-    std::vector<double> update(std::vector<double> inputs);
+    std::vector<float> update(std::vector<float> inputs);
 
 };

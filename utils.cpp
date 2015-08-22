@@ -1,14 +1,14 @@
 #include "utils.h"
 
-double sigmoid(double input) {
+float sigmoid(float input) {
     return ( 1 / ( 1 + exp( - input)));
 }//END: sigmoid
 
-double randFloat() {
+float randFloat() {
     return (rand()) / (RAND_MAX + 1.0);
 }//END: randFloat
 
-double randomClamped() {
+float randomClamped() {
     return randFloat() - randFloat();
 }//END: randomCLamped
 

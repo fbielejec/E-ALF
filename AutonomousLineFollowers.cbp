@@ -78,7 +78,6 @@
 		<Unit filename="sensors.h" />
 		<Unit filename="testSystems.cpp" />
 		<Unit filename="testSystems.h" />
-		<Unit filename="testnn.cpp" />
 		<Unit filename="testnn.h" />
 		<Unit filename="utils.cpp" />
 		<Unit filename="utils.h" />
