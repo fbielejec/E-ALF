@@ -1,5 +1,6 @@
 #include "sensors.h"
 
+#include "cneuralnet.h"
 #include "globalDefines.h"
 
 /**---CONSTANTS---*/
@@ -38,21 +39,40 @@ const int OBST_FRONT_EDGE = 3;
 
 /**---METHODS---*/
 
+float* senseLine() {
 
-std::vector<float> senseLine() {
+//    float readings[INPUT_NODES-1];
 
-    std::vector<float> readings;
+float *readings = (float *) malloc(sizeof(float) * (INPUT_NODES-1));
 
-    int leftVal = analogRead(SENSE_IR_LEFT);
-    int centerVal = analogRead(SENSE_IR_CENTER);
-    int rightVal = analogRead(SENSE_IR_RIGHT);
+    float leftVal = (float) analogRead(SENSE_IR_LEFT);
+    float centerVal = (float) analogRead(SENSE_IR_CENTER);
+    float rightVal = (float) analogRead(SENSE_IR_RIGHT);
 
-    readings.push_back(leftVal);
-    readings.push_back(centerVal);
-    readings.push_back(rightVal);
+    readings[0] = leftVal;
+    readings[1] = centerVal;
+    readings[2] = rightVal;
 
-    return readings;
+//Serial.println(readings[0] );
+
+return(readings);
 }//END: senseLine
+
+
+//std::vector<float> senseLine() {
+//
+//    std::vector<float> readings;
+//
+//    int leftVal = analogRead(SENSE_IR_LEFT);
+//    int centerVal = analogRead(SENSE_IR_CENTER);
+//    int rightVal = analogRead(SENSE_IR_RIGHT);
+
+//    readings.push_back(leftVal);
+//    readings.push_back(centerVal);
+//    readings.push_back(rightVal);
+//
+//    return readings;
+//}//END: senseLine
 
 
 void irSensorBegin() {

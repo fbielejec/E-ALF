@@ -4,7 +4,7 @@
 #include "sensors.h"
 #include "motors.h"
 #include "globalDefines.h"
-#include "parameters.h"
+//#include "parameters.h"
 
 /**---CONSTANTS---*/
 

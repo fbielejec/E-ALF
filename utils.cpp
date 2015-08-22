@@ -5,7 +5,7 @@ float sigmoid(float input) {
 }//END: sigmoid
 
 float randFloat() {
-    return (rand()) / (RAND_MAX + 1.0);
+    return (  (float)rand()  ) / (float)(  RAND_MAX + 1.0);
 }//END: randFloat
 
 float randomClamped() {

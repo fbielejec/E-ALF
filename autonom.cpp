@@ -1,18 +1,26 @@
 #include "autonom.h"
 
+#include <assert.h>
 #include <MemoryFree.h>
+
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
 #include "globalDefines.h"
-#include "neuralnet.h"
-#include "parameters.h"
+#include "cneuralnet.h"
+//#include "parameters.h"
+
+#define DEBUG 1
 
 /**---CONSTANTS---*/
 
-int MAX_SPEED = 100;
+int err;
+float bias = -1;
 
-NeuralNetwork neuralnet;//   = NeuralNetwork();
+
+/**---ARRAYS---*/
+
+float *readings;
 
 /**---METHODS---*/
 
@@ -31,12 +39,13 @@ void init_io(void) {
     motorsBegin();
 
     // initialize nn
-    neuralnet.createNetwork();
+    err = createNetwork();
+    assert(err == 0);
 
     Serial.println("\t Systems functional.");
 
-//  Serial.print("freeMemory()=");
-//  Serial.println(freeMemory());
+    Serial.print("freeMemory=");
+    Serial.println(freeMemory());
 
 }//END: init_io
 
@@ -45,50 +54,64 @@ void run() {
 
     init_io();
 
+ // TODO: detect collision, call isAlive()
+ // TODO: set nn weights over serial
+
     while (1) {
 
-        // TODO: set nn weights over serial
+        float *readings = senseLine();
+        readings[INPUT_NODES - 1] = bias;
 
-        std::vector<float> readings = senseLine();
-        readings.push_back(Parameters::bias);
+#ifdef DEBUG
+        Serial.println("NN inputs:");
+        for (int i = 0; i < INPUT_NODES ; i++) {
+            Serial.println(readings[i] );
+        }
+#endif /* DEBUG */
 
-//Serial.println(readings.at(SENSE_IR_LEFT));
-//Serial.println(readings.at(SENSE_IR_CENTER));
-//Serial.println(readings.at(SENSE_IR_RIGHT));
-//Serial.println( readings.at(readings.size()-1));
+        err = feedforward(readings);
+        assert(err == 0);
 
-  Serial.print("no of weights:");
-Serial.println( neuralnet.getNumberOfWeights());
+        float* output = getOutput();
 
-        std::vector<float> output = neuralnet.update(readings);
+#ifdef DEBUG
+        Serial.println("NN response:");
+        for (int i = 0; i < OUTPUT_NODES ; i++) {
+            Serial.println(output[i] );
+        }
+#endif /* DEBUG */
 
-//Serial.println(output.at(MOTOR_LEFT));
-//Serial.println(output.at(MOTOR_RIGHT));
+        float leftSpeed = sigmoid(output[MOTOR_LEFT]);
+        float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
 
-  Serial.print("freeMemory()=");
-  Serial.println(freeMemory());
+#ifdef DEBUG
+        Serial.println("transformed response" );
+        Serial.println(leftSpeed);
+        Serial.println(rightSpeed );
+#endif /* DEBUG */
 
-delay(1000);
+        leftSpeed = map(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+        rightSpeed = map(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
 
-//Serial.println(output.at(MOTOR_LEFT));
-//Serial.println(output.at(MOTOR_RIGHT));
+#ifdef DEBUG
+        Serial.println("mapped response" );
+        Serial.println(leftSpeed);
+        Serial.println(rightSpeed );
+#endif /* DEBUG */
 
+        motorForward(MOTOR_LEFT, leftSpeed);
+        motorForward(MOTOR_RIGHT, rightSpeed);
 
+#ifdef DEBUG
+        Serial.print("freeMemory=");
+        Serial.println(freeMemory());
+#endif /* DEBUG */
 
-//        int leftSpeed = sigmoid(output.at(MOTOR_LEFT));
-//        int rightSpeed = sigmoid(output.at(MOTOR_RIGHT));
+        free(readings);
 
-//int leftSpeed = 40;
-//int rightSpeed = 80;
-
-//        leftSpeed = map(leftSpeed, 0, 1, -MAX_SPEED, MAX_SPEED);
-//        rightSpeed = map(rightSpeed, 0, 1, -MAX_SPEED, MAX_SPEED);
-//
-//        leftSpeed = constrain(MIN_SPEED + leftSpeed, 0, MAX_SPEED);
-//        rightSpeed = constrain(MIN_SPEED + rightSpeed, 0, MAX_SPEED);
-//
-//        motorForward(MOTOR_LEFT, leftSpeed);
-//        motorForward(MOTOR_RIGHT, rightSpeed);
+#ifdef DEBUG
+        delay(3000);
+#endif /* DEBUG */
 
     }//END: loop
 

@@ -14,11 +14,13 @@ const char* states[] = {"Left", "Right", "Forward", "Back", "Rotate", "Stop"};
 
 // first table entry is 40% speed
 const int MIN_SPEED = 40;
+const int MAX_SPEED = 100;
+
 // each table entry is 10% faster speed
 const int SPEED_TABLE_INTERVAL = 10;
 const int NBR_SPEEDS =  1 + (100 - MIN_SPEED) / SPEED_TABLE_INTERVAL;
 // speeds
-int speedTable[NBR_SPEEDS]  =  {40,     50,   60,   70,   80,   90,  100};
+int speedTable[NBR_SPEEDS]  =  {40,     50,   60,   70,   80,   90,  MAX_SPEED};
 // time
 int rotationTime[NBR_SPEEDS] = {5500, 3300, 2400, 2000, 1750, 1550, 1150};
 

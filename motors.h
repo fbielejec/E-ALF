@@ -7,6 +7,8 @@ extern const int MOTOR_LEFT ;
 extern const int MOTOR_RIGHT;
 
 extern const int MIN_SPEED ;
+extern const int MAX_SPEED ;
+
 extern const int SPEED_TABLE_INTERVAL;
 extern const int NBR_SPEEDS  ;
 

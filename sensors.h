@@ -33,7 +33,9 @@ extern const int OBST_FRONT_EDGE;
 
 /**---PROTOTYPES---*/
 
-std::vector<float> senseLine();
+//std::vector<float> senseLine();
+
+float* senseLine();
 
 void irSensorBegin() ;
 
