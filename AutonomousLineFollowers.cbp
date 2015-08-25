@@ -60,25 +60,20 @@
 		<Unit filename="README.textile" />
 		<Unit filename="autonom.cpp" />
 		<Unit filename="autonom.h" />
+		<Unit filename="cneuralnet.cpp" />
+		<Unit filename="cneuralnet.h" />
 		<Unit filename="display.cpp" />
 		<Unit filename="display.h" />
 		<Unit filename="followLines.cpp" />
 		<Unit filename="followLines.h" />
-		<Unit filename="globalDefines.h" />
 		<Unit filename="main.cpp">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
-		<Unit filename="neuralnet.cpp" />
 		<Unit filename="neuralnet.h" />
-		<Unit filename="parameters.cpp" />
-		<Unit filename="parameters.h" />
 		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
-		<Unit filename="testSystems.cpp" />
-		<Unit filename="testSystems.h" />
-		<Unit filename="testnn.h" />
 		<Unit filename="utils.cpp" />
 		<Unit filename="utils.h" />
 		<Extensions>

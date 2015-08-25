@@ -6,9 +6,8 @@
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
-#include "globalDefines.h"
+//#include "globalDefines.h"
 #include "cneuralnet.h"
-//#include "parameters.h"
 
 #define DEBUG 1
 
@@ -38,6 +37,9 @@ void init_io(void) {
     // initialize motors
     motorsBegin();
 
+    // initialize sensors
+    collisionSensorsBegin();
+
     // initialize nn
     err = createNetwork();
     assert(err == 0);
@@ -57,7 +59,29 @@ void run() {
  // TODO: detect collision, call isAlive()
  // TODO: set nn weights over serial
 
+while(1) {
+
+            // reflection blocked on left side
+        if(checkCollision(COLLISION_LEFT) == true)   {
+
+
+        }//END: left edge
+//
+//        // reflection blocked on right side
+//        if(lookForObstacle(OBST_RIGHT_EDGE) == true)   {
+//
+//            calibrateRotationRate(DIR_RIGHT, 360);
+//
+//        } //END: right edge
+
+
+}
+
+
     while (1) {
+
+
+
 
         float *readings = senseLine();
         readings[INPUT_NODES - 1] = bias;
@@ -101,11 +125,6 @@ void run() {
 
         motorForward(MOTOR_LEFT, leftSpeed);
         motorForward(MOTOR_RIGHT, rightSpeed);
-
-#ifdef DEBUG
-        Serial.print("freeMemory=");
-        Serial.println(freeMemory());
-#endif /* DEBUG */
 
         free(readings);
 

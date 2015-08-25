@@ -1,48 +1,36 @@
 #include <Arduino.h>
-#include <StandardCplusplus.h>
-#include <vector>
 
 /**---CONSTANTS---*/
 
-// defines to identify sensors
-const int SENSE_IR_LEFT = 0;
-const int SENSE_IR_RIGHT = 1;
-const int SENSE_IR_CENTER = 2;
+// defines to identify analog sensor pins
+const int LINE_SENSOR_LEFT = 0;
+const int LINE_SENSOR_CENTER = 1;
+const int LINE_SENSOR_RIGHT = 2;
 
-extern const byte NBR_SENSORS;
-
-extern const char* locationString[];
-
-// % level below ambient to trigger reflection
-extern const int irReflectThreshold ;
-// % level above ambient to trigger edge
-extern const int irEdgeThreshold ;
-
-// for initial detection
-//extern boolean isDetected;
+extern const byte NBR_COLLISION_SENSORS;
 
 // no obstacle detected
-extern const int OBST_NONE ;
+//extern const int COLLISION_NONE ;
 // left edge detected
-extern const int OBST_LEFT_EDGE ;
+extern const int COLLISION_LEFT ;
 // right edge detected
-extern const int OBST_RIGHT_EDGE;
-// edge detect at both left and right sensors
-extern const int OBST_FRONT_EDGE;
+extern const int COLLISION_FRONT;
+// edge detect at right sensors
+extern const int COLLISION_RIGHT;
 
 
 /**---PROTOTYPES---*/
 
-//std::vector<float> senseLine();
-
 float* senseLine();
 
-void irSensorBegin() ;
+void collisionSensorsBegin() ;
 
-void irSensorCalibrate(byte sensor);
+void calibrateCollisionSensor(byte sensor);
 
-boolean lookForObstacle(int obstacle);
 
-boolean irEdgeDetect(int sensor);
 
-boolean irSensorDetect(int sensor);
+boolean checkCollision(int obstacle);
+//
+//boolean irEdgeDetect(int sensor);
+//
+boolean senseCollision(int sensor);

@@ -2,6 +2,7 @@
 
 /**---CONSTANTS---*/
 
+const int LED_PIN = 13;
 
 /**---PROTOTYPES---*/
 

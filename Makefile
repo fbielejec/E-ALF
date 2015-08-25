@@ -1,6 +1,6 @@
 BOARD_TAG    = uno
 MONITOR_PORT  = /dev/ttyACM0
-ARDUINO_LIBS = Wire Adafruit_Motorshield StandardCplusplus MemoryFree
+ARDUINO_LIBS = Wire Adafruit_Motorshield MemoryFree
 #CPP=avr-g++
 
 #NO_CORE = Yes

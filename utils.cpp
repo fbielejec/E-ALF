@@ -1,7 +1,7 @@
 #include "utils.h"
 
 float sigmoid(float input) {
-    return ( 1 / ( 1 + exp( - input)));
+    return ( 1 / ( 1 + (float) exp( - input)));
 }//END: sigmoid
 
 float randFloat() {

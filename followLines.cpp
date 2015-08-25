@@ -3,7 +3,7 @@
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
-#include "globalDefines.h"
+//#include "globalDefines.h"
 //#include "parameters.h"
 
 /**---CONSTANTS---*/
@@ -58,21 +58,21 @@ void followLines() {
 
 void lineFollow( int speed ) {
 
-    int leftVal = analogRead(SENSE_IR_LEFT);
-    int centerVal = analogRead(SENSE_IR_CENTER);
-    int rightVal = analogRead(SENSE_IR_RIGHT);
+    int leftVal = analogRead(LINE_SENSOR_LEFT);
+    int centerVal = analogRead(LINE_SENSOR_CENTER);
+    int rightVal = analogRead(LINE_SENSOR_RIGHT);
 
     sendData(DATA_LEFT, leftVal);
     sendData(DATA_CENTER, centerVal);
     sendData(DATA_RIGHT, rightVal);
 
     // drift: 0 if over line, minus value if left, plus if right
-    int drift = rightVal - leftVal ;
+    int drift = leftVal -rightVal   ;
 
     sendData(DATA_DRIFT, drift);
 
-    int leftSpeed   =  constrain(speed - (drift / damping), 0, 100);
-    int rightSpeed  =  constrain(speed + (drift / damping), 0, 100);
+    int leftSpeed   =  constrain(speed + (drift / damping), 0, 100);
+    int rightSpeed  =  constrain(speed - (drift / damping), 0, 100);
 
     sendData(DATA_L_SPEED, leftSpeed);
     sendData(DATA_R_SPEED, rightSpeed);
