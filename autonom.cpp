@@ -101,25 +101,18 @@ void run() {
 
     init_io();
 
-// TODO: detect collision, call isAlive()
+
 // TODO: set nn weights over serial
 
+ Serial.println("--Receiving weights...");
     while (1) {
 
         if (Serial.available() > 0) {
 
-            int recv = Serial.read();
-            Serial.print("--Arduino received: ");
-            Serial.println(recv);
-
-            if(recv == 66) {
-                Serial.println("--Receiving weights...");
                 float weight = getFloatFromSerial();
 
-                Serial.println("--weights=");
-                Serial.println(weight,8);
-            }
-
+                Serial.println("--weight=");
+                Serial.println(weight, 8);
 
         }//END: serial check
 

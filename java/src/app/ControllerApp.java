@@ -38,7 +38,7 @@ public class ControllerApp implements SerialPortEventListener {
 
 	public ControllerApp(String appName) {
 
-		this.appName = appName;//ControllerApp.class.getName();
+		this.appName = appName;// ControllerApp.class.getName();
 
 	}// END: Constructor
 
@@ -155,7 +155,7 @@ public class ControllerApp implements SerialPortEventListener {
 	}// END: close
 
 	public static void testSerial() {
-		
+
 		ControllerApp test = new ControllerApp(ControllerApp.class.getName());
 		if (test.initialize()) {
 
@@ -192,46 +192,48 @@ public class ControllerApp implements SerialPortEventListener {
 			//
 
 		}
-	}//END: testSerial
-	
+	}// END: testSerial
+
 	public static void main(String[] args) {
 
-		
-//		testSerial();
+		// testSerial();
 
+		// let them live one by one, get fitness values
 		
 		Population population = new Population();
 		float[] weights = population.getCurrentWeights();
-		
-		ControllerApp controller = new ControllerApp(ControllerApp.class.getName());
+
+		ControllerApp controller = new ControllerApp(
+				ControllerApp.class.getName());
+
 		if (controller.initialize()) {
-		
-			controller.sendData("B");
 
-			try {
+			for (int i = 0; i < weights.length; i++) {
 
-				Thread.sleep(2000);
+				controller.sendData(String.valueOf(weights[i]));
 
-			} catch (InterruptedException ie) {
-				//
-			}
+				try {
 
-//			System.out.println(weights[0]);
-			controller.sendData(String.valueOf(weights[0]));
+					Thread.sleep(500);
 
-			try {
+				} catch (InterruptedException ie) {
+					//
+				}
 
-				Thread.sleep(2000);
+			}// END: weights loop
 
-			} catch (InterruptedException ie) {
-				//
-			}
+		}// END: initialized check
 
-			
-			controller.close();
-		
-		}//END: initialized check		
-		
+		try {
+
+			Thread.sleep(2000);
+
+		} catch (InterruptedException ie) {
+			//
+		}
+
+		controller.close();
+
 	}// END: main
 
 }// END: class

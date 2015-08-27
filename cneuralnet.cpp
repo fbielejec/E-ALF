@@ -8,7 +8,10 @@ float output[OUTPUT_NODES];
 float hiddenWeights[INPUT_NODES + 1][HIDDEN_NODES];
 float outputWeights[HIDDEN_NODES + 1][OUTPUT_NODES];
 
+
 int createNetwork() {
+
+//TODO: should take weights as argument
 
     int err = -1;
 
