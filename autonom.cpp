@@ -6,7 +6,8 @@
 #if DEBUG
 #include <MemoryFree.h>
 #endif
-#include "display.h"
+//#include "display.h"
+#include "communicate.h"
 #include "sensors.h"
 #include "motors.h"
 #include "cneuralnet.h"
@@ -33,7 +34,7 @@ void init_io(void) {
     Serial.begin(9600);
     while (!Serial);
 
-    blinkNumber(8);
+//    blinkNumber(8);
     Serial.println("\t Comm-link online.");
 
     // initialize motors
@@ -110,6 +111,15 @@ void run() {
             int recv = Serial.read();
             Serial.print("--Arduino received: ");
             Serial.println(recv);
+
+            if(recv == 66) {
+                Serial.println("--Receiving weights...");
+                float weight = getFloatFromSerial();
+
+                Serial.println("--weights=");
+                Serial.println(weight,8);
+            }
+
 
         }//END: serial check
 

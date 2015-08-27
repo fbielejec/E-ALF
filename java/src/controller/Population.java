@@ -3,16 +3,17 @@ package controller;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import simulator.linefollowing.EAutonom;
 import utils.Utils;
 
 public class Population {
 
-	private LinkedHashMap<Integer, double[]> population;
+	private LinkedHashMap<Integer, float[]> population;
 	private int populationSize = Settings.POPULATION_SIZE;
 
 	private int currentIndex;
 	
-	private ArrayList<double[]> matingPool;
+	private ArrayList<float[]> matingPool;
 	
 	
 	private int nInputNodes = Settings.INPUT_NODES;
@@ -24,13 +25,13 @@ public class Population {
 
 	public Population() {
 
-		this.population = new LinkedHashMap<Integer, double[]>();
+		this.population = new LinkedHashMap<Integer, float[]>();
 		for (int i = 0; i < populationSize; i++) {
 
-			double[] weights = new double[nWeights];
+			float[] weights = new float[nWeights];
 			for (int j = 0; j < nWeights; j++) {
 
-				weights[j] = Utils.randomDouble(-1, 1);
+				weights[j] = (float)Utils.randomDouble(-1, 1);
 
 			}// END: j loop
 
@@ -39,12 +40,37 @@ public class Population {
 		}// END: population loop
 
 		this.currentIndex = 0;
-		this.matingPool = new ArrayList<double[]>();
+		this.matingPool = new ArrayList<float[]>();
 
 		
 	}// END: Constructor
 
 	
+	public void calculateFitness() {
+
+		// let them live one by one and score them
+//		double[] weights = population.get(currentIndex);
+		
+		
+		
+		
+//		if (autonom.isAlive()) {
+//			
+//			autonom.run();
+//			autonom.lineFollow();
+//			
+//			double currentFitness = autonom.getFitness();
+//			if(currentFitness > bestFitness) {
+//				bestFitness = currentFitness;
+//			}
+//			
+//		} else {
+//
+//			currentIndex++;
+//
+//		}//END: alive check
+
+	}// END: calculateFitness
 	
 	
 	
@@ -53,8 +79,9 @@ public class Population {
 	
 	
 	
-	
-	
+	public float[] getCurrentWeights() {
+		return( population.get(currentIndex));
+	}
 	
 	
 	
