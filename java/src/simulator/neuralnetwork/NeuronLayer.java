@@ -1,4 +1,4 @@
-package neuralnetwork;
+package simulator.neuralnetwork;
 
 import java.util.LinkedList;
 

@@ -82,6 +82,10 @@ void motorStop(int motor) {
 }//END: motorStop
 
 
+void motorBrake(int motor) {
+    motors[motor]->run(BRAKE);
+}//END: motorStop
+
 //void calibrateRotationRate(int sensor, int angle) {
 //
 //    Serial.print(locationString[sensor]);

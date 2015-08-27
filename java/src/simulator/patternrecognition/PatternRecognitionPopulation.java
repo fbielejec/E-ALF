@@ -1,10 +1,10 @@
-package test.patternrecognition;
+package simulator.patternrecognition;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import neuralnetwork.NeuralNetwork;
-import neuralnetwork.Parameters;
+import simulator.neuralnetwork.NeuralNetwork;
+import utils.Parameters;
 import utils.Utils;
 
 public class PatternRecognitionPopulation {

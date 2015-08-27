@@ -1,4 +1,4 @@
-package neuralnetwork;
+package utils;
 
 public class Parameters {
 

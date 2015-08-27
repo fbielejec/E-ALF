@@ -1,4 +1,4 @@
-package linefollowing;
+package simulator.linefollowing;
 
 import processing.core.PApplet;
 import processing.core.PVector;

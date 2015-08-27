@@ -1,12 +1,12 @@
-package linefollowing;
+package simulator.linefollowing;
 
 import java.util.LinkedList;
 
-import neuralnetwork.NeuralNetwork;
-import neuralnetwork.Parameters;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
+import simulator.neuralnetwork.NeuralNetwork;
+import utils.Parameters;
 import utils.Utils;
 
 public class EAutonom {

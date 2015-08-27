@@ -1,11 +1,11 @@
-package test.patternrecognition;
+package simulator.patternrecognition;
 
 import java.util.LinkedList;
 
-import neuralnetwork.NeuralNetwork;
-import neuralnetwork.Parameters;
 import processing.core.PApplet;
 import processing.core.PFont;
+import simulator.neuralnetwork.NeuralNetwork;
+import utils.Parameters;
 import utils.Utils;
 
 @SuppressWarnings("serial")

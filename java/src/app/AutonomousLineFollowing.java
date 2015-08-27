@@ -1,10 +1,10 @@
 package app;
 
-import genetic.EAutonomPopulation;
-import linefollowing.Line;
-import neuralnetwork.Parameters;
 import processing.core.PApplet;
 import processing.core.PFont;
+import simulator.genetic.EAutonomPopulation;
+import simulator.linefollowing.Line;
+import utils.Parameters;
 import controlP5.ControlP5;
 
 @SuppressWarnings("serial")

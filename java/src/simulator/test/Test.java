@@ -1,9 +1,6 @@
-package test;
+package simulator.test;
 
-import linefollowing.Line;
-import genetic.EAutonomPopulation;
 import processing.core.PApplet;
-import processing.core.PFont;
 import processing.core.PVector;
 
 @SuppressWarnings("serial")

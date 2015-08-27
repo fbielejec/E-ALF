@@ -13,7 +13,7 @@ const byte NBR_LINE_SENSORS = 3;
 //const byte LINE_SENSOR_PIN[NBR_LINE_SENSORS]  = { 0, 1, 2 };
 
 
-const byte NBR_COLLISION_SENSORS = 3;
+const byte NBR_COLLISION_SENSORS =  3;
 
 // analog pins for sensors
 const byte COLLISION_SENSOR_PIN[NBR_COLLISION_SENSORS] = { 3, 4, 5 };
@@ -83,11 +83,13 @@ void calibrateCollisionSensor(byte sensor) {
     int ambient = analogRead(COLLISION_SENSOR_PIN[sensor]);
     irCollisionAmbient[sensor] = ambient;
     // precalculate the levels for collision detection
-    irCollisionValue[sensor] = (ambient * (long)(100 - irCollisionThreshold)) / 100;
+    irCollisionValue[sensor] = (ambient * (long)(100 + irCollisionThreshold)) / 100;
+//     irCollisionValue[sensor] = (ambient * (long)(100 - irCollisionThreshold)) / 100;
 }//END: irSensorCalibrate
 
 
 boolean checkCollision(int obstacle) {
+
 
     switch(obstacle) {
 
@@ -95,7 +97,14 @@ boolean checkCollision(int obstacle) {
         return senseCollision(COLLISION_SENSOR_LEFT) ;//|| senseCollision(DIR_RIGHT);
 
     case  COLLISION_CENTER:
-        return senseCollision(COLLISION_SENSOR_CENTER);
+
+//        Serial.println("obstacle:");
+//        Serial.println(obstacle);
+//        Serial.println("COLLISION_SENSOR_LEFT");
+//        Serial.println(COLLISION_SENSOR_LEFT);
+
+//        return senseCollision(COLLISION_SENSOR_CENTER);
+return senseCollision(COLLISION_SENSOR_LEFT)  || senseCollision(COLLISION_SENSOR_RIGHT);
 
     case  COLLISION_RIGHT:
         return senseCollision(COLLISION_SENSOR_RIGHT);
@@ -111,6 +120,12 @@ boolean senseCollision(int sensor) {
     * @return: true if an object reflection detected on the given sensor
     */
     boolean result = false;
+
+//        Serial.println("sensor:");
+//        Serial.println(sensor);
+//        Serial.println("COLLISION_SENSOR_PIN[sensor]");
+//        Serial.println(COLLISION_SENSOR_PIN[sensor]);
+
     int value = analogRead(COLLISION_SENSOR_PIN[sensor]);
 
 #if DEBUG
@@ -121,12 +136,12 @@ boolean senseCollision(int sensor) {
     Serial.print(" trigger value ");
     Serial.print(irCollisionValue[sensor]);
     Serial.println();
-    delay(1000);
+//    delay(1000);
 #endif
 
-    if( value <= irCollisionValue[sensor]) {
+    if( value >= irCollisionValue[sensor]) {
 
-        // object detected (lower value means more reflection from a closer object)
+
         result = true;
         if( isDetected[sensor] == false) {
             Serial.print(locationString[sensor]);

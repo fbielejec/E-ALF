@@ -14,7 +14,7 @@ extern const byte NBR_COLLISION_SENSORS;
 // left edge detected
 extern const int COLLISION_LEFT ;
 // right edge detected
-extern const int COLLISION_FRONT;
+extern const int COLLISION_CENTER;
 // edge detect at right sensors
 extern const int COLLISION_RIGHT;
 
@@ -27,10 +27,6 @@ void collisionSensorsBegin() ;
 
 void calibrateCollisionSensor(byte sensor);
 
-
-
 boolean checkCollision(int obstacle);
-//
-//boolean irEdgeDetect(int sensor);
-//
+
 boolean senseCollision(int sensor);

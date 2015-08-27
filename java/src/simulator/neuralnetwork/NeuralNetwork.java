@@ -1,7 +1,8 @@
-package neuralnetwork;
+package simulator.neuralnetwork;
 
 import java.util.LinkedList;
 
+import utils.Parameters;
 import utils.Utils;
 
 public class NeuralNetwork {

@@ -37,6 +37,8 @@ void motorReverse(int motor, int speed) ;
 
 void motorStop(int motor);
 
+void motorBrake(int motor);
+
 //void calibrateRotationRate(int sensor, int angle) ;
 //
 //long rotationAngleToTime( int angle, int speed);

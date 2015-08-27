@@ -1,12 +1,12 @@
-package genetic;
+package simulator.genetic;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import linefollowing.EAutonom;
-import linefollowing.Line;
-import neuralnetwork.Parameters;
 import processing.core.PApplet;
+import simulator.linefollowing.EAutonom;
+import simulator.linefollowing.Line;
+import utils.Parameters;
 import utils.Utils;
 
 public class EAutonomPopulation {

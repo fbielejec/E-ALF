@@ -3,8 +3,8 @@ package utils;
 import java.util.LinkedList;
 import java.util.Random;
 
-import linefollowing.EAutonom;
 import processing.core.PApplet;
+import simulator.linefollowing.EAutonom;
 
 public class Utils {
 

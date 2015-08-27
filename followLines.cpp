@@ -36,12 +36,56 @@ void init_follower(void) {
 
     // initialize motors
     motorsBegin();
-    dataDisplayBegin(DATA_nbrItems, labels, minRange, maxRange );
+//    dataDisplayBegin(DATA_nbrItems, labels, minRange, maxRange );
+
+    // initialize sensors
+    collisionSensorsBegin();
 
     Serial.println("\t Systems functional.");
+    delay(1000);
 
 }//END: init_io
 
+void checkBorders() {
+
+    boolean collision = false;
+    if(checkCollision(COLLISION_LEFT) == true)   {
+        collision = true;
+    }//END: left edge
+
+
+    //    if(checkCollision(COLLISION_CENTER) == true)   {
+//        collision = true;
+//    } //END: right edge
+
+    // reflection blocked on right side
+    if(checkCollision(COLLISION_RIGHT) == true)   {
+        collision = true;
+    } //END: right edge
+
+    if(collision) {
+
+// brake and reverse for 2 seconds
+        motorBrake(MOTOR_LEFT);
+        motorBrake(MOTOR_RIGHT);
+
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(1);
+
+        motorReverse(MOTOR_LEFT,  MIN_SPEED);
+        motorReverse(MOTOR_RIGHT,  MIN_SPEED);
+        delay(2000);
+
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(1);
+
+        Serial.println("Returning to normal operation.");
+
+    }//END: collision check
+
+}//END: checkBorders
 
 void followLines() {
 
@@ -50,6 +94,9 @@ void followLines() {
     while (1) {
 
         lineFollow(c_speed);
+        delay(1);
+
+        checkBorders();
         delay(1);
 
     }//END: loop
@@ -62,20 +109,20 @@ void lineFollow( int speed ) {
     int centerVal = analogRead(LINE_SENSOR_CENTER);
     int rightVal = analogRead(LINE_SENSOR_RIGHT);
 
-    sendData(DATA_LEFT, leftVal);
-    sendData(DATA_CENTER, centerVal);
-    sendData(DATA_RIGHT, rightVal);
+//    sendData(DATA_LEFT, leftVal);
+//    sendData(DATA_CENTER, centerVal);
+//    sendData(DATA_RIGHT, rightVal);
 
     // drift: 0 if over line, minus value if left, plus if right
     int drift = leftVal -rightVal   ;
 
-    sendData(DATA_DRIFT, drift);
+//    sendData(DATA_DRIFT, drift);
 
     int leftSpeed   =  constrain(speed + (drift / damping), 0, 100);
     int rightSpeed  =  constrain(speed - (drift / damping), 0, 100);
 
-    sendData(DATA_L_SPEED, leftSpeed);
-    sendData(DATA_R_SPEED, rightSpeed);
+//    sendData(DATA_L_SPEED, leftSpeed);
+//    sendData(DATA_R_SPEED, rightSpeed);
 
     motorForward(MOTOR_LEFT, leftSpeed);
     motorForward(MOTOR_RIGHT, rightSpeed);
