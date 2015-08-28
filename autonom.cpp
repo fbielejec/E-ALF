@@ -104,6 +104,10 @@ void run() {
 
 // TODO: set nn weights over serial
 
+int k = 0;
+int nWeights = getnWeights();
+
+float *weights = (float *) malloc(sizeof(float) * nWeights);
  Serial.println("--Receiving weights...");
     while (1) {
 
@@ -111,8 +115,26 @@ void run() {
 
                 float weight = getFloatFromSerial();
 
-                Serial.println("--weight=");
+                Serial.print("--k=");
+                Serial.print(k);
+                Serial.print(" weight=");
                 Serial.println(weight, 8);
+                weights[k++] = weight;
+
+if(k == nWeights) {
+
+  Serial.println("--Setting weights");
+  setWeights(weights);
+
+printWeights();
+
+  Serial.println("--Done");
+  free(weights);
+
+}
+
+//                free(weights);
+
 
         }//END: serial check
 

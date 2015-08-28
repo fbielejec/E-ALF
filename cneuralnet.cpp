@@ -2,6 +2,7 @@
 
 int i, j;
 float response;
+int nWeights = 0;
 
 float hidden[HIDDEN_NODES];
 float output[OUTPUT_NODES];
@@ -11,14 +12,13 @@ float outputWeights[HIDDEN_NODES + 1][OUTPUT_NODES];
 
 int createNetwork() {
 
-//TODO: should take weights as argument
-
     int err = -1;
 
     // Initialize hidden weights
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j <= INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = randomClamped() ;
+            nWeights++;
         }//END: j loop
     }//END: i loop
 
@@ -26,6 +26,7 @@ int createNetwork() {
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
             outputWeights[j][i] = randomClamped();
+            nWeights++;
         }//END: j loop
     }//END: i loop
 
@@ -34,6 +35,9 @@ int createNetwork() {
     return err;
 }//END: createNetwork
 
+int getnWeights() {
+    return nWeights;
+}//END: getnWeights
 
 int feedforward(float* input) {
 
@@ -68,3 +72,74 @@ int feedforward(float* input) {
 float* getOutput() {
     return output;
 }//END: getOutput
+
+
+float* getWeights() {
+
+    float *weights = (float *) malloc(sizeof(float) * nWeights);
+
+    int k = 0;
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
+            weights[k++] = hiddenWeights[j][i];
+        }//END: j loop
+    }//END: i loop
+
+    for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
+        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
+            weights[k++] = outputWeights[j][i];
+        }//END: j loop
+    }//END: i loop
+
+    return weights;
+}//END: getWeights
+
+
+int setWeights(float* weights) {
+
+    int err = -1;
+
+    int k = 0;
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
+            hiddenWeights[j][i] = weights[k++];
+        }//END: j loop
+    }//END: i loop
+
+    for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
+        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
+            outputWeights[j][i] = weights[k++];
+        }//END: j loop
+    }//END: i loop
+
+    err = 0;
+
+    return err;
+}//END: setWeights
+
+//---DEBUGGING---///
+
+void printWeights() {
+
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        Serial.print("| ");
+        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
+
+            Serial.print( hiddenWeights[j][i]  );
+            Serial.print(" ");
+        }
+        Serial.print("|\n");
+    }
+
+    for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
+        Serial.print("| ");
+        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
+
+            Serial.print( outputWeights[j][i] );
+            Serial.print(" ");
+
+        }
+        Serial.print("|\n");
+    }
+
+}//END: printWeights

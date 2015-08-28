@@ -9,3 +9,5 @@ float randFloat();
 
 //returns a random float in the range -1 < n < 1
 float randomClamped();
+
+int* calculateCoordinates(int index, int nrow, int ncol);

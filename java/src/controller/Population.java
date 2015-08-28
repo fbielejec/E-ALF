@@ -15,14 +15,12 @@ public class Population {
 	
 	private ArrayList<float[]> matingPool;
 	
-	
 	private int nInputNodes = Settings.INPUT_NODES;
 	private int nHiddenNodes = Settings.HIDDEN_NODES;
 	private int nOutputNodes = Settings.OUTPUT_NODES;
 
-	private int nWeights = nInputNodes * nHiddenNodes + nHiddenNodes
-			* nOutputNodes;
-
+	private int nWeights = (nInputNodes + 1) * nHiddenNodes + (nHiddenNodes + 1) * nOutputNodes;
+	
 	public Population() {
 
 		this.population = new LinkedHashMap<Integer, float[]>();
