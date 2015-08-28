@@ -2,13 +2,12 @@
 
 int i, j;
 float response;
-int nWeights = 0;
+int N_WEIGHTS = 0;
 
 float hidden[HIDDEN_NODES];
 float output[OUTPUT_NODES];
 float hiddenWeights[INPUT_NODES + 1][HIDDEN_NODES];
 float outputWeights[HIDDEN_NODES + 1][OUTPUT_NODES];
-
 
 int createNetwork() {
 
@@ -18,7 +17,7 @@ int createNetwork() {
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j <= INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = randomClamped() ;
-            nWeights++;
+            N_WEIGHTS++;
         }//END: j loop
     }//END: i loop
 
@@ -26,7 +25,7 @@ int createNetwork() {
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
             outputWeights[j][i] = randomClamped();
-            nWeights++;
+            N_WEIGHTS++;
         }//END: j loop
     }//END: i loop
 
@@ -36,7 +35,7 @@ int createNetwork() {
 }//END: createNetwork
 
 int getnWeights() {
-    return nWeights;
+    return N_WEIGHTS;
 }//END: getnWeights
 
 int feedforward(float* input) {
@@ -76,7 +75,7 @@ float* getOutput() {
 
 float* getWeights() {
 
-    float *weights = (float *) malloc(sizeof(float) * nWeights);
+    float *weights = (float *) malloc(sizeof(float) * N_WEIGHTS);
 
     int k = 0;
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {

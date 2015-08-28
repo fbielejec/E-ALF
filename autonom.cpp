@@ -17,12 +17,16 @@
 
 int err;
 float bias = -1;
+int counter = 0;
+int nWeights;
 // byte received on the serial port
-int recv = 0;
+//int recv = 0;
+
 
 /**---ARRAYS---*/
 
 float *readings;
+float *weights ;
 
 /**---METHODS---*/
 
@@ -64,8 +68,6 @@ int checkCollisions() {
     if(checkCollision(COLLISION_LEFT) == true)   {
         collision = true;
     }//END: left edge
-
-
 //    if(checkCollision(COLLISION_CENTER) == true)   {
 //        collision = true;
 //    } //END: right edge
@@ -97,46 +99,55 @@ int checkCollisions() {
     return err;
 }//END: checkBorders
 
+
+int receiveWeights() {
+
+    if (Serial.available() > 0) {
+
+        if(counter == 0) {
+            int err = -1;
+
+            nWeights = getnWeights();
+            weights = (float *) malloc(sizeof(float) * nWeights);
+            Serial.println("Receiving weights");
+        }
+
+        float weight = getFloatFromSerial();
+
+        Serial.print("--counter=");
+        Serial.print(counter);
+        Serial.print(" weight=");
+        Serial.println(weight, 8);
+        weights[counter++] = weight;
+
+        if(counter == nWeights) {
+
+            Serial.println("--Setting weights");
+            setWeights(weights);
+
+            printWeights();
+
+            Serial.println("--Done");
+            free(weights);
+            counter = 0;
+            err = 0;
+        }
+
+
+    }//END: serial check
+
+    return err;
+}//END: receiveWeights
+
 void run() {
 
     init_io();
 
 
-// TODO: set nn weights over serial
-
-int k = 0;
-int nWeights = getnWeights();
-
-float *weights = (float *) malloc(sizeof(float) * nWeights);
- Serial.println("--Receiving weights...");
+// TODO: send collision signal
     while (1) {
 
-        if (Serial.available() > 0) {
-
-                float weight = getFloatFromSerial();
-
-                Serial.print("--k=");
-                Serial.print(k);
-                Serial.print(" weight=");
-                Serial.println(weight, 8);
-                weights[k++] = weight;
-
-if(k == nWeights) {
-
-  Serial.println("--Setting weights");
-  setWeights(weights);
-
-printWeights();
-
-  Serial.println("--Done");
-  free(weights);
-
-}
-
-//                free(weights);
-
-
-        }//END: serial check
+        receiveWeights();
 
     }
 
