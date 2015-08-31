@@ -62,6 +62,8 @@
 		<Unit filename="autonom.h" />
 		<Unit filename="cneuralnet.cpp" />
 		<Unit filename="cneuralnet.h" />
+		<Unit filename="communicate.cpp" />
+		<Unit filename="communicate.h" />
 		<Unit filename="display.cpp" />
 		<Unit filename="display.h" />
 		<Unit filename="followLines.cpp" />
@@ -71,7 +73,6 @@
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
-		<Unit filename="neuralnet.h" />
 		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
 		<Unit filename="utils.cpp" />

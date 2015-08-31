@@ -3,11 +3,9 @@ package utils;
 public class Parameters {
 
 	// including bias
-	public static int numInputs = 4;
-
-	public static int numHiddenLayers = 1;
+	public static int numInputs = 4; // 4
+	public static int numHiddenLayers = 1; // 1
 	public static int neuronsPerHiddenLayer = 6;
-
 	public static int numOutputs = 2;
 
 	public static double bias = -1.0;

@@ -1,6 +1,8 @@
 package app;
 
+import java.awt.event.InputMethodListener;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
@@ -18,14 +20,15 @@ import gnu.io.SerialPortEventListener;
 
 public class ControllerApp implements SerialPortEventListener {
 
-	private SerialPort serialPort = null;
+	private static final String COLLISION_SIGNAL = "C";
 
+	private SerialPort serialPort = null;
 	private static final String PORT_NAMES[] = {
-	// "/dev/tty.usbmodem", // Mac OS X
-	// "/dev/usbdev", // Linux
-	"/dev/tty", // Linux
-	// "/dev/serial", // Linux
-	// "COM3", // Windows
+			// "/dev/tty.usbmodem", // Mac OS X
+			// "/dev/usbdev", // Linux
+			"/dev/tty", // Linux
+			// "/dev/serial", // Linux
+			// "COM3", // Windows
 	};
 
 	// Port open timeout
@@ -51,11 +54,10 @@ public class ControllerApp implements SerialPortEventListener {
 
 			case SerialPortEvent.DATA_AVAILABLE:
 				if (input == null) {
-					input = new BufferedReader(new InputStreamReader(
-							serialPort.getInputStream()));
+					input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
 				}
-				String inputLine = input.readLine();
-				System.out.println(inputLine);
+				// String inputLine = input.readLine();
+				// System.out.println(inputLine);
 				break;
 
 			default:
@@ -81,21 +83,17 @@ public class ControllerApp implements SerialPortEventListener {
 			while (portId == null && portEnum.hasMoreElements()) {
 				// Iterate through your host computer's serial port IDs
 				//
-				CommPortIdentifier currPortId = (CommPortIdentifier) portEnum
-						.nextElement();
+				CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
 				System.out.println("   port" + currPortId.getName());
 				for (String portName : PORT_NAMES) {
-					if (currPortId.getName().equals(portName)
-							|| currPortId.getName().startsWith(portName)) {
+					if (currPortId.getName().equals(portName) || currPortId.getName().startsWith(portName)) {
 
 						// Try to connect to the Arduino on this port
 						//
 						// Open serial port
-						serialPort = (SerialPort) currPortId.open(appName,
-								TIME_OUT);
+						serialPort = (SerialPort) currPortId.open(appName, TIME_OUT);
 						portId = currPortId;
-						System.out.println("Connected on port"
-								+ currPortId.getName());
+						System.out.println("Connected on port" + currPortId.getName());
 						break;
 					}
 				}
@@ -107,8 +105,8 @@ public class ControllerApp implements SerialPortEventListener {
 			}
 
 			// set port parameters
-			serialPort.setSerialPortParams(BAUD_RATE, SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			serialPort.setSerialPortParams(BAUD_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+					SerialPort.PARITY_NONE);
 
 			// add event listeners
 			serialPort.addEventListener(this);
@@ -147,12 +145,114 @@ public class ControllerApp implements SerialPortEventListener {
 
 	}// END: sendData
 
+	public String readData() {
+
+		String inputLine = null;
+
+		try {
+
+			inputLine = input.readLine();
+
+		} catch (IOException e) {
+			System.err.println(e.toString());
+			System.exit(0);
+		}
+
+		return inputLine;
+	}// END: readData
+
 	public synchronized void close() {
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
 		}
 	}// END: close
+
+	public static void main(String[] args) {
+
+		boolean done = false;
+
+		// let them live one by one, get fitness values
+		Population population = new Population();
+		float[] weights = population.getCurrentWeights();
+
+		ControllerApp controller = new ControllerApp(ControllerApp.class.getName());
+
+		if (controller.initialize()) {
+
+			// TODO
+			// send first individual over serial before loop begins
+			
+			while (!done) {
+
+				String inputLine = controller.readData();
+				System.out.println(inputLine);
+
+				if (inputLine.contentEquals(COLLISION_SIGNAL)) {
+
+					for (int i = 0; i < weights.length; i++) {
+
+						controller.sendData(String.valueOf(weights[i]));
+
+						try {
+
+							Thread.sleep(500);
+
+						} catch (InterruptedException ie) {
+							//
+						}
+
+					} // END: weights loop
+
+					
+					//TODO: set fitness
+					population.increaseIndex();
+					if(population.getCurrentIndex() > population.getPopulationSize() - 1) {
+						
+						// TODO
+						// Some reporting on how this pop has done?
+						// logging 
+						
+						// Generate mating pool
+//						population.naturalSelection();
+						// Create next generation
+//						population.generate();
+						
+					}
+					
+					
+					
+					
+				} // END: collision signal check
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			} // END: forever loop
+
+		} // END: initialized check
+
+		try {
+
+			Thread.sleep(2000);
+
+		} catch (InterruptedException ie) {
+			//
+		}
+
+		controller.close();
+
+	}// END: main
+
+	// ///////////////////
+	// ---TEST SERIAL---//
+	// ///////////////////
 
 	public static void testSerial() {
 
@@ -180,7 +280,7 @@ public class ControllerApp implements SerialPortEventListener {
 			}
 
 			test.close();
-		}// END: initialize test
+		} // END: initialize test
 
 		// Wait 5 seconds then shutdown
 		try {
@@ -193,47 +293,5 @@ public class ControllerApp implements SerialPortEventListener {
 
 		}
 	}// END: testSerial
-
-	public static void main(String[] args) {
-
-		// testSerial();
-
-		// let them live one by one, get fitness values
-		
-		Population population = new Population();
-		float[] weights = population.getCurrentWeights();
-
-		ControllerApp controller = new ControllerApp(
-				ControllerApp.class.getName());
-
-		if (controller.initialize()) {
-
-			for (int i = 0; i < weights.length; i++) {
-
-				controller.sendData(String.valueOf(weights[i]));
-
-				try {
-
-					Thread.sleep(500);
-
-				} catch (InterruptedException ie) {
-					//
-				}
-
-			}// END: weights loop
-
-		}// END: initialized check
-
-		try {
-
-			Thread.sleep(2000);
-
-		} catch (InterruptedException ie) {
-			//
-		}
-
-		controller.close();
-
-	}// END: main
 
 }// END: class

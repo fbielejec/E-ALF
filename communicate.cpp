@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "communicate.h"
 
+const char* COLLISION_SIGNAL  = "C";;
+
 float getFloatFromSerial() {
     char inData[20];
     float f = 0;

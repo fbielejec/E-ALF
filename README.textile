@@ -27,7 +27,7 @@ h1. LICENSE
 
 h1. TODO
 * Serial communication
-  - get weights(), set weights() over UART
+  - send collision signal over UART
 * Collison sensors (outside of NN)
   - checkBorders(), isAlive()
 * Population controller
