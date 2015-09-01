@@ -65,7 +65,7 @@ void init_io(void) {
     Serial.print(getnWeights());
     Serial.println(" weights.");
 
-    printWeights();
+//    printWeights();
 
     Serial.println("-- Systems functional.");
 
@@ -87,7 +87,7 @@ void run() {
         recv = Serial.readString();
         if(recv == RESET_SIGNAL) {
             Serial.println("-- RESET signal caught!");
-//            delay(1000);
+            delay(1000);
             resetFunc();
         }
 
@@ -96,8 +96,8 @@ void run() {
             Serial.println("-- Sending ONLINE signal...");
             Serial.println(ONLINE_SIGNAL);
             receiveWeights();
-//            Serial.println("-- Sending DONE signal...");
-//            Serial.println(DONE_SIGNAL);
+            Serial.println("-- Sending DONE signal...");
+            Serial.println(DONE_SIGNAL);
         }
 
 #if DEBUG
