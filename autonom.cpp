@@ -61,9 +61,6 @@ void init_io(void) {
     err = createNetwork();
     assert(err == 0);
 
-// TODO: first set of weights not received
-//    receiveWeights();
-
     Serial.print("-- Neural network with ");
     Serial.print(getnWeights());
     Serial.println(" weights.");
@@ -90,17 +87,23 @@ void run() {
         recv = Serial.readString();
         if(recv == RESET_SIGNAL) {
             Serial.println("-- RESET signal caught!");
-            delay(1000);
+//            delay(1000);
             resetFunc();
         }
 
         if(tick == 0) {
+            // let the controller know we are online and receive weights
             Serial.println("-- Sending ONLINE signal...");
             Serial.println(ONLINE_SIGNAL);
+            receiveWeights();
+//            Serial.println("-- Sending DONE signal...");
+//            Serial.println(DONE_SIGNAL);
         }
 
-
+#if DEBUG
         delay(2000);
+#endif
+
         boolean collision = checkCollisions();
         if(collision) {
 
@@ -113,7 +116,6 @@ void run() {
 
             // TODO: send fitness value
 //            Serial.println(fitness);
-
 
             receiveWeights();
 
@@ -158,7 +160,7 @@ void run() {
         float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
 
 #if DEBUG
-//        Serial.println("transformed response" );
+//        Serial.println("-- NN transformed response" );
 //        Serial.println(leftSpeed);
 //        Serial.println(rightSpeed );
 #endif /* DEBUG */
@@ -234,7 +236,7 @@ int receiveWeights() {
 
             printWeights();
 
-            Serial.println("-- Done");
+//            Serial.println("-- Done");
             free(weights);
             counter = 0;
 //            interrupt = false;
