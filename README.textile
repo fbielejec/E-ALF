@@ -27,9 +27,10 @@ h1. LICENSE
 
 h1. TODO
 * Serial communication
-  - send collision signal over UART
+  - debug & test
 * Collison sensors (outside of NN)
-  - checkBorders(), isAlive()
+  - solder new sensor board
+  - replace collision sensors with one crash sensor
 * Population controller
-  - Genetic Algorithm 
-  
+  - test
+

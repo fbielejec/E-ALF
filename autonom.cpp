@@ -18,8 +18,11 @@
 int err;
 float bias = -1;
 int counter = 0;
+//float fitness = 0;
+long tick = 0;
 int nWeights;
-//boolean interrupt = false;
+// byte received on the serial port
+String recv;
 
 /**---ARRAYS---*/
 
@@ -32,6 +35,7 @@ boolean checkCollisions();
 
 int receiveWeights() ;
 
+void(* resetFunc) (void) = 0;
 
 /**---METHODS---*/
 
@@ -44,29 +48,32 @@ void init_io(void) {
     while (!Serial);
 
 //    blinkNumber(8);
-    Serial.println("\t Comm-link online.");
+    Serial.println("-- Comm-link online.");
 
     // initialize motors
     motorsBegin();
 
     // initialize sensors
     collisionSensorsBegin();
-    Serial.println("\t I sense a soul in search of answers.");
+    Serial.println("-- I sense a soul in search of answers.");
 
     // initialize nn
     err = createNetwork();
     assert(err == 0);
-    Serial.print("\t Neural network with ");
+
+// TODO: first set of weights not received
+//    receiveWeights();
+
+    Serial.print("-- Neural network with ");
     Serial.print(getnWeights());
     Serial.println(" weights.");
 
-printWeights();
+    printWeights();
 
-    Serial.println("\t Systems functional.");
-
+    Serial.println("-- Systems functional.");
 
 #if DEBUG
-    Serial.print("\t freeMemory=");
+    Serial.print("-- freeMemory=");
     Serial.println(freeMemory());
 #endif
 
@@ -79,25 +86,49 @@ void run() {
 
     while (1) {
 
+        // listen to reset signal
+        recv = Serial.readString();
+        if(recv == RESET_SIGNAL) {
+            Serial.println("-- RESET signal caught!");
+            delay(1000);
+            resetFunc();
+        }
+
+        if(tick == 0) {
+            Serial.println("-- Sending ONLINE signal...");
+            Serial.println(ONLINE_SIGNAL);
+        }
+
+
         delay(2000);
         boolean collision = checkCollisions();
         if(collision) {
 
-            Serial.println("Braking...");
+            Serial.println("-- Braking...");
             motorBrake(MOTOR_LEFT);
             motorBrake(MOTOR_RIGHT);
 
-            Serial.println("Sending collision signal...");
+            Serial.println("-- Sending COLLISION signal...");
             Serial.println(COLLISION_SIGNAL);
+
+            // TODO: send fitness value
+//            Serial.println(fitness);
+
 
             receiveWeights();
 
-            Serial.println("Reversing wheels...");
+            Serial.println("-- Reversing wheels...");
             motorReverse(MOTOR_LEFT, MIN_SPEED);
             motorReverse(MOTOR_RIGHT, MIN_SPEED);
             delay(2000);
             motorStop(MOTOR_LEFT);
             motorStop(MOTOR_RIGHT);
+
+//            Serial.println("-- Returning to normal operation.");
+//            fitness = 0;
+
+            Serial.println("-- Sending DONE signal...");
+            Serial.println(DONE_SIGNAL);
 
         }//END: collision check
 
@@ -105,7 +136,7 @@ void run() {
         readings[INPUT_NODES - 1] = bias;
 
 #if DEBUG
-        Serial.println("NN inputs:");
+        Serial.println("-- NN inputs:");
         for (int i = 0; i < INPUT_NODES ; i++) {
             Serial.println(readings[i] );
         }
@@ -117,10 +148,10 @@ void run() {
         float* output = getOutput();
 
 #if DEBUG
-//        Serial.println("NN response:");
-//        for (int i = 0; i < OUTPUT_NODES ; i++) {
-//            Serial.println(output[i] );
-//        }
+        Serial.println("-- NN response:");
+        for (int i = 0; i < OUTPUT_NODES ; i++) {
+            Serial.println(output[i] );
+        }
 #endif /* DEBUG */
 
         float leftSpeed = sigmoid(output[MOTOR_LEFT]);
@@ -136,7 +167,7 @@ void run() {
         rightSpeed = map(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
 
 #if DEBUG
-        Serial.println("NN response" );
+        Serial.println("-- mapped NN response" );
         Serial.println(leftSpeed);
         Serial.println(rightSpeed );
 #endif /* DEBUG */
@@ -150,6 +181,8 @@ void run() {
 //        delay(3000);
 #endif /* DEBUG */
 
+//        fitness += 1;
+        tick++;
     }//END: forever loop
 
 }//END: run
@@ -178,32 +211,38 @@ int receiveWeights() {
 
     int err = -1;
 
-    if(counter == 0) {
-        nWeights = getnWeights();
-        weights = (float *) malloc(sizeof(float) * nWeights);
-        Serial.println("Receiving weights");
-    }//END: counter check
+    while(1) {
 
-    float weight = getFloatFromSerial();
+        if(counter == 0) {
+            nWeights = getnWeights();
+            weights = (float *) malloc(sizeof(float) * nWeights);
+            Serial.println("-- Receiving weights");
+        }//END: counter check
 
-    Serial.print("--counter=");
-    Serial.print(counter);
-    Serial.print(" weight=");
-    Serial.println(weight, 8);
-    weights[counter++] = weight;
+        float weight = getFloatFromSerial();
 
-    if(counter == nWeights) {
+        Serial.print("\t --counter=");
+        Serial.print(counter);
+        Serial.print(" weight=");
+        Serial.println(weight, 8);
+        weights[counter++] = weight;
 
-        Serial.println("--Setting weights");
-        setWeights(weights);
+        if(counter == nWeights) {
 
-        printWeights();
+            Serial.println("-- Setting weights");
+            setWeights(weights);
 
-        Serial.println("--Done");
-        free(weights);
-        counter = 0;
+            printWeights();
 
-    }//END: counter check
+            Serial.println("-- Done");
+            free(weights);
+            counter = 0;
+//            interrupt = false;
+            break;
+
+        }//END: counter check
+
+    }//END: interrupt loop
 
     err = 0;
     return err;

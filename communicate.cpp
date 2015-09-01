@@ -1,7 +1,11 @@
 #include <Arduino.h>
 #include "communicate.h"
 
-const char* COLLISION_SIGNAL  = "C";;
+const char* RESET_SIGNAL  = "R";
+const char* ONLINE_SIGNAL  = "O";
+const char* COLLISION_SIGNAL  = "C";
+const char* DONE_SIGNAL  = "D";
+
 
 float getFloatFromSerial() {
     char inData[20];

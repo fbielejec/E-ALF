@@ -129,7 +129,7 @@ boolean senseCollision(int sensor) {
     int value = analogRead(COLLISION_SENSOR_PIN[sensor]);
 
 #if DEBUG
-    Serial.print("sensor ");
+    Serial.print("-- sensor ");
     Serial.print(locationString[sensor]);
     Serial.print(" reading ");
     Serial.print(value);
@@ -144,6 +144,7 @@ boolean senseCollision(int sensor) {
 
         result = true;
         if( isDetected[sensor] == false) {
+            Serial.print("\t-- ");
             Serial.print(locationString[sensor]);
             Serial.println(" object detected");
 

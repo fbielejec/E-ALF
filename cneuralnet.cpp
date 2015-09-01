@@ -19,7 +19,7 @@ int createNetwork() {
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
 //        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
-            hiddenWeights[j][i] = randomClamped() ;
+            hiddenWeights[j][i] = 0;//randomClamped() ;
             N_WEIGHTS++;
         }//END: j loop
     }//END: i loop
@@ -28,7 +28,7 @@ int createNetwork() {
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
 //                    for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
-            outputWeights[j][i] = randomClamped();
+            outputWeights[j][i] = 0;//randomClamped();
             N_WEIGHTS++;
         }//END: j loop
     }//END: i loop
@@ -129,7 +129,7 @@ int setWeights(float* weights) {
 void printWeights() {
 
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
-        Serial.print("| ");
+        Serial.print("|");
 //        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             Serial.print( hiddenWeights[j][i]  );
@@ -139,7 +139,7 @@ void printWeights() {
     }
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
-        Serial.print("| ");
+        Serial.print("|");
 //        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             Serial.print( outputWeights[j][i] );

@@ -1,6 +1,5 @@
 package app;
 
-import java.awt.event.InputMethodListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,19 +7,18 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 
 import controller.Population;
-import app.ControllerApp;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-
-// http://www.drdobbs.com/jvm/control-an-arduino-from-java/240163864
-
-// https://learn.sparkfun.com/tutorials/connecting-arduino-to-processing
+import utils.Utils;
 
 public class ControllerApp implements SerialPortEventListener {
 
 	private static final String COLLISION_SIGNAL = "C";
+	private static final String DONE_SIGNAL = "D";
+	private static final String RESET_SIGNAL = "R";
+	private static final String ONLINE_SIGNAL = "O";
 
 	private SerialPort serialPort = null;
 	private static final String PORT_NAMES[] = {
@@ -39,9 +37,9 @@ public class ControllerApp implements SerialPortEventListener {
 	private BufferedReader input;
 	private OutputStream output;
 
-	public ControllerApp(String appName) {
+	public ControllerApp() {
 
-		this.appName = appName;// ControllerApp.class.getName();
+		this.appName = ControllerApp.class.getName();
 
 	}// END: Constructor
 
@@ -89,8 +87,6 @@ public class ControllerApp implements SerialPortEventListener {
 					if (currPortId.getName().equals(portName) || currPortId.getName().startsWith(portName)) {
 
 						// Try to connect to the Arduino on this port
-						//
-						// Open serial port
 						serialPort = (SerialPort) currPortId.open(appName, TIME_OUT);
 						portId = currPortId;
 						System.out.println("Connected on port" + currPortId.getName());
@@ -128,6 +124,22 @@ public class ControllerApp implements SerialPortEventListener {
 		return false;
 	}// END: initialize
 
+	public String readData() {
+
+		String inputLine = null;
+
+		try {
+
+			inputLine = input.readLine();
+
+		} catch (IOException e) {
+			System.err.println(e.toString());
+			System.exit(0);
+		}
+
+		return inputLine;
+	}// END: readData
+
 	public void sendData(String data) {
 
 		try {
@@ -145,21 +157,11 @@ public class ControllerApp implements SerialPortEventListener {
 
 	}// END: sendData
 
-	public String readData() {
-
-		String inputLine = null;
-
-		try {
-
-			inputLine = input.readLine();
-
-		} catch (IOException e) {
-			System.err.println(e.toString());
-			System.exit(0);
-		}
-
-		return inputLine;
-	}// END: readData
+	// public void sendWeights(float[] weights) {
+	//
+	//
+	//
+	// }//END: sendWeights
 
 	public synchronized void close() {
 		if (serialPort != null) {
@@ -171,71 +173,100 @@ public class ControllerApp implements SerialPortEventListener {
 	public static void main(String[] args) {
 
 		boolean done = false;
-
-		// let them live one by one, get fitness values
+		ControllerApp controller = new ControllerApp();
 		Population population = new Population();
-		float[] weights = population.getCurrentWeights();
-
-		ControllerApp controller = new ControllerApp(ControllerApp.class.getName());
+		String inputLine;
 
 		if (controller.initialize()) {
 
-			// TODO
-			// send first individual over serial before loop begins
-			
+			// send reset signal
+			System.out.println("Sending RESET signal.");
+			controller.sendData(RESET_SIGNAL);
+
+			// wait for a reboot
+			while (!done) {
+				inputLine = controller.readData();
+				System.out.println(inputLine);
+				if (inputLine.contentEquals(ONLINE_SIGNAL)) {
+					System.out.println("Device is online.");
+					break;
+				}
+			}
+
+			// TODO: send new individual over serial before loop begins
+			float[] weights;// = population.getCurrentWeights();
+			System.out.println("Generation " + population.getGenerationNumber());
+			System.out.println("Evaluating individual " + population.getCurrentIndex());
+
+			// let them live one by one, get fitness values
 			while (!done) {
 
-				String inputLine = controller.readData();
+				inputLine = controller.readData();
 				System.out.println(inputLine);
 
+				// process collison
 				if (inputLine.contentEquals(COLLISION_SIGNAL)) {
 
+					// TODO: get fitness over serial
+
+					// TODO: set fitness value
+					float value = (float) Utils.randomDouble(0, 10);
+					population.setFitness(value, population.getCurrentIndex());
+
+					// send new individual over Serial
+					weights = population.getCurrentWeights();
 					for (int i = 0; i < weights.length; i++) {
 
 						controller.sendData(String.valueOf(weights[i]));
 
 						try {
-
 							Thread.sleep(500);
-
 						} catch (InterruptedException ie) {
 							//
 						}
 
 					} // END: weights loop
 
-					
-					//TODO: set fitness
-					population.increaseIndex();
-					if(population.getCurrentIndex() > population.getPopulationSize() - 1) {
-						
+					// wait for confirmation
+					inputLine = controller.readData();
+					while (!inputLine.contentEquals(DONE_SIGNAL))
+						// evaluate next individual
+						population.increaseIndex();
+
+					if (population.getCurrentIndex() > population.getPopulationSize()) {
+
 						// TODO
-						// Some reporting on how this pop has done?
-						// logging 
-						
+						// Reporting on how this pop has done
+						// logging
+
+						System.out.println("Creating new generation");
+
 						// Generate mating pool
-//						population.naturalSelection();
+						population.naturalSelection();
 						// Create next generation
-//						population.generate();
-						
-					}
-					
-					
-					
-					
+						population.generate();
+
+						// send new individual over Serial
+						weights = population.getCurrentWeights();
+						for (int i = 0; i < weights.length; i++) {
+
+							controller.sendData(String.valueOf(weights[i]));
+
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException ie) {
+								//
+							}
+
+						} // END: weights loop
+
+					} // END: populationSize check
+
+					System.out.println("Generation " + population.getGenerationNumber());
+					System.out.println("Evaluating individual " + population.getCurrentIndex());
 				} // END: collision signal check
 
-				
-				
-				
-				
-				
-				
-				
-				
-				
 			} // END: forever loop
-
 		} // END: initialized check
 
 		try {
@@ -256,7 +287,7 @@ public class ControllerApp implements SerialPortEventListener {
 
 	public static void testSerial() {
 
-		ControllerApp test = new ControllerApp(ControllerApp.class.getName());
+		ControllerApp test = new ControllerApp();
 		if (test.initialize()) {
 
 			test.sendData("y");
