@@ -108,12 +108,12 @@ public class ControllerApp implements SerialPortEventListener {
 			serialPort.addEventListener(this);
 			serialPort.notifyOnDataAvailable(true);
 
-			// Give the Arduino some time
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException ie) {
-				//
-			}
+			// Give Arduino some time
+			// try {
+			Thread.sleep(2000);
+			// } catch (InterruptedException ie) {
+			// //
+			// }
 
 			return true;
 
@@ -124,48 +124,27 @@ public class ControllerApp implements SerialPortEventListener {
 		return false;
 	}// END: initialize
 
-	public String readData() {
-
-		String inputLine = null;
-
-		try {
-
-			inputLine = input.readLine();
-
-		} catch (IOException e) {
-			System.err.println(e.toString());
-			System.exit(0);
-		}
-
+	public String readData() throws IOException {
+		String inputLine = input.readLine();
 		return inputLine;
 	}// END: readData
 
-	public void sendData(String data) {
+	public void sendData(String data) throws IOException {
 
-		try {
+		System.out.println("Sending data: '" + data + "'");
 
-			System.out.println("Sending data: '" + data + "'");
-
-			// open the streams and send the data
-			output = serialPort.getOutputStream();
-			output.write(data.getBytes());
-
-		} catch (Exception e) {
-			System.err.println(e.toString());
-			System.exit(0);
-		}
+		// open the streams and send the data
+		output = serialPort.getOutputStream();
+		output.write(data.getBytes());
 
 	}// END: sendData
 
-	private static void sendWeights(ControllerApp controller, float[] weights) {
+	private static void sendWeights(ControllerApp controller, float[] weights)
+			throws IOException, InterruptedException {
 		for (int i = 0; i < weights.length; i++) {
 
 			controller.sendData(String.valueOf(weights[i]));
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException ie) {
-				//
-			}
+			Thread.sleep(500);
 
 		} // END: weights loop
 	}// END: sendWeights
@@ -228,7 +207,7 @@ public class ControllerApp implements SerialPortEventListener {
 						float value = (float) Utils.randomDouble(0, 10);
 						population.setFitness(value, population.getCurrentIndex());
 						population.increaseIndex();
-						
+
 						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
 
 							// TODO
@@ -242,18 +221,18 @@ public class ControllerApp implements SerialPortEventListener {
 							population.generate();
 
 							// send new individual over Serial
-							weights = population.getCurrentWeights();
-							sendWeights(controller, weights);
+//							weights = population.getCurrentWeights();
+//							sendWeights(controller, weights);
+//
+//							// wait for confirmation
+//							inputLine = controller.readData();
+//							while (!inputLine.contentEquals(DONE_SIGNAL)) {
+//								inputLine = controller.readData();
+//								System.out.println(inputLine);
+//							}
 
-							// wait for confirmation
-							inputLine = controller.readData();
-							while (!inputLine.contentEquals(DONE_SIGNAL)) {
-								inputLine = controller.readData();
-								System.out.println(inputLine);
-							}
+						} // END: popsize check
 
-						}//END: popsize check 
-						
 						// send new individual over Serial
 						weights = population.getCurrentWeights();
 						sendWeights(controller, weights);
@@ -279,57 +258,14 @@ public class ControllerApp implements SerialPortEventListener {
 				Thread.sleep(1000);
 			} catch (InterruptedException ie) {
 				//
+				ie.printStackTrace();
 			}
 
 			controller.close();
-			System.exit(-1);
-			
+			System.exit(0);
+
 		} // END: try-catch block
 
 	}// END: main
-
-	// ///////////////////
-	// ---TEST SERIAL---//
-	// ///////////////////
-
-	public static void testSerial() {
-
-		ControllerApp test = new ControllerApp();
-		if (test.initialize()) {
-
-			test.sendData("y");
-
-			try {
-
-				Thread.sleep(2000);
-
-			} catch (InterruptedException ie) {
-				//
-			}
-
-			test.sendData("n");
-
-			try {
-
-				Thread.sleep(2000);
-
-			} catch (InterruptedException ie) {
-				//
-			}
-
-			test.close();
-		} // END: initialize test
-
-		// Wait 5 seconds then shutdown
-		try {
-
-			Thread.sleep(2000);
-
-		} catch (InterruptedException ie) {
-
-			//
-
-		}
-	}// END: testSerial
 
 }// END: class

@@ -1,14 +1,8 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
-import simulator.linefollowing.EAutonom;
-import simulator.neuralnetwork.NeuralNetwork;
-import sun.awt.X11.MWMConstants;
-import utils.Parameters;
 import utils.Utils;
 
 public class Population {

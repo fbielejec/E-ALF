@@ -27,10 +27,7 @@ h1. LICENSE
 
 h1. TODO
 * Serial communication
-  - debug & test
+  - test
 * Collison sensors (outside of NN)
   - solder new sensor board
   - replace collision sensors with one crash sensor
-* Population controller
-  - test
-
