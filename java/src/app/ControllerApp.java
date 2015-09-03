@@ -185,77 +185,78 @@ public class ControllerApp implements SerialPortEventListener {
 		float[] weights;
 		String inputLine;
 
-		if (controller.initialize()) {
+		try {
 
-			// send reset signal
-			System.out.println("Sending RESET signal.");
-			controller.sendData(RESET_SIGNAL);
+			if (controller.initialize()) {
 
-			// wait for a reboot
-			inputLine = controller.readData();
-			while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
+				// send reset signal
+				System.out.println("Sending RESET signal.");
+				controller.sendData(RESET_SIGNAL);
+
+				// wait for a reboot
 				inputLine = controller.readData();
-				System.out.println(inputLine);
-			}
-			System.out.println("Device is online.");
-
-			// send first individual
-			weights = population.getCurrentWeights();
-			sendWeights(controller, weights);
-			// wait for confirmation
-			inputLine = controller.readData();
-			while (!inputLine.contentEquals(DONE_SIGNAL)) {
-				inputLine = controller.readData();
-				System.out.println(inputLine);
-			}
-
-			System.out.println("Generation " + population.getGenerationNumber());
-			System.out.println("Evaluating individual " + population.getCurrentIndex());
-
-			// let them live one by one, get fitness values
-			while (!done) {
-
-				inputLine = controller.readData();
-				System.out.println(inputLine);
-
-				// process collison
-				if (inputLine.contentEquals(COLLISION_SIGNAL)) {
-
-					// TODO:
-					// get fitness over serial
-					// set fitness value
-					float value = (float) Utils.randomDouble(0, 10);
-					population.setFitness(value, population.getCurrentIndex());
-
-					// send new individual over Serial
-					weights = population.getCurrentWeights();
-					sendWeights(controller, weights);
-					// wait for confirmation
+				while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
 					inputLine = controller.readData();
-					while (!inputLine.contentEquals(DONE_SIGNAL)) {
-						inputLine = controller.readData();
-						System.out.println(inputLine);
-					}
+					System.out.println(inputLine);
+				}
+				System.out.println("Device is online.");
 
-					// evaluate next individual
-					population.increaseIndex();
+				// send first individual
+				weights = population.getCurrentWeights();
+				sendWeights(controller, weights);
+				// wait for confirmation
+				inputLine = controller.readData();
+				while (!inputLine.contentEquals(DONE_SIGNAL)) {
+					inputLine = controller.readData();
+					System.out.println(inputLine);
+				}
 
-					if (population.getCurrentIndex() > population.getPopulationSize()) {
+				System.out.println("Generation " + population.getGenerationNumber());
+				System.out.println("Evaluating individual " + population.getCurrentIndex());
 
-						// TODO
-						// logging
+				// let them live one by one, get fitness values
+				while (!done) {
 
-						System.out.println("Creating new generation");
+					inputLine = controller.readData();
+					System.out.println(inputLine);
 
-						// Generate mating pool
-						population.naturalSelection();
-						// Create next generation
-						population.generate();
+					// process collison
+					if (inputLine.contentEquals(COLLISION_SIGNAL)) {
 
+						// TODO:
+						// get fitness over serial
+						float value = (float) Utils.randomDouble(0, 10);
+						population.setFitness(value, population.getCurrentIndex());
+						population.increaseIndex();
+						
+						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
+
+							// TODO
+							// logging
+
+							System.out.println("Creating new generation");
+
+							// Generate mating pool
+							population.naturalSelection();
+							// Create next generation
+							population.generate();
+
+							// send new individual over Serial
+							weights = population.getCurrentWeights();
+							sendWeights(controller, weights);
+
+							// wait for confirmation
+							inputLine = controller.readData();
+							while (!inputLine.contentEquals(DONE_SIGNAL)) {
+								inputLine = controller.readData();
+								System.out.println(inputLine);
+							}
+
+						}//END: popsize check 
+						
 						// send new individual over Serial
 						weights = population.getCurrentWeights();
 						sendWeights(controller, weights);
-
 						// wait for confirmation
 						inputLine = controller.readData();
 						while (!inputLine.contentEquals(DONE_SIGNAL)) {
@@ -263,24 +264,27 @@ public class ControllerApp implements SerialPortEventListener {
 							System.out.println(inputLine);
 						}
 
-					} // END: populationSize check
+						System.out.println("Generation " + population.getGenerationNumber());
+						System.out.println("Evaluating individual " + population.getCurrentIndex());
+					} // END: collision signal check
 
-					System.out.println("Generation " + population.getGenerationNumber());
-					System.out.println("Evaluating individual " + population.getCurrentIndex());
-				} // END: collision signal check
+				} // END: forever loop
+			} // END: initialized check
 
-			} // END: forever loop
-		} // END: initialized check
+		} catch (Exception e) {
 
-		try {
+			e.printStackTrace();
 
-			Thread.sleep(2000);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ie) {
+				//
+			}
 
-		} catch (InterruptedException ie) {
-			//
-		}
-
-		controller.close();
+			controller.close();
+			System.exit(-1);
+			
+		} // END: try-catch block
 
 	}// END: main
 
