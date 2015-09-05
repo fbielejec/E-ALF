@@ -13,16 +13,20 @@
 #include "cneuralnet.h"
 
 
-/**---CONSTANTS---*/
+/**---VARIABLES---*/
+
+boolean online = false;
 
 int err;
+
 float bias = -1;
-int counter = 0;
-//float fitness = 0;
-long tick = 0;
 int nWeights;
-// byte received on the serial port
+
+float fitness = 0;
+long tick = 0;
+
 String recv;
+int counter = 0;
 
 /**---ARRAYS---*/
 
@@ -34,6 +38,10 @@ float *weights ;
 boolean checkCollisions();
 
 int receiveWeights() ;
+
+int updateFitness( float *readings );
+
+float getFitness();
 
 void(* resetFunc) (void) = 0;
 
@@ -91,13 +99,14 @@ void run() {
             resetFunc();
         }
 
-        if(tick == 0) {
+        if(!online) {
             // let the controller know we are online and receive weights
             Serial.println("-- Sending ONLINE signal...");
             Serial.println(ONLINE_SIGNAL);
             receiveWeights();
             Serial.println("-- Sending DONE signal...");
             Serial.println(DONE_SIGNAL);
+            online = true;
         }
 
 #if DEBUG
@@ -115,7 +124,12 @@ void run() {
             Serial.println(COLLISION_SIGNAL);
 
             // TODO: send fitness value
-//            Serial.println(fitness);
+            Serial.println("-- Sending FITNESS_TRANSMITION_SIGNAL signal...");
+            Serial.println(FITNESS_TRANSMITION_SIGNAL);
+//            Serial.println("-- Sending fitness evaluation...");
+            Serial.println(getFitness());
+
+
 
             receiveWeights();
 
@@ -127,7 +141,8 @@ void run() {
             motorStop(MOTOR_RIGHT);
 
 //            Serial.println("-- Returning to normal operation.");
-//            fitness = 0;
+            fitness = 0;
+            tick = 0;
 
             Serial.println("-- Sending DONE signal...");
             Serial.println(DONE_SIGNAL);
@@ -174,6 +189,10 @@ void run() {
         Serial.println(rightSpeed );
 #endif /* DEBUG */
 
+
+        err = updateFitness(readings);
+        assert(err == 0);
+
         motorForward(MOTOR_LEFT, leftSpeed);
         motorForward(MOTOR_RIGHT, rightSpeed);
 
@@ -183,12 +202,39 @@ void run() {
 //        delay(3000);
 #endif /* DEBUG */
 
-//        fitness += 1;
         tick++;
     }//END: forever loop
 
 }//END: run
 
+int updateFitness( float *readings ) {
+    /**
+    * @input: sensor on the line -> its reading increases
+    * @return: fitness maximizes the sensor reading values
+    **/
+
+    int err = -1;
+
+    float leftVal = readings[LINE_SENSOR_LEFT];
+    float dl = map(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+
+    float centerVal = readings[LINE_SENSOR_CENTER];
+    float dc = map(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+
+    float rightVal = readings[LINE_SENSOR_RIGHT];
+    float dr = map(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+
+    // TODO: possible div by zero here
+    fitness += 1/(1 - dl) * 1/(1 - dc) * 1/(1 - dr);
+
+    err = 0;
+    return err;
+}//END: updateFitness
+
+float getFitness() {
+    float value = fitness / (float) tick;
+    return value;
+}//END: getFitness
 
 boolean checkCollisions() {
 

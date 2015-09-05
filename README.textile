@@ -26,8 +26,16 @@ h1. LICENSE
    "GNU Lesser General Public License":http://www.gnu.org/licenses/lgpl.html for more details.
 
 h1. TODO
-* Serial communication
-  - test
+* C code
+  - test fitness function
+  - mapping NN response to wheel speeds
 * Collison sensors (outside of NN)
   - solder new sensor board
   - replace collision sensors with one crash sensor
+* Hardware
+  - LED online indicator
+* Tracking XY position:
+http://www.martijnthe.nl/2009/07/interfacing-an-optical-mouse-sensor-to-your-arduino/
+http://www.instructables.com/id/Optical-Mouse-Odometer-for-Arduino-Robot/?ALLSTEPS
+http://www.instructables.com/id/Arduino-Tutorial-ADNS-9800-Laser-Mouse-Traveled-Di/?ALLSTEPS
+ ADNS-9800

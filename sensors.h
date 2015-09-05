@@ -7,6 +7,10 @@ const int LINE_SENSOR_LEFT = 0;
 const int LINE_SENSOR_CENTER = 1;
 const int LINE_SENSOR_RIGHT = 2;
 
+const int LINE_SENSOR_MIN = 0;
+const int LINE_SENSOR_MAX = 1023;
+
+
 extern const byte NBR_COLLISION_SENSORS;
 
 // no obstacle detected

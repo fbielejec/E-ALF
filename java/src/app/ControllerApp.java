@@ -18,6 +18,7 @@ public class ControllerApp implements SerialPortEventListener {
 	private static final String RESET_SIGNAL = "R";
 	private static final String ONLINE_SIGNAL = "O";
 	private static final String COLLISION_SIGNAL = "C";
+	private static final String FITNESS_TRANSMITION_SIGNAL = "T";
 	private static final String DONE_SIGNAL = "D";
 
 	private SerialPort serialPort = null;
@@ -202,9 +203,18 @@ public class ControllerApp implements SerialPortEventListener {
 					// process collison
 					if (inputLine.contentEquals(COLLISION_SIGNAL)) {
 
-						// TODO:
-						// get fitness over serial
-						float value = (float) Utils.randomDouble(0, 10);
+						float value = 0;
+						while (!done) {
+							inputLine = controller.readData();	
+							System.out.println(inputLine);
+							if(inputLine.contentEquals(FITNESS_TRANSMITION_SIGNAL)) {
+								inputLine = controller.readData();
+								value = Float.valueOf(inputLine);
+								System.out.println("Received fitness evaluation: " + value);
+								break;
+							}
+						}
+						
 						population.setFitness(value, population.getCurrentIndex());
 						population.increaseIndex();
 
@@ -219,17 +229,6 @@ public class ControllerApp implements SerialPortEventListener {
 							population.naturalSelection();
 							// Create next generation
 							population.generate();
-
-							// send new individual over Serial
-//							weights = population.getCurrentWeights();
-//							sendWeights(controller, weights);
-//
-//							// wait for confirmation
-//							inputLine = controller.readData();
-//							while (!inputLine.contentEquals(DONE_SIGNAL)) {
-//								inputLine = controller.readData();
-//								System.out.println(inputLine);
-//							}
 
 						} // END: popsize check
 
