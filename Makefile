@@ -1,4 +1,4 @@
-BOARD_TAG    = megaADK #uno megaADK
+BOARD_TAG    = uno #uno megaADK
 MONITOR_PORT  = /dev/ttyACM0
 ARDUINO_LIBS = Wire Adafruit_Motorshield MemoryFree
 #CPP=avr-g++

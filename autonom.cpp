@@ -35,8 +35,6 @@ float *weights ;
 
 /**---PROTOTYPES---*/
 
-boolean checkCollisions();
-
 int receiveWeights() ;
 
 int updateFitness( float *readings );
@@ -55,7 +53,6 @@ void init_io(void) {
     Serial.begin(9600);
     while (!Serial);
 
-//    blinkNumber(8);
     Serial.println("-- Comm-link online.");
 
     // initialize motors
@@ -113,8 +110,10 @@ void run() {
         delay(2000);
 #endif
 
-        boolean collision = checkCollisions();
+        boolean collision = checkCollision();
         if(collision) {
+
+            Serial.println("-- Collision detected");
 
             Serial.println("-- Braking...");
             motorBrake(MOTOR_LEFT);
@@ -235,24 +234,6 @@ float getFitness() {
     float value = fitness / (float) tick;
     return value;
 }//END: getFitness
-
-boolean checkCollisions() {
-
-    boolean collision = false;
-    if(checkCollision(COLLISION_LEFT) == true)   {
-        collision = true;
-    }//END: left edge
-//    if(checkCollision(COLLISION_CENTER) == true)   {
-//        collision = true;
-//    } //END: right edge
-//
-//     reflection blocked on right side
-//    if(checkCollision(COLLISION_RIGHT) == true)   {
-//        collision = true;
-//    } //END: right edge
-
-    return collision;
-}//END: checkCollisions
 
 
 int receiveWeights() {

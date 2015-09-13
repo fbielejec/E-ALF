@@ -10,27 +10,13 @@ const int LINE_SENSOR_RIGHT = 2;
 const int LINE_SENSOR_MIN = 0;
 const int LINE_SENSOR_MAX = 1023;
 
-
-extern const byte NBR_COLLISION_SENSORS;
-
-// no obstacle detected
-//extern const int COLLISION_NONE ;
-// left edge detected
-extern const int COLLISION_LEFT ;
-// right edge detected
-extern const int COLLISION_CENTER;
-// edge detect at right sensors
-extern const int COLLISION_RIGHT;
-
+// defines to identify digital sensor pins
+const int CRASH_SENSOR_PIN = 4;
 
 /**---PROTOTYPES---*/
 
 float* senseLine();
 
-void collisionSensorsBegin() ;
+void collisionSensorsBegin();
 
-void calibrateCollisionSensor(byte sensor);
-
-boolean checkCollision(int obstacle);
-
-boolean senseCollision(int sensor);
+boolean checkCollision();

@@ -48,24 +48,10 @@ void init_follower(void) {
 
 void checkBorders() {
 
-    boolean collision = false;
-    if(checkCollision(COLLISION_LEFT) == true)   {
-        collision = true;
-    }//END: left edge
-
-
-    //    if(checkCollision(COLLISION_CENTER) == true)   {
-//        collision = true;
-//    } //END: right edge
-
-    // reflection blocked on right side
-    if(checkCollision(COLLISION_RIGHT) == true)   {
-        collision = true;
-    } //END: right edge
-
+    boolean collision = checkCollision();
     if(collision) {
 
-// brake and reverse for 2 seconds
+        // brake and reverse for 2 seconds
         motorBrake(MOTOR_LEFT);
         motorBrake(MOTOR_RIGHT);
 
