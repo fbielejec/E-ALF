@@ -10,8 +10,8 @@ public class Settings {
 
 	// -- NEURAL NETWORK -- //
 
-	public static final int INPUT_NODES = 2; // 4
-	public static final int HIDDEN_NODES = 1; // 6
-	public static final int OUTPUT_NODES = 1; // 2
+	public static final int INPUT_NODES = 4; // 2
+	public static final int HIDDEN_NODES = 2; // 6
+	public static final int OUTPUT_NODES = 2; // 1
 
 }// END: settings

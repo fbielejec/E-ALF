@@ -60,7 +60,7 @@ void init_io(void) {
 
     // initialize sensors
     collisionSensorsBegin();
-    Serial.println("-- I sense a soul in search of answers.");
+    Serial.println("-- Sensors activated.");
 
     // initialize nn
     err = createNetwork();
@@ -68,11 +68,11 @@ void init_io(void) {
 
     Serial.print("-- Neural network with ");
     Serial.print(getnWeights());
-    Serial.println(" weights.");
+    Serial.println(" weights is active.");
 
 //    printWeights();
 
-    Serial.println("-- Systems functional.");
+    Serial.println("-- All systems functional.");
 
 #if DEBUG
     Serial.print("-- freeMemory=");
@@ -107,7 +107,7 @@ void run() {
         }
 
 #if DEBUG
-        delay(2000);
+//        delay(2000);
 #endif
 
         boolean collision = checkCollision();
@@ -116,30 +116,24 @@ void run() {
             Serial.println("-- Collision detected");
 
             Serial.println("-- Braking...");
-            motorBrake(MOTOR_LEFT);
-            motorBrake(MOTOR_RIGHT);
+            motorStop(MOTOR_LEFT);
+            motorStop(MOTOR_RIGHT);
+            delay(1000);
 
             Serial.println("-- Sending COLLISION signal...");
             Serial.println(COLLISION_SIGNAL);
 
-            // TODO: send fitness value
             Serial.println("-- Sending FITNESS_TRANSMITION_SIGNAL signal...");
             Serial.println(FITNESS_TRANSMITION_SIGNAL);
-//            Serial.println("-- Sending fitness evaluation...");
             Serial.println(getFitness());
-
-
 
             receiveWeights();
 
             Serial.println("-- Reversing wheels...");
             motorReverse(MOTOR_LEFT, MIN_SPEED);
             motorReverse(MOTOR_RIGHT, MIN_SPEED);
-            delay(2000);
-            motorStop(MOTOR_LEFT);
-            motorStop(MOTOR_RIGHT);
+            delay(3000);
 
-//            Serial.println("-- Returning to normal operation.");
             fitness = 0;
             tick = 0;
 
@@ -174,13 +168,13 @@ void run() {
         float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
 
 #if DEBUG
-//        Serial.println("-- NN transformed response" );
-//        Serial.println(leftSpeed);
-//        Serial.println(rightSpeed );
+        Serial.println("-- sigmoid transformed NN response" );
+        Serial.println(leftSpeed);
+        Serial.println(rightSpeed );
 #endif /* DEBUG */
 
-        leftSpeed = map(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
-        rightSpeed = map(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+        leftSpeed = mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+        rightSpeed = mapFloat(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
 
 #if DEBUG
         Serial.println("-- mapped NN response" );
@@ -215,13 +209,13 @@ int updateFitness( float *readings ) {
     int err = -1;
 
     float leftVal = readings[LINE_SENSOR_LEFT];
-    float dl = map(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     float centerVal = readings[LINE_SENSOR_CENTER];
-    float dc = map(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     float rightVal = readings[LINE_SENSOR_RIGHT];
-    float dr = map(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     // TODO: possible div by zero here
     fitness += 1/(1 - dl) * 1/(1 - dc) * 1/(1 - dr);

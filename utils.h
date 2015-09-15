@@ -4,6 +4,9 @@
 //inline
 float sigmoid(float input);
 
+float mapFloat(float value, float fromLow, float fromHigh,
+               float toLow, float toHigh);
+
 //returns a random float between zero and 1
 float randFloat();
 

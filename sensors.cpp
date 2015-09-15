@@ -1,7 +1,5 @@
 #include "sensors.h"
-
 #include "cneuralnet.h"
-//#include "globalDefines.h"
 
 #define DEBUG 1
 
@@ -32,9 +30,7 @@ float* senseLine() {
 
 
 void collisionSensorsBegin() {
-
     pinMode(CRASH_SENSOR_PIN, INPUT);
-
 }//END: collisionSensorsBegin
 
 
@@ -44,10 +40,10 @@ boolean checkCollision() {
 
     int value = digitalRead(CRASH_SENSOR_PIN);
     if (value == HIGH) {
-        collision = true;
-    } else {
         collision = false;
+    } else {
+        collision = true;
     }
 
-return collision;
+    return collision;
 }//END: checkCollision

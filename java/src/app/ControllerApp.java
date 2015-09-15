@@ -205,16 +205,16 @@ public class ControllerApp implements SerialPortEventListener {
 
 						float value = 0;
 						while (!done) {
-							inputLine = controller.readData();	
+							inputLine = controller.readData();
 							System.out.println(inputLine);
-							if(inputLine.contentEquals(FITNESS_TRANSMITION_SIGNAL)) {
+							if (inputLine.contentEquals(FITNESS_TRANSMITION_SIGNAL)) {
 								inputLine = controller.readData();
 								value = Float.valueOf(inputLine);
 								System.out.println("Received fitness evaluation: " + value);
 								break;
 							}
 						}
-						
+
 						population.setFitness(value, population.getCurrentIndex());
 						population.increaseIndex();
 

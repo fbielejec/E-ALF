@@ -27,15 +27,12 @@ h1. LICENSE
 
 h1. TODO
 
-* Collison sensors (outside of NN)
-  - crash sensor code
-  - http://www.dfrobot.com/wiki/index.php/Crash_Sensor_%28SKU:_SEN0138%29
-
 * Neural Network & population control
-  - test fitness function
+  - sigmoid transformation
   - mapping NN response to wheel speeds
+  - fitness function
 
 * Tracking XY position
   - mount the sensor to robot chassis
-
+  - send position data
 

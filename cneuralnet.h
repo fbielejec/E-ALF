@@ -3,9 +3,9 @@
 #include "utils.h"
 
 // including bias
-const int INPUT_NODES = 2; // 4
-const int HIDDEN_NODES = 1; // 6
-const int OUTPUT_NODES = 1; // 2
+const int INPUT_NODES = 4; // 2
+const int HIDDEN_NODES = 2; // 6
+const int OUTPUT_NODES = 2; // 1
 
 int createNetwork();
 
