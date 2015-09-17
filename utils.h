@@ -1,8 +1,10 @@
 #include <math.h>
 #include <stdlib.h>
+#include<stdio.h>
+#include <string.h>
 
 //inline
-float sigmoid(float input);
+float sigmoid(float input, float activation);
 
 float mapFloat(float value, float fromLow, float fromHigh,
                float toLow, float toHigh);
@@ -14,3 +16,7 @@ float randFloat();
 float randomClamped();
 
 int* calculateCoordinates(int index, int nrow, int ncol);
+
+char * float2s(float f, unsigned int digits);
+
+char * float2s(float f);

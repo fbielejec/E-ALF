@@ -5,19 +5,12 @@
 
 extern const int MOTOR_LEFT ;
 extern const int MOTOR_RIGHT;
+extern const int REVERSE_SPEED;
 
 extern const int MIN_SPEED ;
 extern const int MAX_SPEED ;
 
-//extern const int SPEED_TABLE_INTERVAL;
-//extern const int NBR_SPEEDS  ;
-//
 enum {MOV_LEFT, MOV_RIGHT, MOV_FORWARD, MOV_BACK, MOV_ROTATE, MOV_STOP};
-
-// defines for directions
-//extern const int DIR_LEFT;
-//extern const int DIR_CENTER;
-//extern const int DIR_RIGHT;
 
 /**---PROTOTYPES---*/
 
@@ -39,6 +32,3 @@ void motorStop(int motor);
 
 void motorBrake(int motor);
 
-//void calibrateRotationRate(int sensor, int angle) ;
-//
-//long rotationAngleToTime( int angle, int speed);

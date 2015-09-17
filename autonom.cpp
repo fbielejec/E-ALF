@@ -15,6 +15,10 @@
 
 /**---VARIABLES---*/
 
+const int REVERSE_TIME = 4000;
+// measured in actions
+const int LIFE_LENGTH = 10;
+
 boolean online = false;
 
 int err;
@@ -42,6 +46,8 @@ int updateFitness( float *readings );
 float getFitness();
 
 void(* resetFunc) (void) = 0;
+
+boolean isAlive();
 
 /**---METHODS---*/
 
@@ -110,12 +116,22 @@ void run() {
 //        delay(2000);
 #endif
 
-        boolean collision = checkCollision();
-        if(collision) {
+        boolean alive = isAlive();
+        if(!alive) {
 
-            Serial.println("-- Collision detected");
+            Serial.println("-- Life span over");
 
             Serial.println("-- Braking...");
+            motorStop(MOTOR_LEFT);
+            motorStop(MOTOR_RIGHT);
+            delay(1000);
+
+            Serial.println("-- Reversing wheels...");
+            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+            delay(REVERSE_TIME);
+
+            Serial.println("-- Stopping engines...");
             motorStop(MOTOR_LEFT);
             motorStop(MOTOR_RIGHT);
             delay(1000);
@@ -129,10 +145,10 @@ void run() {
 
             receiveWeights();
 
-            Serial.println("-- Reversing wheels...");
-            motorReverse(MOTOR_LEFT, MIN_SPEED);
-            motorReverse(MOTOR_RIGHT, MIN_SPEED);
-            delay(3000);
+//            Serial.println("-- Reversing wheels...");
+//            motorReverse(MOTOR_LEFT, MIN_SPEED);
+//            motorReverse(MOTOR_RIGHT, MIN_SPEED);
+//            delay(3000);
 
             fitness = 0;
             tick = 0;
@@ -160,17 +176,17 @@ void run() {
 #if DEBUG
         Serial.println("-- NN response:");
         for (int i = 0; i < OUTPUT_NODES ; i++) {
-            Serial.println(output[i] );
+            Serial.println( float2s(output[i] ) ) ;
         }
 #endif /* DEBUG */
 
-        float leftSpeed = sigmoid(output[MOTOR_LEFT]);
-        float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
+        float leftSpeed = sigmoid(output[MOTOR_LEFT], SIGMOID_ACTIVATION);
+        float rightSpeed = sigmoid(output[MOTOR_RIGHT], SIGMOID_ACTIVATION);
 
 #if DEBUG
         Serial.println("-- sigmoid transformed NN response" );
-        Serial.println(leftSpeed);
-        Serial.println(rightSpeed );
+        Serial.println(leftSpeed, 2);
+        Serial.println(rightSpeed, 2);
 #endif /* DEBUG */
 
         leftSpeed = mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
@@ -192,8 +208,11 @@ void run() {
         free(readings);
 
 #if DEBUG
+        Serial.print("-- Performing action no: ");
+        Serial.println(tick);
 //        delay(3000);
 #endif /* DEBUG */
+
 
         tick++;
     }//END: forever loop
@@ -208,14 +227,14 @@ int updateFitness( float *readings ) {
 
     int err = -1;
 
-    float leftVal = readings[LINE_SENSOR_LEFT];
-    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dl = readings[LINE_SENSOR_LEFT];
+//    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
-    float centerVal = readings[LINE_SENSOR_CENTER];
-    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dc = readings[LINE_SENSOR_CENTER];
+//    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
-    float rightVal = readings[LINE_SENSOR_RIGHT];
-    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dr = readings[LINE_SENSOR_RIGHT];
+//    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     // TODO: possible div by zero here
     fitness += 1/(1 - dl) * 1/(1 - dc) * 1/(1 - dr);
@@ -257,10 +276,8 @@ int receiveWeights() {
 
             printWeights();
 
-//            Serial.println("-- Done");
             free(weights);
             counter = 0;
-//            interrupt = false;
             break;
 
         }//END: counter check
@@ -271,4 +288,18 @@ int receiveWeights() {
     return err;
 }//END: receiveWeights
 
+boolean isAlive() {
 
+    boolean alive = true;
+
+    boolean collision = checkCollision();
+    if(collision) {
+        alive = false;
+    }
+
+    if(tick > LIFE_LENGTH) {
+        alive = false;
+    }
+
+    return alive;
+}//END: isAlive

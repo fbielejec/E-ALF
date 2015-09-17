@@ -14,16 +14,24 @@
 /**---METHODS---*/
 
 float* senseLine() {
-
+    /**
+     * read the sensor values
+     * compress them to continuous (0,1) range
+     * @return compressed sensor readings
+     */
     float *readings = (float *) malloc(sizeof(float) * (INPUT_NODES-1));
 
     float leftVal = (float) analogRead(LINE_SENSOR_LEFT);
     float centerVal = (float) analogRead(LINE_SENSOR_CENTER);
     float rightVal = (float) analogRead(LINE_SENSOR_RIGHT);
 
-    readings[LINE_SENSOR_LEFT] = leftVal;
-    readings[LINE_SENSOR_CENTER] = centerVal;
-    readings[LINE_SENSOR_RIGHT] = rightVal;
+    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+
+    readings[LINE_SENSOR_LEFT] = dl;
+    readings[LINE_SENSOR_CENTER] = dc;
+    readings[LINE_SENSOR_RIGHT] = dr;
 
     return(readings);
 }//END: senseLine

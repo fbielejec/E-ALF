@@ -1,11 +1,17 @@
 #include <Arduino.h>
-//#include "parameters.h"
 #include "utils.h"
+
+/**---CONSTANTS---*/
 
 // including bias
 const int INPUT_NODES = 4; // 2
 const int HIDDEN_NODES = 2; // 6
 const int OUTPUT_NODES = 2; // 1
+
+// sigmoid function activation
+const float SIGMOID_ACTIVATION = 0.5;
+
+/**---PROTOTYPES---*/
 
 int createNetwork();
 
