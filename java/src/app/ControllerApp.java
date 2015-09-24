@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 
 import controller.Population;
+import controller.Settings;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -36,6 +38,9 @@ public class ControllerApp implements SerialPortEventListener {
 	private String appName;
 	private BufferedReader input;
 	private OutputStream output;
+
+	// For logging
+	private static final String TAB = "\t";
 
 	public ControllerApp() {
 
@@ -164,9 +169,28 @@ public class ControllerApp implements SerialPortEventListener {
 		float[] weights;
 		String inputLine;
 
+		// logging
+		PrintWriter writer = null;
+
 		try {
 
 			if (controller.initialize()) {
+
+				if (Settings.RELEASE) {
+					writer = new PrintWriter("fitness.log", "UTF-8");
+				} else {
+					writer = new PrintWriter("../logging/fitness.log", "UTF-8");
+				}
+
+				String header = "generation" + TAB + "individual" + TAB + "fitness" + TAB;
+
+				for (int i = 0; i < population.getnWeights(); i++) {
+
+					String w = "w" + i;
+					header += w + TAB;
+
+				}
+				writer.println(header);
 
 				// send reset signal
 				System.out.println("Sending RESET signal.");
@@ -215,12 +239,24 @@ public class ControllerApp implements SerialPortEventListener {
 						}
 
 						population.setFitness(value, population.getCurrentIndex());
+
+						// log data
+						System.out.println("Writing to log file ");
+						int currentIndex = population.getCurrentIndex();
+						String line = population.getGenerationNumber() + TAB + currentIndex + TAB
+								+ population.getFitness(currentIndex) + TAB;
+						for (float w : population.getCurrentWeights()) {
+
+							line += w + TAB;
+
+						}
+
+						writer.println(line);
+						writer.flush();
+
 						population.increaseIndex();
 
 						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
-
-							// TODO
-							// logging
 
 							System.out.println("Creating new generation");
 
@@ -234,6 +270,7 @@ public class ControllerApp implements SerialPortEventListener {
 						// send new individual over Serial
 						weights = population.getCurrentWeights();
 						sendWeights(controller, weights);
+
 						// wait for confirmation
 						inputLine = controller.readData();
 						while (!inputLine.contentEquals(DONE_SIGNAL)) {
@@ -243,6 +280,7 @@ public class ControllerApp implements SerialPortEventListener {
 
 						System.out.println("Generation " + population.getGenerationNumber());
 						System.out.println("Evaluating individual " + population.getCurrentIndex());
+
 					} // END: collision signal check
 
 				} // END: forever loop
@@ -260,6 +298,7 @@ public class ControllerApp implements SerialPortEventListener {
 			}
 
 			controller.close();
+			writer.close();
 			System.exit(0);
 
 		} // END: try-catch block

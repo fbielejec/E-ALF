@@ -17,7 +17,7 @@
 
 const int REVERSE_TIME = 4000;
 // measured in actions
-const int LIFE_LENGTH = 10;
+const int LIFE_LENGTH = 80;
 
 boolean online = false;
 
@@ -97,7 +97,7 @@ void run() {
         // listen to reset signal
         recv = Serial.readString();
         if(recv == RESET_SIGNAL) {
-            Serial.println("-- RESET signal caught!");
+            Serial.println("-- RESET signal caught");
             delay(1000);
             resetFunc();
         }
@@ -176,7 +176,7 @@ void run() {
 #if DEBUG
         Serial.println("-- NN response:");
         for (int i = 0; i < OUTPUT_NODES ; i++) {
-            Serial.println( float2s(output[i] ) ) ;
+            Serial.println( output[i] ) ;
         }
 #endif /* DEBUG */
 
@@ -189,8 +189,8 @@ void run() {
         Serial.println(rightSpeed, 2);
 #endif /* DEBUG */
 
-        leftSpeed = mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
-        rightSpeed = mapFloat(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+        leftSpeed = mapFloat(leftSpeed, 0, 1, -DRIFT_SPEED, DRIFT_SPEED);
+        rightSpeed = mapFloat(rightSpeed, 0, 1, -DRIFT_SPEED, DRIFT_SPEED);
 
 #if DEBUG
         Serial.println("-- mapped NN response" );
@@ -198,12 +198,15 @@ void run() {
         Serial.println(rightSpeed );
 #endif /* DEBUG */
 
-
         err = updateFitness(readings);
         assert(err == 0);
 
-        motorForward(MOTOR_LEFT, leftSpeed);
-        motorForward(MOTOR_RIGHT, rightSpeed);
+        /**
+        * wheels spin with constant speed
+        * NN provides drift for left and right wheel
+        */
+        motorForward(MOTOR_LEFT, CONSTANT_SPEED + leftSpeed);
+        motorForward(MOTOR_RIGHT, CONSTANT_SPEED + rightSpeed);
 
         free(readings);
 
@@ -228,13 +231,8 @@ int updateFitness( float *readings ) {
     int err = -1;
 
     float dl = readings[LINE_SENSOR_LEFT];
-//    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-
     float dc = readings[LINE_SENSOR_CENTER];
-//    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-
     float dr = readings[LINE_SENSOR_RIGHT];
-//    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     // TODO: possible div by zero here
     fitness += 1/(1 - dl) * 1/(1 - dc) * 1/(1 - dr);

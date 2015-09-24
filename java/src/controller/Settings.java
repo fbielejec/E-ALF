@@ -2,9 +2,11 @@ package controller;
 
 public class Settings {
 
+	public static final boolean RELEASE = true;
+	
 	// -- GENETIC ALGORITHM -- //
-
-	public static final int POPULATION_SIZE = 10; // 10
+	
+	public static final int POPULATION_SIZE = 2; // 10
 	public static int N_FITTEST = 100;
 	public static float MUTATION_RATE = (float) 0.01;
 

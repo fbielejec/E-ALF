@@ -11,7 +11,7 @@ public class Population {
 	private int generationNumber;
 	private int populationSize = Settings.POPULATION_SIZE;
 	
-	private float[] fittness;
+	private float[] fitness;
 	private LinkedHashMap<Integer, float[]> population;
 	private ArrayList<float[]> matingPool;
 
@@ -42,7 +42,7 @@ public class Population {
 		} // END: population loop
 
 		this.matingPool = new ArrayList<float[]>();
-		this.fittness = new float[populationSize];
+		this.fitness = new float[populationSize];
 		// Arrays.fill(fittness, 0.0);
 
 	}// END: Constructor
@@ -55,7 +55,7 @@ public class Population {
 		double maxFitness = 0;
 		for (int i = 0; i < populationSize; i++) {
 
-			double iFitness = fittness[i];
+			double iFitness = fitness[i];
 			if (iFitness > maxFitness) {
 				maxFitness = iFitness;
 			}
@@ -64,7 +64,7 @@ public class Population {
 
 		for (int i = 0; i < populationSize; i++) {
 
-			double iFitness = Utils.map(fittness[i], 0, maxFitness, 0, 1);
+			double iFitness = Utils.map(fitness[i], 0, maxFitness, 0, 1);
 
 			int n = (int) Math.floor(iFitness * Settings.N_FITTEST);
 			for (int j = 0; j < n; j++) {
@@ -97,7 +97,7 @@ public class Population {
 
 		// reset index
 		currentIndex = 0;
-		this.fittness = new float[populationSize];
+		this.fitness = new float[populationSize];
 		generationNumber++;
 	}// END: generate
 
@@ -140,9 +140,13 @@ public class Population {
 	}// END: crossover
 
 	public void setFitness(float value, int index) {
-		this.fittness[index] = value;
+		this.fitness[index] = value;
 	}// END: setFitness
 
+	public float getFitness( int index) {
+	return(fitness[index]);
+	}// END: setFitness
+	
 	public int getPopulationSize() {
 		return populationSize;
 	}// END: getCurrentWeights
@@ -155,6 +159,10 @@ public class Population {
 		return currentIndex;
 	}// END: getCurrentWeights
 
+	public int getnWeights() {
+		return nWeights;
+	}
+	
 	public float[] getCurrentWeights() {
 		return population.get(currentIndex);
 	}

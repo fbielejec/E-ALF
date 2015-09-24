@@ -3,9 +3,11 @@
 
 /**---CONSTANTS---*/
 
-const int MIN_SPEED = 20;
-const int MAX_SPEED = 60;
+const int CONSTANT_SPEED = 50;
+const int DRIFT_SPEED = 40;
 const int REVERSE_SPEED = 100;
+
+const int MIN_SPEED = 40;
 
 const int MOTOR_LEFT  = 0;
 const int MOTOR_RIGHT = 1;

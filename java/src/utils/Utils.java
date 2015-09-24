@@ -8,6 +8,7 @@ import simulator.linefollowing.EAutonom;
 
 public class Utils {
 
+	public static final String TAB = "\t";
 	private final static Random randomGenerator = new Random();
 
 	public static double randomDouble(double lower, double upper) {
@@ -65,10 +66,8 @@ public class Utils {
 		System.out.println();
 	}// END: printArray
 
-	public static double map(double value, double fromLow, double fromHigh,
-			double toLow, double toHigh) {
-		return (value - fromLow) / (fromHigh - fromLow) * (toHigh - toLow)
-				+ toLow;
+	public static float map(double value, double fromLow, double fromHigh, double toLow, double toHigh) {
+		return (float) (toLow + (toHigh - toLow) * ((value - fromLow) / (fromHigh - fromLow)));
 	}// END: map
 
 	// /////////////////
@@ -86,13 +85,12 @@ public class Utils {
 
 		return message;
 	}// END: displayWeights
-	
+
 	// ////////////////////////
 	// ---PROCESSING UTILS---//
 	// ////////////////////////
 
-	public static void dashline(float x0, float y0, float x1, float y1, float[] spacing,
-			PApplet p) {
+	public static void dashline(float x0, float y0, float x1, float y1, float[] spacing, PApplet p) {
 		float distance = PApplet.dist(x0, y0, x1, y1);
 		float[] xSpacing = new float[spacing.length];
 		float[] ySpacing = new float[spacing.length];
@@ -133,8 +131,7 @@ public class Utils {
 	 * x-coordinate of line. y1 ending y-coordinate of line. dash - length of
 	 * dashed line in pixels gap - space between dashes in pixels
 	 */
-	public static void dashline(float x0, float y0, float x1, float y1, float dash,
-			float gap, PApplet p) {
+	public static void dashline(float x0, float y0, float x1, float y1, float dash, float gap, PApplet p) {
 		float[] spacing = { dash, gap };
 		dashline(x0, y0, x1, y1, spacing, p);
 	}

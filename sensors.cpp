@@ -36,17 +36,15 @@ float* senseLine() {
     return(readings);
 }//END: senseLine
 
-
 void collisionSensorsBegin() {
-    pinMode(CRASH_SENSOR_PIN, INPUT);
+    pinMode(CRASH_SENSOR_LEFT, INPUT);
+    pinMode(CRASH_SENSOR_RIGHT, INPUT);
 }//END: collisionSensorsBegin
 
-
-boolean checkCollision() {
-
+boolean senseCollision(int sensor) {
     boolean collision = false;
 
-    int value = digitalRead(CRASH_SENSOR_PIN);
+    int value = digitalRead(sensor);
     if (value == HIGH) {
         collision = false;
     } else {
@@ -54,4 +52,17 @@ boolean checkCollision() {
     }
 
     return collision;
+}//END: senseCollision
+
+boolean checkCollision() {
+
+    if(senseCollision(CRASH_SENSOR_LEFT) == true) {
+        return true;
+    }
+
+    if(senseCollision(CRASH_SENSOR_RIGHT) == true) {
+        return true;
+    }
+
+    return false;
 }//END: checkCollision

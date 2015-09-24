@@ -11,12 +11,15 @@ const int LINE_SENSOR_MIN = 0;
 const int LINE_SENSOR_MAX = 1023;
 
 // defines to identify digital sensor pins
-const int CRASH_SENSOR_PIN = 4;
+const int CRASH_SENSOR_LEFT = 3;
+const int CRASH_SENSOR_RIGHT = 4;
 
 /**---PROTOTYPES---*/
 
 float* senseLine();
 
 void collisionSensorsBegin();
+
+boolean senseCollision(int sensor) ;
 
 boolean checkCollision();
