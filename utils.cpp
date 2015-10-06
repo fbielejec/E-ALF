@@ -1,7 +1,10 @@
 #include "utils.h"
 
-float sigmoid(float input, float activation) {
-    return ( 1 / ( 1 +  exp( - input / activation )));
+float sigmoid(float input) {
+    /**
+     * @return number in [-1.0, 1.0], 0.0 returned at input = 0
+     * */
+    return ((1 / (1 + pow(E, -input)))-0.5)*2;
 }//END: sigmoid
 
 float mapFloat(float value, float fromLow, float fromHigh,

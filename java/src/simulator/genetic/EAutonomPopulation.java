@@ -28,7 +28,7 @@ public class EAutonomPopulation {
 
 	private PrintWriter writer;
 
-	public EAutonomPopulation(PApplet p, Line line) throws FileNotFoundException, UnsupportedEncodingException {
+	public EAutonomPopulation(PApplet p, Line line) throws  UnsupportedEncodingException, FileNotFoundException {
 
 		this.parent = p;
 		this.line = line;
@@ -47,7 +47,13 @@ public class EAutonomPopulation {
 		this.bestFitness = 0;
 
 		// logging
-		this.writer = new PrintWriter("/home/filip/Pulpit/fitness_simulation.log", "UTF-8");
+		
+		try {
+			this.writer = new PrintWriter("/home/filip/Pulpit/fitness_simulation.log", "UTF-8");
+		} catch (FileNotFoundException e) {
+			this.writer = new PrintWriter("/home/filip/Desktop/fitness_simulation.log", "UTF-8");
+		}
+		
 		String header = "generation" + Utils.TAB + "individual" + Utils.TAB + "fitness" + Utils.TAB;
 		for (int i = 0; i < this.getNWeights(); i++) {
 
@@ -155,31 +161,6 @@ public class EAutonomPopulation {
 		currentIndex = 0;
 		generationNumber++;
 	}// END: generate
-
-//	public void setMaxspeed(float maxspeed) {
-//
-//		for (int i = 0; i < populationSize; i++) {
-//
-//			EAutonom autonom = population[i];
-//			if (autonom.isAlive()) {
-//
-//				autonom.setMaxspeed(maxspeed);
-//
-//			} // END: alive check
-//		} // END: population loop
-//	}// END: setMaxspeed
-
-	public void setLifespan(int lifespan) {
-		for (int i = 0; i < populationSize; i++) {
-
-			EAutonom autonom = population[i];
-			if (autonom.isAlive()) {
-
-				autonom.setLifespan(lifespan);
-
-			} // END: alive check
-		} // END: population loop
-	}// END: setLifespan
 
 	public int getCurrentIndex() {
 		return currentIndex;

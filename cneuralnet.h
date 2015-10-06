@@ -4,12 +4,12 @@
 /**---CONSTANTS---*/
 
 // including bias
-const int INPUT_NODES = 4; // 2
-const int HIDDEN_NODES = 2; // 6
-const int OUTPUT_NODES = 2; // 1
+const int INPUT_NODES = 4;
+const int HIDDEN_NODES = 1;
+const int OUTPUT_NODES = 2;
 
 // sigmoid function activation
-const float SIGMOID_ACTIVATION = 0.5;
+//const float SIGMOID_ACTIVATION = 0.5;
 
 /**---PROTOTYPES---*/
 

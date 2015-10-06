@@ -3,8 +3,10 @@
 #include<stdio.h>
 #include <string.h>
 
+#define E (2.7182818284590452353602874713526624977572470937L )
+
 //inline
-float sigmoid(float input, float activation);
+float sigmoid(float input);
 
 float mapFloat(float value, float fromLow, float fromHigh,
                float toLow, float toHigh);

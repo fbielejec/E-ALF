@@ -1,14 +1,12 @@
 package app;
 
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import processing.core.PApplet;
 import processing.core.PFont;
 import simulator.genetic.EAutonomPopulation;
 import simulator.linefollowing.Line;
-import utils.Parameters;
 
 @SuppressWarnings("serial")
 public class AutonomousLineFollowing extends PApplet {
@@ -25,10 +23,6 @@ public class AutonomousLineFollowing extends PApplet {
 	private float HMOVE = 15;
 	private float VMOVE = 15;
 
-	// private ControlP5 controller;
-//	private float maxspeed = Parameters.maxspeed;
-	private int lifespan = Parameters.lifespan;
-
 	public static void main(String[] args) {
 
 		PApplet.main(new String[] { "app.AutonomousLineFollowing" });
@@ -44,12 +38,9 @@ public class AutonomousLineFollowing extends PApplet {
 			f = createFont("Courier", 12, true);
 			smooth();
 
-			
 			float radius = 200;
 			this.line = new Line(this, radius);
 			population = new EAutonomPopulation(this, line);
-//			population.setMaxspeed(maxspeed);
-			population.setLifespan(lifespan);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -62,12 +53,12 @@ public class AutonomousLineFollowing extends PApplet {
 	@Override
 	public void draw() {
 
-//	try {
-//		Thread.sleep(500);
-//	} catch (InterruptedException e) {
-//		e.printStackTrace();
-//	}
-		
+		// try {
+		// Thread.sleep(500);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+
 		background(255);
 		line.display();
 
@@ -104,13 +95,16 @@ public class AutonomousLineFollowing extends PApplet {
 		fill(255);
 		textSize(12);
 
-		text("Individal:    " + population.getCurrentIndex(), HMOVE + ADJUST, VMOVE + ADJUST);
-		text("Generation:   " + population.getGenerationNumber(), HMOVE + ADJUST, VMOVE + 2 * ADJUST);
+		text("Individal:    " + population.getCurrentIndex(), HMOVE + ADJUST,
+				VMOVE + ADJUST);
+		text("Generation:   " + population.getGenerationNumber(), HMOVE
+				+ ADJUST, VMOVE + 2 * ADJUST);
 
 		String message = "";
 		double[] velocities = population.getCurrentVelocity();
 		for (int i = 0; i < velocities.length; i++) {
-			message = message.concat(String.format("%.4g", velocities[i]) + " ");
+			message = message
+					.concat(String.format("%.4g", velocities[i]) + " ");
 		}
 
 		text("Velocities:   " + message, HMOVE + ADJUST, VMOVE + 4 * ADJUST);
@@ -118,14 +112,17 @@ public class AutonomousLineFollowing extends PApplet {
 		message = "";
 		double[] sensorReadings = population.getCurrentSensorReadings();
 		for (int i = 0; i < sensorReadings.length; i++) {
-			message = message.concat(String.format("%.4g", sensorReadings[i]) + " ");
+			message = message.concat(String.format("%.4g", sensorReadings[i])
+					+ " ");
 		}
 
 		text("Sensors:   " + message, HMOVE + ADJUST, VMOVE + 5 * ADJUST);
 
-		text("Current fitness: " + population.getCurrentFitness(), HMOVE + ADJUST, VMOVE + 6 * ADJUST);
+		text("Current fitness: " + population.getCurrentFitness(), HMOVE
+				+ ADJUST, VMOVE + 6 * ADJUST);
 
-		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST, VMOVE + 7 * ADJUST);
+		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
+				VMOVE + 7 * ADJUST);
 
 	}// END: displayInfo
 

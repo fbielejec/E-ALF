@@ -180,8 +180,8 @@ void run() {
         }
 #endif /* DEBUG */
 
-        float leftSpeed = sigmoid(output[MOTOR_LEFT], SIGMOID_ACTIVATION);
-        float rightSpeed = sigmoid(output[MOTOR_RIGHT], SIGMOID_ACTIVATION);
+        float leftSpeed = sigmoid(output[MOTOR_LEFT]);
+        float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
 
 #if DEBUG
         Serial.println("-- sigmoid transformed NN response" );

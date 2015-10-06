@@ -15,9 +15,9 @@ public class EAutonom {
 
 	private float CONSTANT_SPEED = 3;
 	private float DRIFT_SPEED = 6;
+//	private float MAX_SPEED = 10;
 	
 	private float activation = Parameters.activation;
-//	private float maxspeed = Parameters.maxspeed;
 	private int lifespan = Parameters.lifespan;
 
 	private boolean alive = true;
@@ -54,12 +54,12 @@ public class EAutonom {
 
 		this.parent = p;
 
-//		 float xpos = parent.width / 2;
-//		 float ypos = parent.height / 2;
-		
+		// float xpos = parent.width / 2;
+		// float ypos = parent.height / 2;
+
 		float xpos = (float) Utils.randomDouble(0, parent.width);
 		float ypos = (float) Utils.randomDouble(0, parent.height);
-		
+
 		this.location = new PVector(xpos, ypos);
 
 		this.line = line;
@@ -113,13 +113,13 @@ public class EAutonom {
 		System.out.println(rightSpeed);
 
 		leftSpeed = Utils.map(leftSpeed, //
-				0, //
+				-1, //
 				1, //
 				-DRIFT_SPEED, //
 				DRIFT_SPEED);
 
 		rightSpeed = Utils.map(rightSpeed, //
-				0, //
+				-1, //
 				1, //
 				-DRIFT_SPEED, //
 				DRIFT_SPEED);
@@ -136,7 +136,13 @@ public class EAutonom {
 	}// END: lineFollow
 
 	private double sigmoid(double input, double activation) {
-		return (1 / (1 + Math.exp(-input / activation)));
+
+		/**
+		 * @return number in [-1.0, 1.0], 0.0 returned at input = 0
+		 * */
+
+		// return (1 / (1 + Math.exp(-input / activation)));
+		return ((1 / (1 + Math.pow(Math.E, -input))) - activation) * 2;
 	}// END: sigmoid
 
 	public void run() {
@@ -169,12 +175,14 @@ public class EAutonom {
 
 		float radians = velocity.heading() + PApplet.radians(90);
 
-		double[] leftSensorPosition = new double[] { location.x + sensorMount[SENSOR_LEFT][X],
+		double[] leftSensorPosition = new double[] {
+				location.x + sensorMount[SENSOR_LEFT][X],
 				location.y + sensorMount[SENSOR_LEFT][Y] };
 
 		rotatePoint(location.x, location.y, radians, leftSensorPosition);
 
-		float leftDist = PApplet.dist((float) leftSensorPosition[X], (float) leftSensorPosition[Y], aX, aY);
+		float leftDist = PApplet.dist((float) leftSensorPosition[X],
+				(float) leftSensorPosition[Y], aX, aY);
 
 		if (leftDist > maxDist) {
 			leftDist = maxDist;
@@ -192,12 +200,14 @@ public class EAutonom {
 
 		} // END: DEBUG check
 
-		double[] centerSensorPosition = new double[] { location.x + sensorMount[SENSOR_CENTER][X],
+		double[] centerSensorPosition = new double[] {
+				location.x + sensorMount[SENSOR_CENTER][X],
 				location.y + sensorMount[SENSOR_CENTER][Y] };
 
 		rotatePoint(location.x, location.y, radians, centerSensorPosition);
 
-		float centerDist = PApplet.dist((float) centerSensorPosition[X], (float) centerSensorPosition[Y], aX, aY);
+		float centerDist = PApplet.dist((float) centerSensorPosition[X],
+				(float) centerSensorPosition[Y], aX, aY);
 
 		if (centerDist > maxDist) {
 			centerDist = maxDist;
@@ -215,12 +225,14 @@ public class EAutonom {
 
 		} // END: DEBUG check
 
-		double[] rightSensorPosition = new double[] { location.x + sensorMount[SENSOR_RIGHT][X],
+		double[] rightSensorPosition = new double[] {
+				location.x + sensorMount[SENSOR_RIGHT][X],
 				location.y + sensorMount[SENSOR_RIGHT][Y] };
 
 		rotatePoint(location.x, location.y, radians, rightSensorPosition);
 
-		float rightDist = PApplet.dist((float) rightSensorPosition[X], (float) rightSensorPosition[Y], aX, aY);
+		float rightDist = PApplet.dist((float) rightSensorPosition[X],
+				(float) rightSensorPosition[Y], aX, aY);
 
 		if (rightDist > maxDist) {
 			rightDist = maxDist;
@@ -247,7 +259,7 @@ public class EAutonom {
 		sensorReadings[SENSOR_CENTER] = (double) centerDist;
 		sensorReadings[SENSOR_RIGHT] = (double) rightDist;
 
-		readings.add(SENSOR_LEFT, sensorReadings[SENSOR_LEFT] );
+		readings.add(SENSOR_LEFT, sensorReadings[SENSOR_LEFT]);
 		readings.add(SENSOR_CENTER, sensorReadings[SENSOR_CENTER]);
 		readings.add(SENSOR_RIGHT, sensorReadings[SENSOR_RIGHT]);
 
@@ -286,13 +298,15 @@ public class EAutonom {
 		double dc = readings.get(SENSOR_CENTER);
 		double dr = readings.get(SENSOR_RIGHT);
 
-		double v1 = Utils.map(velocity.x, 0, CONSTANT_SPEED+DRIFT_SPEED, -0.5, 0.5);
-		double v2 = Utils.map(velocity.y, 0, CONSTANT_SPEED+DRIFT_SPEED, -0.5, 0.5);
-		double v = Math.abs(v1 + v2);
+		// double v1 = Utils.map(velocity.x, 0, CONSTANT_SPEED + DRIFT_SPEED,
+		// -0.5, 0.5);
+		// double v2 = Utils.map(velocity.y, 0, CONSTANT_SPEED + DRIFT_SPEED,
+		// -0.5, 0.5);
+		// double v = Math.abs(v1 + v2);
 
-//		fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
-		fitness +=  (1 - dl) * Math.pow((1 - dc),2) * (1 - dr);
-		
+		// fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
+		fitness += (1 - dl) * (1 - dc) * (1 - dr);
+
 		framesAlive++;
 	}// END: updateFitness
 
@@ -305,13 +319,13 @@ public class EAutonom {
 
 	private void checkBorders() {
 
-//		if (location.x > parent.width || location.x < 0) {
-//			this.alive = false;
-//		}
-//
-//		if (location.y > parent.height || location.y < 0) {
-//			this.alive = false;
-//		}
+		if (location.x > parent.width || location.x < 0) {
+			this.alive = false;
+		}
+
+		if (location.y > parent.height || location.y < 0) {
+			this.alive = false;
+		}
 
 		if (framesAlive > lifespan) {
 			this.alive = false;
@@ -370,20 +384,21 @@ public class EAutonom {
 		// left sensor
 		parent.point(sensorMount[SENSOR_LEFT][X], sensorMount[SENSOR_LEFT][Y]);
 		// central sensor
-		parent.point(sensorMount[SENSOR_CENTER][X], sensorMount[SENSOR_CENTER][Y]);
+		parent.point(sensorMount[SENSOR_CENTER][X],
+				sensorMount[SENSOR_CENTER][Y]);
 		// right sensor
 		parent.point(sensorMount[SENSOR_RIGHT][X], sensorMount[SENSOR_RIGHT][Y]);
 
 		parent.popMatrix();
 	}// END: render
 
-//	public void setMaxspeed(float maxspeed) {
-//		this.maxspeed = maxspeed;
-//	}// END: setMaxspeed
-//
-//	public float getMaxspeed() {
-//		return maxspeed;
-//	}// END: setMaxspeed
+	// public void setMaxspeed(float maxspeed) {
+	// this.maxspeed = maxspeed;
+	// }// END: setMaxspeed
+	//
+	// public float getMaxspeed() {
+	// return maxspeed;
+	// }// END: setMaxspeed
 
 	public int getLifespan() {
 		return lifespan;
@@ -411,7 +426,8 @@ public class EAutonom {
 
 	public EAutonom crossover(EAutonom parentB) {
 
-		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(parentB.getNeuralNetwork());
+		NeuralNetwork childNeuralNetwork = this.getNeuralNetwork().crossover(
+				parentB.getNeuralNetwork());
 
 		EAutonom child = new EAutonom(parent, line);
 		child.setNeuralNetwork(childNeuralNetwork);

@@ -4,8 +4,8 @@
 /**---CONSTANTS---*/
 
 const int CONSTANT_SPEED = 50;
-const int DRIFT_SPEED = 40;
-const int REVERSE_SPEED = 100;
+const int DRIFT_SPEED = 20;
+const int REVERSE_SPEED = 60;
 
 const int MIN_SPEED = 40;
 
@@ -19,8 +19,8 @@ const char* states[] = {"Left", "Right", "Forward", "Back", "Rotate", "Stop"};
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 Adafruit_DCMotor *motors[2] = {
-    AFMS.getMotor(1), // left is Motor #1
-    AFMS.getMotor(2) // right is Motor #2
+    AFMS.getMotor(2), // left is Motor #1
+    AFMS.getMotor(3) // right is Motor #2
 };
 
 /**---METHODS---*/
