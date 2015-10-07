@@ -8,8 +8,10 @@ extern const int MOTOR_RIGHT;
 extern const int REVERSE_SPEED;
 
 extern const int MIN_SPEED;
-extern const int CONSTANT_SPEED;
-extern const int DRIFT_SPEED ;
+extern const int MAX_SPEED;
+
+//extern const int CONSTANT_SPEED;
+//extern const int DRIFT_SPEED ;
 
 enum {MOV_LEFT, MOV_RIGHT, MOV_FORWARD, MOV_BACK, MOV_ROTATE, MOV_STOP};
 

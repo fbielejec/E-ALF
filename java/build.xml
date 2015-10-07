@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CONTROLLER" default="help" basedir=".">
+
+   <property name="build.sysclasspath" value="last" />
+   <property name="Main-Class" value="app.ControllerApp" />
+   <property name="JDK_VERSION" value="1.7" />
+   <property name="src" location="src"/>
+   <property name="buildDir" location="classes" />
+   <property name="dist" location="dist" />
+   <property name="lib" location="lib" />
+   <property name="report" location="${buildDir}/junitreport" />
+
+
+   <target name="help">
+      <echo message="Common build targets:" />
+      <echo message="jar - Builds jar" />
+      <echo message="build - Same as clean+jar" />
+      <echo message="clean - Remove all *.class and *.jar" />
+   </target>
+
+
+   <path id="classpath">
+      <pathelement path="." />
+      <fileset dir="${lib}">
+         <include name="*.jar" />
+      </fileset>
+      <pathelement location="." />
+   </path>
+
+
+   <target name="build" depends="clean,jar" />
+
+
+   <target name="jar" depends="compile">
+      <mkdir dir="${dist}" />
+      
+      <jar jarfile="${dist}/controller.jar">
+
+         <manifest>
+            <attribute name="Built-By" value="${user.name}" />
+            <attribute name="Main-Class" value="${Main-Class}" />
+            <!--<attribute name="Classpath" value="." />-->
+         </manifest>
+
+         <fileset dir="${buildDir}" />
+         <zipgroupfileset dir="${lib}" includes="core.jar" />
+         <zipgroupfileset dir="${lib}" includes="RXTXcomm.jar" />
+         <zipgroupfileset dir="${lib}" includes="serial.jar" />
+
+      </jar>
+   </target>
+
+   <target name="compile">
+      <mkdir dir="${buildDir}" />
+      <javac source="1.7" target="1.7" srcdir="${src}" destdir="classes" classpathref="classpath" />
+
+      <!--copy resources 
+      <copy todir="${buildDir}/icons">
+         <fileset dir="${src}/icons">
+            <include name="**/*.png" />
+         </fileset>
+      </copy>
+
+      <copy todir="${buildDir}/colorpicker/swing/resources">
+         <fileset dir="${src}/colorpicker/swing/resources">
+            <include name="**/*.properties" />
+         </fileset>
+      </copy>
+
+      <copy file="${src}/templates/world_map.png" todir="classes/templates" />
+-->
+
+   </target>
+
+   <target name="clean">
+      <delete dir="${buildDir}" />
+      <delete dir="${dist}" />
+   </target>
+
+</project>
+

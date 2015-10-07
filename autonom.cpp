@@ -145,11 +145,6 @@ void run() {
 
             receiveWeights();
 
-//            Serial.println("-- Reversing wheels...");
-//            motorReverse(MOTOR_LEFT, MIN_SPEED);
-//            motorReverse(MOTOR_RIGHT, MIN_SPEED);
-//            delay(3000);
-
             fitness = 0;
             tick = 0;
 
@@ -184,16 +179,18 @@ void run() {
         float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
 
 #if DEBUG
-        Serial.println("-- sigmoid transformed NN response" );
+        Serial.println("-- sigmoid transformed NN response:" );
         Serial.println(leftSpeed, 2);
         Serial.println(rightSpeed, 2);
 #endif /* DEBUG */
 
-        leftSpeed = mapFloat(leftSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
-        rightSpeed = mapFloat(rightSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
+        leftSpeed = mapFloat(leftSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+        rightSpeed = mapFloat(rightSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+//        leftSpeed = mapFloat(leftSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
+//        rightSpeed = mapFloat(rightSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
 
 #if DEBUG
-        Serial.println("-- mapped NN response" );
+        Serial.println("-- NN response mapped to wheel speed:" );
         Serial.println(leftSpeed);
         Serial.println(rightSpeed );
 #endif /* DEBUG */
@@ -201,12 +198,10 @@ void run() {
         err = updateFitness(readings);
         assert(err == 0);
 
-        /**
-        * wheels spin with constant speed
-        * NN provides drift for left and right wheel
-        */
-        motorForward(MOTOR_LEFT, CONSTANT_SPEED + leftSpeed);
-        motorForward(MOTOR_RIGHT, CONSTANT_SPEED + rightSpeed);
+        motorForward(MOTOR_LEFT, leftSpeed);
+        motorForward(MOTOR_RIGHT, rightSpeed);
+//        motorForward(MOTOR_LEFT, CONSTANT_SPEED + leftSpeed);
+//        motorForward(MOTOR_RIGHT, CONSTANT_SPEED + rightSpeed);
 
         free(readings);
 

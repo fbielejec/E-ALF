@@ -34,8 +34,6 @@ h1. LICENSE
 h1. TODO
 
 * Neural Network & population control
-  - sigmoid transformation
-  - mapping NN response to wheel speeds
   - fitness function
 
 * Tracking XY position
