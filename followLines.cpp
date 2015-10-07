@@ -11,7 +11,7 @@
 //1 is most sensitive, range 1 to 1023
 int damping =  5;
 
-int c_speed = MIN_SPEED;
+int c_speed = 50;
 
 char* labels[] = {"", "Left Line", "Center Line", "Right Line","Drift", "Left Speed", "Right Speed", "Damping"};
 

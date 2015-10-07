@@ -11,8 +11,8 @@ const int LINE_SENSOR_MIN = 0;
 const int LINE_SENSOR_MAX = 1023;
 
 // defines to identify digital sensor pins
-const int CRASH_SENSOR_LEFT = 3;
-const int CRASH_SENSOR_RIGHT = 4;
+const int COLLISION_SENSOR_LEFT = 3;
+const int COLLISION_SENSOR_RIGHT = 4;
 
 /**---PROTOTYPES---*/
 

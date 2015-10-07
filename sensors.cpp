@@ -37,17 +37,15 @@ float* senseLine() {
 }//END: senseLine
 
 void collisionSensorsBegin() {
-    pinMode(CRASH_SENSOR_LEFT, INPUT);
-    pinMode(CRASH_SENSOR_RIGHT, INPUT);
+    pinMode(COLLISION_SENSOR_LEFT, INPUT);
+    pinMode(COLLISION_SENSOR_RIGHT, INPUT);
 }//END: collisionSensorsBegin
 
 boolean senseCollision(int sensor) {
     boolean collision = false;
 
     int value = digitalRead(sensor);
-    if (value == HIGH) {
-        collision = false;
-    } else {
+    if (value == LOW) {
         collision = true;
     }
 
@@ -56,11 +54,13 @@ boolean senseCollision(int sensor) {
 
 boolean checkCollision() {
 
-    if(senseCollision(CRASH_SENSOR_LEFT) == true) {
+    if(senseCollision(COLLISION_SENSOR_LEFT) == true) {
+        Serial.println("-- Left collision detected");
         return true;
     }
 
-    if(senseCollision(CRASH_SENSOR_RIGHT) == true) {
+    if(senseCollision(COLLISION_SENSOR_RIGHT) == true) {
+        Serial.println("-- Right collision detected");
         return true;
     }
 

@@ -15,9 +15,9 @@
 
 /**---VARIABLES---*/
 
-const int REVERSE_TIME = 4000;
+const int REVERSE_TIME = 5000;
 // measured in actions
-const int LIFE_LENGTH = 80;
+const int LIFE_LENGTH = 50;
 
 boolean online = false;
 
@@ -189,8 +189,8 @@ void run() {
         Serial.println(rightSpeed, 2);
 #endif /* DEBUG */
 
-        leftSpeed = mapFloat(leftSpeed, 0, 1, -DRIFT_SPEED, DRIFT_SPEED);
-        rightSpeed = mapFloat(rightSpeed, 0, 1, -DRIFT_SPEED, DRIFT_SPEED);
+        leftSpeed = mapFloat(leftSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
+        rightSpeed = mapFloat(rightSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
 
 #if DEBUG
         Serial.println("-- mapped NN response" );
