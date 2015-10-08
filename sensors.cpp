@@ -6,6 +6,7 @@
 /**---CONSTANTS---*/
 
 //const byte NBR_LINE_SENSORS = 3;
+int COLLISION_DIRECTION = COLLISION_DIRECTION_LEFT;
 
 
 /**---ARRAYS---*/
@@ -56,13 +57,19 @@ boolean checkCollision() {
 
     if(senseCollision(COLLISION_SENSOR_LEFT) == true) {
         Serial.println("-- Left collision detected");
+        COLLISION_DIRECTION = COLLISION_DIRECTION_LEFT;
         return true;
     }
 
     if(senseCollision(COLLISION_SENSOR_RIGHT) == true) {
         Serial.println("-- Right collision detected");
+        COLLISION_DIRECTION = COLLISION_DIRECTION_RIGHT;
         return true;
     }
 
     return false;
 }//END: checkCollision
+
+int getCollisionDirection() {
+    return COLLISION_DIRECTION;
+}

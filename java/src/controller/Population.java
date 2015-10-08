@@ -8,23 +8,29 @@ import utils.Utils;
 public class Population {
 
 	private int currentIndex;
+	private int bestIndex;
 	private int generationNumber;
 	private int populationSize = Settings.POPULATION_SIZE;
-	
+
 	private float[] fitness;
+	private float bestFitness;
+
 	private LinkedHashMap<Integer, float[]> population;
 	private ArrayList<float[]> matingPool;
 
 	private int nInputNodes = Settings.INPUT_NODES;
 	private int nHiddenNodes = Settings.HIDDEN_NODES;
 	private int nOutputNodes = Settings.OUTPUT_NODES;
-	private int nWeights = (nInputNodes * nHiddenNodes) + (nHiddenNodes * nOutputNodes);
+	private int nWeights = (nInputNodes * nHiddenNodes)
+			+ (nHiddenNodes * nOutputNodes);
+
 	// private int nWeights = (nInputNodes + 1) * nHiddenNodes + (nHiddenNodes +
 	// 1) * nOutputNodes;
-	
+
 	public Population() {
 
 		this.currentIndex = 0;
+		this.bestIndex = this.currentIndex;
 		this.generationNumber = 0;
 
 		this.population = new LinkedHashMap<Integer, float[]>();
@@ -43,6 +49,7 @@ public class Population {
 
 		this.matingPool = new ArrayList<float[]>();
 		this.fitness = new float[populationSize];
+		this.bestFitness = -Float.MAX_VALUE;
 		// Arrays.fill(fittness, 0.0);
 
 	}// END: Constructor
@@ -140,13 +147,24 @@ public class Population {
 	}// END: crossover
 
 	public void setFitness(float value, int index) {
+
 		this.fitness[index] = value;
+
+		if (this.fitness[index] > this.bestFitness) {
+			this.bestFitness = this.fitness[index];
+			this.bestFitness = index;
+		}
+
 	}// END: setFitness
 
-	public float getFitness( int index) {
-	return(fitness[index]);
+	public float getFitness(int index) {
+		return (fitness[index]);
 	}// END: setFitness
-	
+
+	public float getBestFitness() {
+		return bestFitness;
+	}// END: setFitness
+
 	public int getPopulationSize() {
 		return populationSize;
 	}// END: getCurrentWeights
@@ -159,14 +177,22 @@ public class Population {
 		return currentIndex;
 	}// END: getCurrentWeights
 
+	public int getBestIndex() {
+		return bestIndex;
+	}// END: getCurrentWeights
+
 	public int getnWeights() {
 		return nWeights;
 	}
-	
+
 	public float[] getCurrentWeights() {
 		return population.get(currentIndex);
 	}
 
+	public float[] getBestWeights() {
+		return population.get(bestIndex);
+	}
+	
 	public int getGenerationNumber() {
 		return generationNumber;
 	}

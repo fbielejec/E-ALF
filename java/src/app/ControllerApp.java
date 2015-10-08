@@ -239,25 +239,23 @@ public class ControllerApp implements SerialPortEventListener {
 						}
 
 						population.setFitness(value, population.getCurrentIndex());
-
-						// log data
-						System.out.println("Writing to log file ");
-						int currentIndex = population.getCurrentIndex();
-						String line = population.getGenerationNumber() + TAB + currentIndex + TAB
-								+ population.getFitness(currentIndex) + TAB;
-						for (float w : population.getCurrentWeights()) {
-
-							line += w + TAB;
-
-						}
-
-						writer.println(line);
-						writer.flush();
-
 						population.increaseIndex();
 
 						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
 
+							// log best individual from generation
+							System.out.println("Writing to log file ");							
+							int bestIndex = population.getBestIndex();							
+							String line = population.getGenerationNumber() + TAB + bestIndex + TAB
+							+ population.getBestFitness() + TAB;
+							for (float w : population.getBestWeights()) {
+
+								line += w + TAB;
+
+							}
+							writer.println(line);
+							writer.flush();
+							
 							System.out.println("Creating new generation");
 
 							// Generate mating pool

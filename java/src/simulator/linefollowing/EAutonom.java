@@ -13,9 +13,8 @@ public class EAutonom {
 
 	public boolean DEBUG = true;
 
-	private float CONSTANT_SPEED = 3;
-	private float DRIFT_SPEED = 6;
-//	private float MAX_SPEED = 10;
+	private float MIN_SPEED = -1;
+	private float MAX_SPEED = 1;
 	
 	private float activation = Parameters.activation;
 	private int lifespan = Parameters.lifespan;
@@ -33,11 +32,9 @@ public class EAutonom {
 	private final int X = 0;
 	private final int Y = 1;
 
-	// private final int NBR_DRIVE = 2;
 	private final int DRIVE_LEFT = 0;
 	private final int DRIVE_RIGHT = 1;
 
-	// private Neuron perceptron;
 	private NeuralNetwork neuralnet;
 
 	private PApplet parent;
@@ -54,11 +51,11 @@ public class EAutonom {
 
 		this.parent = p;
 
-		// float xpos = parent.width / 2;
-		// float ypos = parent.height / 2;
+		 float xpos = (float) ( parent.width / 2 - 0.001);
+		 float ypos = (float) ( parent.height / 2 + 0.001);
 
-		float xpos = (float) Utils.randomDouble(0, parent.width);
-		float ypos = (float) Utils.randomDouble(0, parent.height);
+//		float xpos = (float) Utils.randomDouble(0, parent.width);
+//		float ypos = (float) Utils.randomDouble(0, parent.height);
 
 		this.location = new PVector(xpos, ypos);
 
@@ -112,26 +109,18 @@ public class EAutonom {
 		System.out.println(leftSpeed);
 		System.out.println(rightSpeed);
 
-		leftSpeed = Utils.map(leftSpeed, //
-				-1, //
-				1, //
-				-DRIFT_SPEED, //
-				DRIFT_SPEED);
+		leftSpeed = Math.min(Math.max(-1, velocity.x + leftSpeed  ), 1);
+		rightSpeed = Math.min(Math.max(-1, velocity.y + rightSpeed  ), 1);
 
-		rightSpeed = Utils.map(rightSpeed, //
-				-1, //
-				1, //
-				-DRIFT_SPEED, //
-				DRIFT_SPEED);
-
+//		leftSpeed = Utils.map(leftSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+//		rightSpeed = Utils.map(rightSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+		
 		System.out.println("mapped NN response");
 		System.out.println(leftSpeed);
 		System.out.println(rightSpeed);
 
-		// velocity.x = (float) (velocity.x + leftSpeed);
-		// velocity.y = (float) (velocity.y + rightSpeed);
-		velocity.x = CONSTANT_SPEED + (float) leftSpeed;
-		velocity.y = CONSTANT_SPEED + (float) rightSpeed;
+		 velocity.x = (float) leftSpeed;
+		 velocity.y = (float) rightSpeed;
 
 	}// END: lineFollow
 
@@ -298,14 +287,12 @@ public class EAutonom {
 		double dc = readings.get(SENSOR_CENTER);
 		double dr = readings.get(SENSOR_RIGHT);
 
-		// double v1 = Utils.map(velocity.x, 0, CONSTANT_SPEED + DRIFT_SPEED,
-		// -0.5, 0.5);
-		// double v2 = Utils.map(velocity.y, 0, CONSTANT_SPEED + DRIFT_SPEED,
-		// -0.5, 0.5);
-		// double v = Math.abs(v1 + v2);
+		 double v1 =  velocity.x ;
+		 double v2 = velocity.y;
+		 double v = Math.abs(v1 + v2);
 
-		// fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
-		fitness += (1 - dl) * (1 - dc) * (1 - dr);
+		 fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
+//		fitness += (1 - dl) * (1 - dc) * (1 - dr);
 
 		framesAlive++;
 	}// END: updateFitness

@@ -14,6 +14,10 @@ const int LINE_SENSOR_MAX = 1023;
 const int COLLISION_SENSOR_LEFT = 3;
 const int COLLISION_SENSOR_RIGHT = 4;
 
+const int COLLISION_DIRECTION_LEFT = 0;
+const int COLLISION_DIRECTION_RIGHT = 0;
+extern int COLLISION_DIRECTION;
+
 /**---PROTOTYPES---*/
 
 float* senseLine();

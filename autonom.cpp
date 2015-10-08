@@ -127,8 +127,23 @@ void run() {
             delay(1000);
 
             Serial.println("-- Reversing wheels...");
-            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+
+            if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
+
+                motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+                motorReverse(MOTOR_RIGHT, REVERSE_SPEED / 2);
+
+            } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
+
+                motorReverse(MOTOR_LEFT, REVERSE_SPEED / 2);
+                motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+
+            } else {
+
+                //
+
+            }
+
             delay(REVERSE_TIME);
 
             Serial.println("-- Stopping engines...");
