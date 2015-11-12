@@ -96,11 +96,12 @@ void run() {
     while (1) {
 
         // listen to reset signal
-        recv = Serial.readString();
-        if(recv == RESET_SIGNAL) {
-            Serial.println("-- RESET signal caught");
-            resetFunc();
-        }
+//        recv = Serial.readString();
+//        if(recv == RESET_SIGNAL) {
+//            Serial.println("-- RESET signal caught");
+//            delay(1000);
+//            resetFunc();
+//        }
 
         if(!online) {
             // let the controller know we are online and receive weights
