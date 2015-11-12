@@ -131,8 +131,9 @@ public class ControllerApp implements SerialPortEventListener {
 
 	public String readData() throws IOException {
 
-		if (input == null) {
+		while (input == null) {
 			initialize();
+			System.out.println("Reconnecting...");
 		}
 
 		String inputLine = input.readLine();
