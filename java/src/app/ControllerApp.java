@@ -202,7 +202,7 @@ public class ControllerApp implements SerialPortEventListener {
 				inputLine = controller.readData();
 				while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
 
-					System.out.println("Sending RESET signal. Reboot the device.");
+					System.out.println("Sending RESET signal. Waiting for the device.");
 					controller.sendData(RESET_SIGNAL);
 
 					inputLine = controller.readData();

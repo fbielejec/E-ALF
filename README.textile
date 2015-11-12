@@ -19,6 +19,10 @@ Link to rxtxSerial native serial library:
 
 -Djava.library.path=/java/lib/
 
+Start the ControllerApp.
+
+Reboot the microcontroller.
+
 h1. LICENSE
 
   This is free software; you can redistribute it and/or modify
