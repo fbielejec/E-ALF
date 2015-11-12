@@ -15,7 +15,8 @@
 
 /**---VARIABLES---*/
 
-const int REVERSE_TIME = 5000;
+const int ROTATE_TIME = 2000;
+const int REVERSE_TIME = 1000;
 // measured in actions
 const int LIFE_LENGTH = 50;
 
@@ -128,23 +129,30 @@ void run() {
 
             Serial.println("-- Reversing wheels...");
 
+            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+            delay(REVERSE_TIME);
+            motorStop(MOTOR_LEFT);
+            motorStop(MOTOR_RIGHT);
+            delay(500);
+
             if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
 
                 motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-                motorReverse(MOTOR_RIGHT, REVERSE_SPEED / 2);
+                motorForward(MOTOR_RIGHT, REVERSE_SPEED);
 
             } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
 
-                motorReverse(MOTOR_LEFT, REVERSE_SPEED / 2);
+                motorForward(MOTOR_LEFT, REVERSE_SPEED);
                 motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
 
             } else {
 
-                //
+                // TODO: randomly decide where to turn
 
             }
 
-            delay(REVERSE_TIME);
+            delay(ROTATE_TIME);
 
             Serial.println("-- Stopping engines...");
             motorStop(MOTOR_LEFT);
@@ -155,7 +163,7 @@ void run() {
             Serial.println(COLLISION_SIGNAL);
 
             Serial.println("-- Sending FITNESS_TRANSMITION_SIGNAL signal...");
-            Serial.println(FITNESS_TRANSMITION_SIGNAL);
+            Serial.println(TRANSMITION_SIGNAL);
             Serial.println(getFitness());
 
             receiveWeights();
@@ -300,10 +308,10 @@ boolean isAlive() {
 
     boolean alive = true;
 
-    boolean collision = checkCollision();
-    if(collision) {
-        alive = false;
-    }
+//    boolean collision = checkCollision();
+//    if(collision) {
+//        alive = false;
+//    }
 
     if(tick > LIFE_LENGTH) {
         alive = false;

@@ -1,7 +1,6 @@
 package simulator.genetic;
 
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -22,13 +21,14 @@ public class EAutonomPopulation {
 	private EAutonom[] population;
 	private ArrayList<EAutonom> matingPool;
 
-	private int currentIndex;
-	private int generationNumber;
+	// index and fitness of the best individual in this generation
+	private int bestIndex;
 	private double bestFitness;
 
-	private PrintWriter writer;
+	private int currentIndex;
+	private int generationNumber;
 
-	public EAutonomPopulation(PApplet p, Line line) throws  UnsupportedEncodingException, FileNotFoundException {
+	public EAutonomPopulation(PApplet p, Line line) throws UnsupportedEncodingException, FileNotFoundException {
 
 		this.parent = p;
 		this.line = line;
@@ -43,25 +43,9 @@ public class EAutonomPopulation {
 		this.matingPool = new ArrayList<EAutonom>();
 
 		this.currentIndex = 0;
+		this.bestIndex = 0;
 		this.generationNumber = 0;
 		this.bestFitness = 0;
-
-		// logging
-		
-		try {
-			this.writer = new PrintWriter("/home/filip/Pulpit/fitness_simulation.log", "UTF-8");
-		} catch (FileNotFoundException e) {
-			this.writer = new PrintWriter("/home/filip/Desktop/fitness_simulation.log", "UTF-8");
-		}
-		
-		String header = "generation" + Utils.TAB + "individual" + Utils.TAB + "fitness" + Utils.TAB;
-		for (int i = 0; i < this.getNWeights(); i++) {
-
-			String w = "w" + i;
-			header += w + Utils.TAB;
-
-		}
-		writer.println(header);
 
 	}// END: Constructor
 
@@ -78,30 +62,11 @@ public class EAutonomPopulation {
 
 			double currentFitness = autonom.getFitness();
 			if (currentFitness > bestFitness) {
+
 				bestFitness = currentFitness;
+				bestIndex = currentIndex;
+
 			}
-
-			// ---LOGGING---//
-
-			// log data
-			while (true) {
-				
-				System.out.println("Writing to log file ");
-				int currentIndex = this.getCurrentIndex();
-				
-				String line = this.getGenerationNumber() + Utils.TAB + currentIndex + Utils.TAB
-						+ this.getCurrentFitness() + Utils.TAB;
-				for (Double w : this.getCurrentWeights()) {
-
-					line += w + Utils.TAB;
-
-				}
-
-				writer.println(line);
-				writer.flush();
-
-				break;
-			} // END: logging loop
 
 			currentIndex++;
 
@@ -157,13 +122,20 @@ public class EAutonomPopulation {
 
 		} // END: i loop
 
-		// reset index
-		currentIndex = 0;
+		// reset indices
+		this.currentIndex = 0;
+		this.bestIndex = 0;
+		this.bestFitness = 0;
+
 		generationNumber++;
 	}// END: generate
 
 	public int getCurrentIndex() {
 		return currentIndex;
+	}
+
+	public int getBestIndex() {
+		return bestIndex;
 	}
 
 	public int getPopulationSize() {
@@ -180,6 +152,10 @@ public class EAutonomPopulation {
 
 	public LinkedList<Double> getCurrentWeights() {
 		return population[currentIndex].getNeuralNetwork().getWeights();
+	}// END: getCurrentWeights
+
+	public LinkedList<Double> getBestWeights() {
+		return population[bestIndex].getNeuralNetwork().getWeights();
 	}// END: getCurrentWeights
 
 	public int getNWeights() {

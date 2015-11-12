@@ -103,8 +103,12 @@ public class Population {
 		} // END: i loop
 
 		// reset index
-		currentIndex = 0;
+		this.currentIndex = 0;
+		this.bestIndex = 0;
+		
 		this.fitness = new float[populationSize];
+		this.bestFitness = 0;
+		
 		generationNumber++;
 	}// END: generate
 
@@ -152,7 +156,7 @@ public class Population {
 
 		if (this.fitness[index] > this.bestFitness) {
 			this.bestFitness = this.fitness[index];
-			this.bestFitness = index;
+			this.bestIndex = index;
 		}
 
 	}// END: setFitness

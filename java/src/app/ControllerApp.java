@@ -130,6 +130,11 @@ public class ControllerApp implements SerialPortEventListener {
 	}// END: initialize
 
 	public String readData() throws IOException {
+
+		if (input == null) {
+			initialize();
+		}
+
 		String inputLine = input.readLine();
 		return inputLine;
 	}// END: readData
@@ -244,10 +249,10 @@ public class ControllerApp implements SerialPortEventListener {
 						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
 
 							// log best individual from generation
-							System.out.println("Writing to log file ");							
-							int bestIndex = population.getBestIndex();							
+							System.out.println("Writing to log file ");
+							int bestIndex = population.getBestIndex();
 							String line = population.getGenerationNumber() + TAB + bestIndex + TAB
-							+ population.getBestFitness() + TAB;
+									+ population.getBestFitness() + TAB;
 							for (float w : population.getBestWeights()) {
 
 								line += w + TAB;
@@ -255,7 +260,7 @@ public class ControllerApp implements SerialPortEventListener {
 							}
 							writer.println(line);
 							writer.flush();
-							
+
 							System.out.println("Creating new generation");
 
 							// Generate mating pool

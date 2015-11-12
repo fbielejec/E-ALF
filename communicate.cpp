@@ -1,4 +1,4 @@
-#include <Arduino.h>
+//#include <Arduino.h>
 #include "communicate.h"
 
 const char* RESET_SIGNAL  = "R";
@@ -6,7 +6,7 @@ const char* ONLINE_SIGNAL  = "O";
 
 const char* COLLISION_SIGNAL  = "C";
 
-const char* FITNESS_TRANSMITION_SIGNAL  = "T";
+const char* TRANSMITION_SIGNAL  = "T";
 const char* DONE_SIGNAL  = "D";
 
 

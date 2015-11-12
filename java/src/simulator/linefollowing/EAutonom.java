@@ -51,11 +51,11 @@ public class EAutonom {
 
 		this.parent = p;
 
-		 float xpos = (float) ( parent.width / 2 - 0.001);
-		 float ypos = (float) ( parent.height / 2 + 0.001);
+//		 float xpos = (float) ( parent.width / 2 - 0.001);
+//		 float ypos = (float) ( parent.height / 2 + 0.001);
 
-//		float xpos = (float) Utils.randomDouble(0, parent.width);
-//		float ypos = (float) Utils.randomDouble(0, parent.height);
+		float xpos = (float) Utils.randomDouble(0, parent.width);
+		float ypos = (float) Utils.randomDouble(0, parent.height);
 
 		this.location = new PVector(xpos, ypos);
 
@@ -291,15 +291,17 @@ public class EAutonom {
 		 double v2 = velocity.y;
 		 double v = Math.abs(v1 + v2);
 
-		 fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
+//		 fitness += v * (1 - dc) * (1 - dl) * (1 - dr);
 //		fitness += (1 - dl) * (1 - dc) * (1 - dr);
 
+		 fitness += framesAlive;
+		 
 		framesAlive++;
 	}// END: updateFitness
 
 	public double getFitness() {
-		double phi = fitness / framesAlive;
-		// double phi = framesAlive;
+//		double phi = fitness / framesAlive;
+		 double phi = fitness / lifespan;
 
 		return phi;
 	}// END: getScore
@@ -378,14 +380,6 @@ public class EAutonom {
 
 		parent.popMatrix();
 	}// END: render
-
-	// public void setMaxspeed(float maxspeed) {
-	// this.maxspeed = maxspeed;
-	// }// END: setMaxspeed
-	//
-	// public float getMaxspeed() {
-	// return maxspeed;
-	// }// END: setMaxspeed
 
 	public int getLifespan() {
 		return lifespan;

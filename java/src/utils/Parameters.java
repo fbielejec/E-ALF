@@ -14,7 +14,7 @@ public class Parameters {
 	public static int nFittest = 100;	
 	public static double mutationRate = 0.01;
 	
-	public static int lifespan = 400;
+	public static int lifespan = 800;
 	public static float activation = (float) 0.5;
 	
 }// END: class

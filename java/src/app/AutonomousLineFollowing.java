@@ -1,12 +1,14 @@
 package app;
 
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import processing.core.PApplet;
 import processing.core.PFont;
 import simulator.genetic.EAutonomPopulation;
 import simulator.linefollowing.Line;
+import utils.Utils;
 
 @SuppressWarnings("serial")
 public class AutonomousLineFollowing extends PApplet {
@@ -23,6 +25,10 @@ public class AutonomousLineFollowing extends PApplet {
 	private float HMOVE = 15;
 	private float VMOVE = 15;
 
+	// logging
+	private double bestFitnessOverall;
+	private PrintWriter writer;
+	
 	public static void main(String[] args) {
 
 		PApplet.main(new String[] { "app.AutonomousLineFollowing" });
@@ -40,8 +46,26 @@ public class AutonomousLineFollowing extends PApplet {
 
 			float radius = 200;
 			this.line = new Line(this, radius);
-			population = new EAutonomPopulation(this, line);
+			this.population = new EAutonomPopulation(this, line);
+            this.bestFitnessOverall = 0;
+			
+			// logging
+			
+			try {
+				this.writer = new PrintWriter("/home/filip/Pulpit/fitness_simulation.log", "UTF-8");
+			} catch (FileNotFoundException e) {
+				this.writer = new PrintWriter("/home/filip/Desktop/fitness_simulation.log", "UTF-8");
+			}
+			
+			String header = "generation" + Utils.TAB + "individual" + Utils.TAB + "fitness" + Utils.TAB;
+			for (int i = 0; i < population.getNWeights(); i++) {
 
+				String w = "w" + i;
+				header += w + Utils.TAB;
+
+			}
+			writer.println(header);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -67,6 +91,28 @@ public class AutonomousLineFollowing extends PApplet {
 
 		if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
 
+			// ---LOGGING---//
+
+			// log best individual from current generation
+			while (true) {
+				
+				System.out.println("Writing to log file ");
+				int bestIndex = population.getBestIndex();
+				
+				String line = population.getGenerationNumber() + Utils.TAB + bestIndex + Utils.TAB
+						+ population.getBestFitness() + Utils.TAB;
+				for (Double w : population.getBestWeights()) {
+
+					line += w + Utils.TAB;
+
+				}
+
+				writer.println(line);
+				writer.flush();
+
+				break;
+			} // END: logging loop
+			
 			// Generate mating pool
 			population.naturalSelection();
 			// Create next generation
@@ -121,6 +167,11 @@ public class AutonomousLineFollowing extends PApplet {
 		text("Current fitness: " + population.getCurrentFitness(), HMOVE
 				+ ADJUST, VMOVE + 6 * ADJUST);
 
+		double bestFitness = population.getBestFitness();
+		if(bestFitness > bestFitnessOverall) {
+			bestFitnessOverall = bestFitness;
+		}
+		
 		text("Top fitness: " + population.getBestFitness(), HMOVE + ADJUST,
 				VMOVE + 7 * ADJUST);
 
