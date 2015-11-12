@@ -131,12 +131,12 @@ public class ControllerApp implements SerialPortEventListener {
 
 	public String readData() throws IOException {
 
-		while (input == null) {
-			initialize();
-			System.out.println("Reconnecting...");
+		String inputLine = "";
+
+		if (!(input == null)) {
+			inputLine = input.readLine();
 		}
 
-		String inputLine = input.readLine();
 		return inputLine;
 	}// END: readData
 
@@ -198,15 +198,15 @@ public class ControllerApp implements SerialPortEventListener {
 				}
 				writer.println(header);
 
-				// send reset signal
-				System.out.println("Sending RESET signal.");
-				controller.sendData(RESET_SIGNAL);
-
 				// wait for a reboot
 				inputLine = controller.readData();
 				while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
+
+					System.out.println("Sending RESET signal. Reboot the device.");
+					controller.sendData(RESET_SIGNAL);
+
 					inputLine = controller.readData();
-					System.out.println(inputLine);
+					// System.out.println(inputLine);
 				}
 				System.out.println("Device is online.");
 

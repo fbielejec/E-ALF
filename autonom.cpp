@@ -99,8 +99,8 @@ void run() {
         recv = Serial.readString();
         if(recv == RESET_SIGNAL) {
             Serial.println("-- RESET signal caught");
-            delay(1000);
-            resetFunc();
+//            delay(1000);
+//            resetFunc();
         }
 
         if(!online) {
