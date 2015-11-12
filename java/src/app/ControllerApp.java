@@ -201,15 +201,9 @@ public class ControllerApp implements SerialPortEventListener {
 				// wait for a reboot
 				inputLine = controller.readData();
 				while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
-
 					System.out.println("Waiting for ONLINE signal. Reboot the device.");
-//					System.out.println("Sending RESET signal. Reboot the device.");
 //					controller.sendData(RESET_SIGNAL);
-
 					inputLine = controller.readData();
-					// System.out.println(inputLine);
-					
-//					Thread.sleep(1000);
 				}
 				System.out.println("Device is online.");
 
@@ -225,6 +219,10 @@ public class ControllerApp implements SerialPortEventListener {
 
 				System.out.println("Generation " + population.getGenerationNumber());
 				System.out.println("Evaluating individual " + population.getCurrentIndex());
+
+				///////////////////////
+				// ---FOREVER LOOP---//
+				///////////////////////
 
 				// let them live one by one, get fitness values
 				while (!done) {

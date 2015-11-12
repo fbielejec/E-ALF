@@ -9,6 +9,7 @@
 //#include "display.h"
 #include "communicate.h"
 #include "sensors.h"
+#include "pause.h"
 #include "motors.h"
 #include "cneuralnet.h"
 
@@ -66,6 +67,7 @@ void init_io(void) {
     motorsBegin();
 
     // initialize sensors
+    pauseButtonBegin();
     collisionSensorsBegin();
     Serial.println("-- Sensors activated.");
 
@@ -89,11 +91,17 @@ void init_io(void) {
 }//END: init_io
 
 
+// TODO; pause / resume button
+// http://www.kasperkamperman.com/blog/arduino/arduino-programming-state-change/
+
 void run() {
 
     init_io();
 
     while (1) {
+
+        // listen to pause signal
+        checkPauseButton();
 
         // listen to reset signal
 //        recv = Serial.readString();

@@ -9,7 +9,6 @@ const char* COLLISION_SIGNAL  = "C";
 const char* TRANSMITION_SIGNAL  = "T";
 const char* DONE_SIGNAL  = "D";
 
-
 float getFloatFromSerial() {
     char inData[20];
     float f = 0;
