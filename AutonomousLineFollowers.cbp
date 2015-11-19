@@ -73,6 +73,8 @@
 		</Unit>
 		<Unit filename="motors.cpp" />
 		<Unit filename="motors.h" />
+		<Unit filename="pause.cpp" />
+		<Unit filename="pause.h" />
 		<Unit filename="sensors.cpp" />
 		<Unit filename="sensors.h" />
 		<Unit filename="utils.cpp" />

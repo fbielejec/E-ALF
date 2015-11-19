@@ -41,6 +41,8 @@ float *weights ;
 
 /**---PROTOTYPES---*/
 
+void run();
+
 int receiveWeights() ;
 
 int updateFitness( float *readings );
@@ -90,20 +92,13 @@ void init_io(void) {
 
 }//END: init_io
 
-
-// TODO; pause / resume button
-// http://www.kasperkamperman.com/blog/arduino/arduino-programming-state-change/
-
-void run() {
+void operate() {
 
     init_io();
 
     while (1) {
 
-        // listen to pause signal
-        checkPauseButton();
-
-        // listen to reset signal
+//        listen to reset signal
 //        recv = Serial.readString();
 //        if(recv == RESET_SIGNAL) {
 //            Serial.println("-- RESET signal caught");
@@ -112,7 +107,7 @@ void run() {
 //        }
 
         if(!online) {
-            // let the controller know we are online and receive weights
+            // let the controller know we are online and receive first weights
             Serial.println("-- Sending ONLINE signal...");
             Serial.println(ONLINE_SIGNAL);
             receiveWeights();
@@ -121,132 +116,142 @@ void run() {
             online = true;
         }
 
+        // listen to pause signal
+        checkPauseButton();
+        if(PAUSE_STATE == 0) {
+            run();
+        } else {
+            Serial.println("-- PAUSED. Press resume button");
+        }//END: PAUSE_STATE check
+
 #if DEBUG
 //        delay(2000);
 #endif
-
-        boolean alive = isAlive();
-        if(!alive) {
-
-            Serial.println("-- Life span over");
-
-            Serial.println("-- Braking...");
-            motorStop(MOTOR_LEFT);
-            motorStop(MOTOR_RIGHT);
-            delay(1000);
-
-            Serial.println("-- Reversing wheels...");
-
-            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
-            delay(REVERSE_TIME);
-            motorStop(MOTOR_LEFT);
-            motorStop(MOTOR_RIGHT);
-            delay(500);
-
-            if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
-
-                motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-                motorForward(MOTOR_RIGHT, REVERSE_SPEED);
-
-            } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
-
-                motorForward(MOTOR_LEFT, REVERSE_SPEED);
-                motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
-
-            } else {
-
-                // TODO: randomly decide where to turn
-
-            }
-
-            delay(ROTATE_TIME);
-
-            Serial.println("-- Stopping engines...");
-            motorStop(MOTOR_LEFT);
-            motorStop(MOTOR_RIGHT);
-            delay(1000);
-
-            Serial.println("-- Sending COLLISION signal...");
-            Serial.println(COLLISION_SIGNAL);
-
-            Serial.println("-- Sending FITNESS_TRANSMITION_SIGNAL signal...");
-            Serial.println(TRANSMITION_SIGNAL);
-            Serial.println(getFitness());
-
-            receiveWeights();
-
-            fitness = 0;
-            tick = 0;
-
-            Serial.println("-- Sending DONE signal...");
-            Serial.println(DONE_SIGNAL);
-
-        }//END: collision check
-
-        float *readings = senseLine();
-        readings[INPUT_NODES - 1] = bias;
-
-#if DEBUG
-        Serial.println("-- NN inputs:");
-        for (int i = 0; i < INPUT_NODES ; i++) {
-            Serial.println(readings[i] );
-        }
-#endif /* DEBUG */
-
-        err = feedforward(readings);
-        assert(err == 0);
-
-        float* output = getOutput();
-
-#if DEBUG
-        Serial.println("-- NN response:");
-        for (int i = 0; i < OUTPUT_NODES ; i++) {
-            Serial.println( output[i] ) ;
-        }
-#endif /* DEBUG */
-
-        float leftSpeed = sigmoid(output[MOTOR_LEFT]);
-        float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
-
-#if DEBUG
-        Serial.println("-- sigmoid transformed NN response:" );
-        Serial.println(leftSpeed, 2);
-        Serial.println(rightSpeed, 2);
-#endif /* DEBUG */
-
-        leftSpeed = mapFloat(leftSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
-        rightSpeed = mapFloat(rightSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
-//        leftSpeed = mapFloat(leftSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
-//        rightSpeed = mapFloat(rightSpeed, -1, 1, -DRIFT_SPEED, DRIFT_SPEED);
-
-#if DEBUG
-        Serial.println("-- NN response mapped to wheel speed:" );
-        Serial.println(leftSpeed);
-        Serial.println(rightSpeed );
-#endif /* DEBUG */
-
-        err = updateFitness(readings);
-        assert(err == 0);
-
-        motorForward(MOTOR_LEFT, leftSpeed);
-        motorForward(MOTOR_RIGHT, rightSpeed);
-//        motorForward(MOTOR_LEFT, CONSTANT_SPEED + leftSpeed);
-//        motorForward(MOTOR_RIGHT, CONSTANT_SPEED + rightSpeed);
-
-        free(readings);
-
-#if DEBUG
-        Serial.print("-- Performing action no: ");
-        Serial.println(tick);
-//        delay(3000);
-#endif /* DEBUG */
-
-
-        tick++;
     }//END: forever loop
 
+}//END: operate
+
+
+
+void run() {
+
+    boolean alive = isAlive();
+    if(!alive) {
+
+        Serial.println("-- Life span over");
+
+        Serial.println("-- Braking...");
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(1000);
+
+        Serial.println("-- Reversing wheels...");
+
+        motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+        motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+        delay(REVERSE_TIME);
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(500);
+
+        if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
+
+            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+            motorForward(MOTOR_RIGHT, REVERSE_SPEED);
+
+        } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
+
+            motorForward(MOTOR_LEFT, REVERSE_SPEED);
+            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+
+        } else {
+
+            // TODO: randomly decide where to turn
+
+        }
+
+        delay(ROTATE_TIME);
+
+        Serial.println("-- Stopping engines...");
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(1000);
+
+        Serial.println("-- Sending COLLISION signal...");
+        Serial.println(COLLISION_SIGNAL);
+
+        Serial.println("-- Sending FITNESS_TRANSMITION_SIGNAL signal...");
+        Serial.println(TRANSMITION_SIGNAL);
+        Serial.println(getFitness());
+
+        receiveWeights();
+
+        fitness = 0;
+        tick = 0;
+
+        Serial.println("-- Sending DONE signal...");
+        Serial.println(DONE_SIGNAL);
+
+    }//END: collision check
+
+    float *readings = senseLine();
+    readings[INPUT_NODES - 1] = bias;
+
+#if DEBUG
+    Serial.println("-- NN inputs:");
+    for (int i = 0; i < INPUT_NODES ; i++) {
+        Serial.println(readings[i] );
+    }
+#endif /* DEBUG */
+
+    err = feedforward(readings);
+    assert(err == 0);
+
+    float* output = getOutput();
+
+#if DEBUG
+    Serial.println("-- NN response:");
+    for (int i = 0; i < OUTPUT_NODES ; i++) {
+        Serial.println( output[i] ) ;
+    }
+#endif /* DEBUG */
+
+    float leftSpeed = sigmoid(output[MOTOR_LEFT]);
+    float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
+
+#if DEBUG
+    Serial.println("-- sigmoid transformed NN response:" );
+    Serial.println(leftSpeed, 2);
+    Serial.println(rightSpeed, 2);
+#endif /* DEBUG */
+
+    leftSpeed = mapFloat(leftSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+    rightSpeed = mapFloat(rightSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+
+#if DEBUG
+    Serial.println("-- NN response mapped to wheel speed:" );
+    Serial.println(leftSpeed);
+    Serial.println(rightSpeed );
+#endif /* DEBUG */
+
+    err = updateFitness(readings);
+    assert(err == 0);
+
+    motorForward(MOTOR_LEFT, leftSpeed);
+    motorForward(MOTOR_RIGHT, rightSpeed);
+
+    free(readings);
+
+#if DEBUG
+    Serial.print("-- Performing action no: ");
+    Serial.println(tick);
+#endif /* DEBUG */
+
+    tick++;
+//    }//END: forever loop
+
 }//END: run
+
 
 int updateFitness( float *readings ) {
     /**

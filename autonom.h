@@ -9,5 +9,5 @@
 
 /**---PROTOTYPES---*/
 
-void run() ;
+void operate() ;
 

@@ -14,9 +14,13 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
+/**
+ * @author Filip Bielejec
+ * @version $Id$
+ */
 public class ControllerApp implements SerialPortEventListener {
 
-	private static final String RESET_SIGNAL = "R";
+//	private static final String RESET_SIGNAL = "R";
 	private static final String ONLINE_SIGNAL = "O";
 	private static final String COLLISION_SIGNAL = "C";
 	private static final String FITNESS_TRANSMITION_SIGNAL = "T";

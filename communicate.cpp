@@ -1,7 +1,7 @@
 //#include <Arduino.h>
 #include "communicate.h"
 
-const char* RESET_SIGNAL  = "R";
+//const char* RESET_SIGNAL  = "R";
 const char* ONLINE_SIGNAL  = "O";
 
 const char* COLLISION_SIGNAL  = "C";

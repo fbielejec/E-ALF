@@ -8,7 +8,7 @@
 
 int main(void) {
 
-  run();
+  operate();
 //  followLines();
 
     return 0;
