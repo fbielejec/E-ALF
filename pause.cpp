@@ -1,4 +1,5 @@
 #include "pause.h"
+#include "motors.h"
 
 // D13
 const int PAUSE_BUTTON_PIN = 12;
@@ -28,10 +29,19 @@ void checkPauseButton() {
         if (buttonState == 1) {
 
             if(PAUSE_STATE == 1) {
+
                 PAUSE_STATE = 0;
                 Serial.println("-- Resuming operations.");
+
             } else {
+
+                Serial.println("-- Stopping wheels...");
+                motorStop(MOTOR_LEFT);
+                motorStop(MOTOR_RIGHT);
+                delay(1000);
+
                 PAUSE_STATE = 1;
+                Serial.println("-- Pausing.");
             }
 
         }//END: button pressed check
