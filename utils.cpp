@@ -13,10 +13,12 @@ float mapFloat(float value, float fromLow, float fromHigh,
 }// END: mapFloat
 
 float randFloat() {
+    // float number in [0, 1]
     return ( rand() / (RAND_MAX + 1.0));
 }//END: randFloat
 
 float randomClamped() {
+     // float number in [-1, 1]
     return randFloat() - randFloat();
 }//END: randomCLamped
 

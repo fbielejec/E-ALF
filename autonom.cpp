@@ -135,7 +135,8 @@ void operate() {
 
 void run() {
 
-    boolean alive = isAlive();
+//TODO
+    boolean alive = true;//isAlive();
     if(!alive) {
 
         Serial.println("-- Life span over");
@@ -156,19 +157,27 @@ void run() {
 
         if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
 
-            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-            motorForward(MOTOR_RIGHT, REVERSE_SPEED);
+            rotateLeft();
+//            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+//            motorForward(MOTOR_RIGHT, REVERSE_SPEED);
 
         } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
 
-            motorForward(MOTOR_LEFT, REVERSE_SPEED);
-            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+            rotateRight();
+//            motorForward(MOTOR_LEFT, REVERSE_SPEED);
+//            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
 
         } else {
 
             // TODO: randomly decide where to turn
+            float r = randFloat();
+            if(r < 0.5) {
+                rotateLeft();
+            } else {
+                rotateRight();
+            }
 
-        }
+        }//END: COLLISION_DIRECTION check
 
         delay(ROTATE_TIME);
 

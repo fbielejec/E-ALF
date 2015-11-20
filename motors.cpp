@@ -80,3 +80,12 @@ void motorBrake(int motor) {
     motors[motor]->run(BRAKE);
 }//END: motorStop
 
+void rotateLeft() {
+    motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+    motorForward(MOTOR_RIGHT, REVERSE_SPEED);
+}//END: trunLeft
+
+void rotateRight() {
+    motorForward(MOTOR_LEFT, REVERSE_SPEED);
+    motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+}//END: turnRight

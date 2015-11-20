@@ -35,3 +35,6 @@ void motorStop(int motor);
 
 void motorBrake(int motor);
 
+void rotateLeft() ;
+
+void rotateRight() ;

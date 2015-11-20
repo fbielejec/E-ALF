@@ -1,9 +1,9 @@
 #include "pause.h"
 #include "motors.h"
 
-// D13
-const int PAUSE_BUTTON_PIN = 12;
-const int PAUSE_LED_PIN = 11;
+// D12
+const int PAUSE_BUTTON_PIN = 11;
+const int PAUSE_LED_PIN = 12;
 
 
 int buttonState = 0;
@@ -38,7 +38,8 @@ void checkPauseButton() {
                 Serial.println("-- Stopping wheels...");
                 motorStop(MOTOR_LEFT);
                 motorStop(MOTOR_RIGHT);
-                delay(1000);
+                //TODO
+//                delay(1000);
 
                 PAUSE_STATE = 1;
                 Serial.println("-- Pausing.");
