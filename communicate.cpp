@@ -1,4 +1,3 @@
-//#include <Arduino.h>
 #include "communicate.h"
 
 //const char* RESET_SIGNAL  = "R";

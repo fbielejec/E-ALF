@@ -5,8 +5,6 @@
 
 /**---CONSTANTS---*/
 
-//int MAX_SPEED = 100;
-
 /**---PROTOTYPES---*/
 
 void operate() ;

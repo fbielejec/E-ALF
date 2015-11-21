@@ -79,9 +79,7 @@ void init_io(void) {
 
     Serial.print("-- Neural network with ");
     Serial.print(getnWeights());
-    Serial.println(" weights is active.");
-
-//    printWeights();
+    Serial.println(" weights is initialized.");
 
     Serial.println("-- All systems functional.");
 
@@ -135,8 +133,7 @@ void operate() {
 
 void run() {
 
-//TODO
-    boolean alive = true;//isAlive();
+    boolean alive = isAlive();
     if(!alive) {
 
         Serial.println("-- Life span over");
@@ -257,8 +254,6 @@ void run() {
 #endif /* DEBUG */
 
     tick++;
-//    }//END: forever loop
-
 }//END: run
 
 
@@ -330,6 +325,7 @@ boolean isAlive() {
 
     boolean alive = true;
 
+// TODO
 //    boolean collision = checkCollision();
 //    if(collision) {
 //        alive = false;
