@@ -130,7 +130,6 @@ void operate() {
 }//END: operate
 
 
-
 void run() {
 
     boolean alive = isAlive();
@@ -154,15 +153,11 @@ void run() {
 
         if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
 
-            rotateLeft();
-//            motorReverse(MOTOR_LEFT, REVERSE_SPEED);
-//            motorForward(MOTOR_RIGHT, REVERSE_SPEED);
+            rotateRight();
 
         } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
 
-            rotateRight();
-//            motorForward(MOTOR_LEFT, REVERSE_SPEED);
-//            motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+            rotateLeft();
 
         } else {
 
@@ -325,11 +320,10 @@ boolean isAlive() {
 
     boolean alive = true;
 
-// TODO
-//    boolean collision = checkCollision();
-//    if(collision) {
-//        alive = false;
-//    }
+    boolean collision = checkCollision();
+    if(collision) {
+        alive = false;
+    }
 
     if(tick > LIFE_LENGTH) {
         alive = false;
