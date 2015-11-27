@@ -16,10 +16,10 @@
 
 /**---VARIABLES---*/
 
-const int ROTATE_TIME = 2000;
-const int REVERSE_TIME = 1000;
+const int ROTATE_TIME = 1500;
+const int REVERSE_TIME = 2000;
 // measured in actions
-const int LIFE_LENGTH = 50;
+const int LIFE_LENGTH = 80;
 
 boolean online = false;
 
@@ -171,6 +171,8 @@ void run() {
 
         }//END: COLLISION_DIRECTION check
 
+
+// Choose randomly the amount of time to rotate
         delay(ROTATE_TIME);
 
         Serial.println("-- Stopping engines...");
@@ -235,6 +237,7 @@ void run() {
     Serial.println(rightSpeed );
 #endif /* DEBUG */
 
+// TODO: compress whell speeds to [0,1]m pass to fitness calculation
     err = updateFitness(readings);
     assert(err == 0);
 

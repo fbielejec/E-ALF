@@ -185,7 +185,12 @@ public class ControllerApp implements SerialPortEventListener {
 		try {
 
 			if (controller.initialize()) {
+				
+				// TODO: resume / or start new analysis
 
+				
+				
+				
 				if (Settings.RELEASE) {
 					writer = new PrintWriter("fitness.log", "UTF-8");
 				} else {
