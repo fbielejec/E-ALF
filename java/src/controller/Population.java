@@ -1,7 +1,7 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import utils.Utils;
 
@@ -16,7 +16,7 @@ public class Population {
 	private float bestFitness;
 
 	private LinkedHashMap<Integer, float[]> population;
-	private ArrayList<float[]> matingPool;
+	private LinkedList<float[]> matingPool;
 
 	private int nInputNodes = Settings.INPUT_NODES;
 	private int nHiddenNodes = Settings.HIDDEN_NODES;
@@ -47,7 +47,7 @@ public class Population {
 
 		} // END: population loop
 
-		this.matingPool = new ArrayList<float[]>();
+		this.matingPool = new LinkedList<float[]>();
 		this.fitness = new float[populationSize];
 		this.bestFitness = -Float.MAX_VALUE;
 		// Arrays.fill(fittness, 0.0);
@@ -181,6 +181,7 @@ public class Population {
 		return currentIndex;
 	}// END: getCurrentWeights
 
+	
 	public int getBestIndex() {
 		return bestIndex;
 	}// END: getCurrentWeights
@@ -189,6 +190,14 @@ public class Population {
 		return nWeights;
 	}
 
+	public float[] getIndividualWeights(int individual) {
+		return population.get(individual);
+	}
+
+	public void setIndividualWeights(int individual, float[] weights) {
+		 population.put(individual, weights);
+	}//END: setIndividualWeights
+	
 	public float[] getCurrentWeights() {
 		return population.get(currentIndex);
 	}
@@ -201,4 +210,8 @@ public class Population {
 		return generationNumber;
 	}
 
+	public void setGenerationNumber(int generationNumber) {
+		this.generationNumber = generationNumber;
+	}// END: getCurrentWeights
+	
 }// END: class

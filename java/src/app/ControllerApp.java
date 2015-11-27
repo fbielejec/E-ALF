@@ -1,12 +1,19 @@
 package app;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import utils.Utils;
+import controller.LoggingUtils;
 import controller.Population;
 import controller.Settings;
 import gnu.io.CommPortIdentifier;
@@ -20,7 +27,7 @@ import gnu.io.SerialPortEventListener;
  */
 public class ControllerApp implements SerialPortEventListener {
 
-//	private static final String RESET_SIGNAL = "R";
+	// private static final String RESET_SIGNAL = "R";
 	private static final String ONLINE_SIGNAL = "O";
 	private static final String COLLISION_SIGNAL = "C";
 	private static final String FITNESS_TRANSMITION_SIGNAL = "T";
@@ -28,11 +35,11 @@ public class ControllerApp implements SerialPortEventListener {
 
 	private SerialPort serialPort = null;
 	private static final String PORT_NAMES[] = {
-			// "/dev/tty.usbmodem", // Mac OS X
-			// "/dev/usbdev", // Linux
-			"/dev/tty", // Linux
-			// "/dev/serial", // Linux
-			// "COM3", // Windows
+	// "/dev/tty.usbmodem", // Mac OS X
+	// "/dev/usbdev", // Linux
+	"/dev/tty", // Linux
+	// "/dev/serial", // Linux
+	// "COM3", // Windows
 	};
 
 	// Port open timeout
@@ -43,8 +50,8 @@ public class ControllerApp implements SerialPortEventListener {
 	private BufferedReader input;
 	private OutputStream output;
 
-	// For logging
-	private static final String TAB = "\t";
+	// // For logging
+	// private static final String TAB = "\t";
 
 	public ControllerApp() {
 
@@ -61,7 +68,8 @@ public class ControllerApp implements SerialPortEventListener {
 
 			case SerialPortEvent.DATA_AVAILABLE:
 				if (input == null) {
-					input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+					input = new BufferedReader(new InputStreamReader(
+							serialPort.getInputStream()));
 				}
 				// String inputLine = input.readLine();
 				// System.out.println(inputLine);
@@ -90,15 +98,19 @@ public class ControllerApp implements SerialPortEventListener {
 			while (portId == null && portEnum.hasMoreElements()) {
 				// Iterate through your host computer's serial port IDs
 				//
-				CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+				CommPortIdentifier currPortId = (CommPortIdentifier) portEnum
+						.nextElement();
 				System.out.println("   port" + currPortId.getName());
 				for (String portName : PORT_NAMES) {
-					if (currPortId.getName().equals(portName) || currPortId.getName().startsWith(portName)) {
+					if (currPortId.getName().equals(portName)
+							|| currPortId.getName().startsWith(portName)) {
 
 						// Try to connect to the Arduino on this port
-						serialPort = (SerialPort) currPortId.open(appName, TIME_OUT);
+						serialPort = (SerialPort) currPortId.open(appName,
+								TIME_OUT);
 						portId = currPortId;
-						System.out.println("Connected on port" + currPortId.getName());
+						System.out.println("Connected on port"
+								+ currPortId.getName());
 						break;
 					}
 				}
@@ -110,8 +122,8 @@ public class ControllerApp implements SerialPortEventListener {
 			}
 
 			// set port parameters
-			serialPort.setSerialPortParams(BAUD_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
+			serialPort.setSerialPortParams(BAUD_RATE, SerialPort.DATABITS_8,
+					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 
 			// add event listeners
 			serialPort.addEventListener(this);
@@ -179,43 +191,49 @@ public class ControllerApp implements SerialPortEventListener {
 		float[] weights;
 		String inputLine;
 
-		// logging
-		PrintWriter writer = null;
+		PrintWriter logWriter = null;
 
 		try {
 
 			if (controller.initialize()) {
-				
-				// TODO: resume / or start new analysis
-
-				
-				
-				
-				if (Settings.RELEASE) {
-					writer = new PrintWriter("fitness.log", "UTF-8");
-				} else {
-					writer = new PrintWriter("../logging/fitness.log", "UTF-8");
-				}
-
-				String header = "generation" + TAB + "individual" + TAB + "fitness" + TAB;
-
-				for (int i = 0; i < population.getnWeights(); i++) {
-
-					String w = "w" + i;
-					header += w + TAB;
-
-				}
-				writer.println(header);
 
 				// wait for a reboot
 				inputLine = controller.readData();
 				while (!inputLine.contentEquals(ONLINE_SIGNAL)) {
-					System.out.println("Waiting for ONLINE signal. Reboot the device.");
-//					controller.sendData(RESET_SIGNAL);
+					System.out
+							.println("Waiting for ONLINE signal. Reboot the device.");
+					// controller.sendData(RESET_SIGNAL);
 					inputLine = controller.readData();
 				}
 				System.out.println("Device is online.");
 
+				// resume / or start new analysis
+				File resumeFile = new File("resume.log");
+				if (resumeFile.exists()) {
+
+					System.out
+							.println("Resume log file found. Resuming previously generated weights");
+
+					// this sets the weights and generation number
+					resumeAnalysis(resumeFile, population);
+				}//END: resume check
+
+				// TODO: append if resuming
+				
+				
+				System.out.println("Creating log file");
+				logWriter = new PrintWriter("fitness.log", "UTF-8");
+				LoggingUtils.initializeBestIndividualLog(population, logWriter);
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				// send first individual
 				weights = population.getCurrentWeights();
 				sendWeights(controller, weights);
@@ -226,12 +244,14 @@ public class ControllerApp implements SerialPortEventListener {
 					System.out.println(inputLine);
 				}
 
-				System.out.println("Generation " + population.getGenerationNumber());
-				System.out.println("Evaluating individual " + population.getCurrentIndex());
+				System.out.println("Generation "
+						+ population.getGenerationNumber());
+				System.out.println("Evaluating individual "
+						+ population.getCurrentIndex());
 
-				///////////////////////
+				// /////////////////////
 				// ---FOREVER LOOP---//
-				///////////////////////
+				// /////////////////////
 
 				// let them live one by one, get fitness values
 				while (!done) {
@@ -246,38 +266,43 @@ public class ControllerApp implements SerialPortEventListener {
 						while (!done) {
 							inputLine = controller.readData();
 							System.out.println(inputLine);
-							if (inputLine.contentEquals(FITNESS_TRANSMITION_SIGNAL)) {
+							if (inputLine
+									.contentEquals(FITNESS_TRANSMITION_SIGNAL)) {
 								inputLine = controller.readData();
 								value = Float.valueOf(inputLine);
-								System.out.println("Received fitness evaluation: " + value);
+								System.out
+										.println("Received fitness evaluation: "
+												+ value);
 								break;
 							}
 						}
 
-						population.setFitness(value, population.getCurrentIndex());
+						population.setFitness(value,
+								population.getCurrentIndex());
 						population.increaseIndex();
 
-						if (population.getCurrentIndex() > population.getPopulationSize() - 1) {
+						if (population.getCurrentIndex() > population
+								.getPopulationSize() - 1) {
 
 							// log best individual from generation
 							System.out.println("Writing to log file ");
-							int bestIndex = population.getBestIndex();
-							String line = population.getGenerationNumber() + TAB + bestIndex + TAB
-									+ population.getBestFitness() + TAB;
-							for (float w : population.getBestWeights()) {
-
-								line += w + TAB;
-
-							}
-							writer.println(line);
-							writer.flush();
+							LoggingUtils.logBestIndividual(population,
+									logWriter);
 
 							System.out.println("Creating new generation");
-
 							// Generate mating pool
 							population.naturalSelection();
 							// Create next generation
 							population.generate();
+
+							// write next generation to resume log
+							System.out
+									.println("Writing to current generation log");
+							PrintWriter currentGenerationWriter = new PrintWriter(
+									"resume.log", "UTF-8");
+							LoggingUtils.logCurrentGeneration(population,
+									currentGenerationWriter);
+							currentGenerationWriter.close();
 
 						} // END: popsize check
 
@@ -292,8 +317,10 @@ public class ControllerApp implements SerialPortEventListener {
 							System.out.println(inputLine);
 						}
 
-						System.out.println("Generation " + population.getGenerationNumber());
-						System.out.println("Evaluating individual " + population.getCurrentIndex());
+						System.out.println("Generation "
+								+ population.getGenerationNumber());
+						System.out.println("Evaluating individual "
+								+ population.getCurrentIndex());
 
 					} // END: collision signal check
 
@@ -312,11 +339,80 @@ public class ControllerApp implements SerialPortEventListener {
 			}
 
 			controller.close();
-			writer.close();
+			logWriter.close();
 			System.exit(0);
 
 		} // END: try-catch block
 
 	}// END: main
+
+	private static void resumeAnalysis(File file, Population population)
+			throws IOException {
+
+		LinkedList<float[]> individuals = new LinkedList<float[]>();
+		int generationNumber = -1;
+
+		String[] lines = LoggingUtils.readLines(file.getAbsolutePath(),
+				LoggingUtils.HASH_COMMENT);
+		String[] columnNames = lines[LoggingUtils.HEADER_ROW].split("\t");
+
+		// Find columns with weights
+		List<Integer> columns = new LinkedList<Integer>();
+		Pattern pattern = Pattern.compile(LoggingUtils.WEIGHT);
+		for (int i = 0; i < columnNames.length; i++) {
+
+			// Look for matches in column names
+			Matcher matcher = pattern.matcher(columnNames[i]);
+			if (matcher.find()) {
+				columns.add(i);
+			}
+
+		} // END: column names loop
+
+		int nrow = lines.length - 1;
+		if (nrow != population.getPopulationSize()) {
+			throw new RuntimeException(
+					"Number of individuals in resume log file incompatible with current analysis");
+		}
+		int ncol = columns.size();
+		if (ncol != population.getnWeights()) {
+			throw new RuntimeException(
+					"Number of weights in resume log file incompatible with current analysis");
+		}
+
+		int i = 0;
+		for (int row = 1; row <= nrow; row++) {
+
+			String[] line = lines[row].split(LoggingUtils.BLANK_SPACE);
+
+			if (i == 0) {
+				generationNumber = Integer
+						.parseInt(line[LoggingUtils.GENERATION_NUMBER_COLUMN]);
+			}
+
+			float[] individual = new float[ncol];
+			for (int col = 0; col < ncol; col++) {
+
+				individual[col] = Float.valueOf(line[columns.get(col)]);
+
+			} // END: col loop
+
+			individuals.add(i, individual);
+
+			i++;
+		}// END: row loop
+
+		if (individuals.size() != population.getPopulationSize()) {
+			throw new RuntimeException("Something went wrong when resuming");
+		}
+
+		// resume population
+		population.setGenerationNumber(generationNumber);
+
+		for (int ind = 0; ind < individuals.size(); ind++) {
+			population.setIndividualWeights(ind, individuals.get(ind));
+		}
+
+	}// END: resumeAnalysis
 
 }// END: class
