@@ -2,6 +2,7 @@ package app;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -218,21 +219,18 @@ public class ControllerApp implements SerialPortEventListener {
 					resumeAnalysis(resumeFile, population);
 				}//END: resume check
 
-				// TODO: append if resuming
-				
-				
-				System.out.println("Creating log file");
-				logWriter = new PrintWriter("fitness.log", "UTF-8");
-				LoggingUtils.initializeBestIndividualLog(population, logWriter);
+				File logFile = new File("fitness.log");
+				if(!logFile.exists()) {
 
-				
-				
-				
-				
-				
-				
-				
-				
+					System.out.println("Creating log file");
+					logWriter = new PrintWriter("fitness.log", "UTF-8");
+					LoggingUtils.initializeBestIndividualLog(population, logWriter);
+					
+				} else {
+					
+					FileWriter fileWritter = new FileWriter(logFile.getName(),true);
+					logWriter = new PrintWriter(fileWritter);
+				}// log file exists check
 				
 				// send first individual
 				weights = population.getCurrentWeights();
