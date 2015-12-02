@@ -5,7 +5,7 @@
 
 // including bias
 const int INPUT_NODES = 4;
-const int HIDDEN_NODES = 3;
+const int HIDDEN_NODES = 2;
 const int OUTPUT_NODES = 2;
 
 // sigmoid function activation

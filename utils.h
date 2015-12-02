@@ -1,9 +1,12 @@
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include<stdio.h>
 #include <string.h>
 
-#define E (2.7182818284590452353602874713526624977572470937L )
+//#define E (2.7182818284590452353602874713526624977572470937L )
+
+//#define FLT_MAX 3.4028235E+38
 
 //inline
 float sigmoid(float input);

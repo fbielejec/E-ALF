@@ -228,8 +228,8 @@ void run() {
 #endif /* DEBUG */
 
    // sigmoid output is (0,1)
-    leftSpeed = mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
-    rightSpeed = mapFloat(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+    leftSpeed = static_cast<int> (mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED) );
+    rightSpeed = static_cast<int> (mapFloat(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED) );
 
 #if DEBUG
     Serial.println("-- NN response mapped to wheel speed:" );
@@ -237,7 +237,7 @@ void run() {
     Serial.println(rightSpeed );
 #endif /* DEBUG */
 
-// TODO: compress whell speeds to [0,1] pass to fitness calculation
+    // TODO: compress whell speeds to [0,1] & pass to fitness calculation
     err = updateFitness(readings);
     assert(err == 0);
 
@@ -251,6 +251,8 @@ void run() {
     Serial.println(tick);
 #endif /* DEBUG */
 
+   // debounce
+   delay(20);
     tick++;
 }//END: run
 
@@ -268,7 +270,7 @@ int updateFitness( float *readings ) {
     float dr = readings[LINE_SENSOR_RIGHT];
 
     // TODO: possible div by zero here
-    fitness += 1/(1 - dl) * 1/(1 - dc) * 1/(1 - dr);
+    fitness += 1/(1 - dl) * pow( 1/(1 - dc), 2) * 1/(1 - dr);
 
     err = 0;
     return err;

@@ -6,6 +6,7 @@ int N_WEIGHTS = 0;
 
 float hidden[HIDDEN_NODES];
 float output[OUTPUT_NODES];
+
 //float hiddenWeights[INPUT_NODES + 1][HIDDEN_NODES];
 //float outputWeights[HIDDEN_NODES + 1][OUTPUT_NODES];
 float hiddenWeights[INPUT_NODES][HIDDEN_NODES];
@@ -17,7 +18,6 @@ int createNetwork() {
 
     // Initialize Hidden Weights
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
-//        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = N_WEIGHTS;
             N_WEIGHTS++;
@@ -27,7 +27,6 @@ int createNetwork() {
     // Initialize output Weights
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
-//        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
             outputWeights[j][i] = N_WEIGHTS;
             N_WEIGHTS++;
         }
@@ -47,6 +46,13 @@ int getnWeights() {
 }//END: getnWeights
 
 int feedforward(float* input) {
+/*
+TODO: returns nan sometmes, check why
+< FLT_MAX ?
+https://stackoverflow.com/questions/5442526/c-float-number-to-nan
+*/
+
+//    int m = FLT_MAX;
 
     int err = -1;
     int w = 0;
@@ -61,7 +67,7 @@ int feedforward(float* input) {
         }
 
         hidden[i] = response;
-    }
+    }//END: HIDDEN_NODES loop
 
     // compute output layer activations
     for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
@@ -71,14 +77,18 @@ int feedforward(float* input) {
             w++;
         }
 
+if(response < -FLT_MAX) {
+response = 0.0;
+}//END: ovf check
+
         output[i] = response;
-    }
+    }//END:  OUTPUT_NODES loop
 
     err = 0;
 
-    if( w !=  N_WEIGHTS ) {
-        err = -1;
-    }
+//    if( w !=  N_WEIGHTS ) {
+//        err = -1;
+//    }
 
     return err;
 }//END: feedforward
@@ -94,14 +104,12 @@ int setWeights(float* weights) {
 
     int k = 0;
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
-//        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = weights[k++];
         }//END: j loop
     }//END: i loop
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
-//        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             outputWeights[j][i] = weights[k++];
         }//END: j loop
@@ -119,14 +127,12 @@ float* getWeights() {
 
     int k = 0;
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
-//        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             weights[k++] = hiddenWeights[j][i];
         }//END: j loop
     }//END: i loop
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
-//        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             weights[k++] = outputWeights[j][i];
         }//END: j loop
@@ -142,7 +148,6 @@ void printWeights() {
 
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         Serial.print("|");
-//        for( j = 0 ; j <= INPUT_NODES ; j++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             Serial.print( hiddenWeights[j][i]  );
             Serial.print(" ");
@@ -152,7 +157,6 @@ void printWeights() {
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         Serial.print("|");
-//        for( j = 0 ; j <= HIDDEN_NODES ; j++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             Serial.print( outputWeights[j][i] );
             Serial.print(" ");

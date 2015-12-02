@@ -1,5 +1,10 @@
 package app;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,14 +18,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import utils.Utils;
 import controller.LoggingUtils;
 import controller.Population;
-import controller.Settings;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 
 /**
  * @author Filip Bielejec
