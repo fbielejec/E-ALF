@@ -3,13 +3,17 @@
 #include "display.h"
 #include "sensors.h"
 #include "motors.h"
+#include "utils.h"
 //#include "globalDefines.h"
 //#include "parameters.h"
 
 /**---CONSTANTS---*/
 
+const int ROTATE_TIME = 1500;
+const int REVERSE_TIME = 2000;
+
 //1 is most sensitive, range 1 to 1023
-int damping =  5;
+int damping =  2; //5
 
 int c_speed = 50;
 
@@ -51,23 +55,63 @@ void checkBorders() {
     boolean collision = checkCollision();
     if(collision) {
 
+// brake and reverse
+   Serial.println("-- Braking...");
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(1000);
+
+        Serial.println("-- Reversing wheels...");
+
+        motorReverse(MOTOR_LEFT, REVERSE_SPEED);
+        motorReverse(MOTOR_RIGHT, REVERSE_SPEED);
+        delay(REVERSE_TIME);
+        motorStop(MOTOR_LEFT);
+        motorStop(MOTOR_RIGHT);
+        delay(500);
+
+
+        if(COLLISION_DIRECTION == COLLISION_DIRECTION_LEFT) {
+
+            rotateRight();
+
+        } else if (COLLISION_DIRECTION == COLLISION_DIRECTION_RIGHT) {
+
+            rotateLeft();
+
+        } else {
+
+            // TODO: randomly decide where to turn
+            float r = randFloat();
+            if(r < 0.5) {
+                rotateLeft();
+            } else {
+                rotateRight();
+            }
+
+        }//END: COLLISION_DIRECTION check
+
+
+// Choose randomly the amount of time to rotate
+        delay(ROTATE_TIME);
+
         // brake and reverse for 2 seconds
-        motorBrake(MOTOR_LEFT);
-        motorBrake(MOTOR_RIGHT);
-
-        motorStop(MOTOR_LEFT);
-        motorStop(MOTOR_RIGHT);
-        delay(1);
-
-        motorReverse(MOTOR_LEFT,  MIN_SPEED);
-        motorReverse(MOTOR_RIGHT,  MIN_SPEED);
-        delay(2000);
-
-        motorStop(MOTOR_LEFT);
-        motorStop(MOTOR_RIGHT);
-        delay(1);
-
-        Serial.println("Returning to normal operation.");
+//        motorBrake(MOTOR_LEFT);
+//        motorBrake(MOTOR_RIGHT);
+//
+//        motorStop(MOTOR_LEFT);
+//        motorStop(MOTOR_RIGHT);
+//        delay(1);
+//
+//        motorReverse(MOTOR_LEFT,  MIN_SPEED);
+//        motorReverse(MOTOR_RIGHT,  MIN_SPEED);
+//        delay(2000);
+//
+//        motorStop(MOTOR_LEFT);
+//        motorStop(MOTOR_RIGHT);
+//        delay(1);
+//
+//        Serial.println("Returning to normal operation.");
 
     }//END: collision check
 
@@ -80,7 +124,6 @@ void followLines() {
     while (1) {
 
         lineFollow(c_speed);
-        delay(1);
 
         checkBorders();
         delay(1);

@@ -11,10 +11,13 @@ float sigmoid(float input);
 float mapFloat(float value, float fromLow, float fromHigh,
                float toLow, float toHigh);
 
-//returns a random float between 0 and 1
+// random int between (0,N)
+int randomInt(int N);
+
+// returns a random float between 0 and 1
 float randFloat();
 
-//returns a random float in the range -1 < n < 1
+// returns a random float in the range -1 < n < 1
 float randomClamped();
 
 int* calculateCoordinates(int index, int nrow, int ncol);

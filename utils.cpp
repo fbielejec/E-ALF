@@ -2,15 +2,27 @@
 
 float sigmoid(float input) {
     /**
-     * @return number in [-1.0, 1.0], 0.0 returned at input = 0
+     * @return number in [0, 1.0]
      * */
-    return ((1 / (1 + pow(E, -input)))-0.5)*2;
+//     float activation = 0.5
+//    return ((1 / (1 + pow(E, -input))) - activation) * 2;
+    float activation = 1; // 0.5
+    return ( 1 / ( 1 + (float)exp( - input / activation)));
 }//END: sigmoid
 
 float mapFloat(float value, float fromLow, float fromHigh,
                float toLow, float toHigh) {
+
+//      return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
     return( toLow + (toHigh - toLow ) * ((value - fromLow) / (fromHigh - fromLow)) );
 }// END: mapFloat
+
+int randomInt(int N) {
+  // int number in [0, N]
+  int rint = rand() % N;
+
+  return (rint);
+}//END: randomInt
 
 float randFloat() {
     // float number in [0, 1]

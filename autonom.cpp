@@ -161,7 +161,7 @@ void run() {
 
         } else {
 
-            // TODO: randomly decide where to turn
+            // randomly decide where to turn
             float r = randFloat();
             if(r < 0.5) {
                 rotateLeft();
@@ -171,8 +171,7 @@ void run() {
 
         }//END: COLLISION_DIRECTION check
 
-
-// Choose randomly the amount of time to rotate
+        // choose randomly the amount of time to rotate
         delay(ROTATE_TIME);
 
         Serial.println("-- Stopping engines...");
@@ -228,8 +227,9 @@ void run() {
     Serial.println(rightSpeed, 2);
 #endif /* DEBUG */
 
-    leftSpeed = mapFloat(leftSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
-    rightSpeed = mapFloat(rightSpeed, -1, 1, MIN_SPEED, MAX_SPEED);
+   // sigmoid output is (0,1)
+    leftSpeed = mapFloat(leftSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
+    rightSpeed = mapFloat(rightSpeed, 0, 1, MIN_SPEED, MAX_SPEED);
 
 #if DEBUG
     Serial.println("-- NN response mapped to wheel speed:" );
@@ -237,7 +237,7 @@ void run() {
     Serial.println(rightSpeed );
 #endif /* DEBUG */
 
-// TODO: compress whell speeds to [0,1]m pass to fitness calculation
+// TODO: compress whell speeds to [0,1] pass to fitness calculation
     err = updateFitness(readings);
     assert(err == 0);
 

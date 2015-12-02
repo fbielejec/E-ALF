@@ -26,9 +26,9 @@ float* senseLine() {
     float centerVal = (float) analogRead(LINE_SENSOR_CENTER);
     float rightVal = (float) analogRead(LINE_SENSOR_RIGHT);
 
-    float dl = mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-    float dc = mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-    float dr = mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dl = leftVal / LINE_SENSOR_MAX; // mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dc =  centerVal / LINE_SENSOR_MAX; // mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dr = rightVal / LINE_SENSOR_MAX; // mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
 
     readings[LINE_SENSOR_LEFT] = dl;
     readings[LINE_SENSOR_CENTER] = dc;
