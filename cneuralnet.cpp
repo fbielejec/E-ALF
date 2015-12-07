@@ -7,8 +7,6 @@ int N_WEIGHTS = 0;
 float hidden[HIDDEN_NODES];
 float output[OUTPUT_NODES];
 
-//float hiddenWeights[INPUT_NODES + 1][HIDDEN_NODES];
-//float outputWeights[HIDDEN_NODES + 1][OUTPUT_NODES];
 float hiddenWeights[INPUT_NODES][HIDDEN_NODES];
 float outputWeights[HIDDEN_NODES][OUTPUT_NODES];
 
@@ -16,7 +14,7 @@ int createNetwork() {
 
     int err = -1;
 
-    // Initialize Hidden Weights
+    // Initialize hidden weights
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = N_WEIGHTS;
@@ -34,9 +32,9 @@ int createNetwork() {
 
     err = 0;
 
-    if( N_WEIGHTS != (INPUT_NODES * HIDDEN_NODES + OUTPUT_NODES * HIDDEN_NODES ) ) {
-        err = -1;
-    }
+//    if( N_WEIGHTS != (INPUT_NODES * HIDDEN_NODES + OUTPUT_NODES * HIDDEN_NODES ) ) {
+//        err = -1;
+//    }
 
     return err;
 }//END: createNetwork
@@ -46,13 +44,11 @@ int getnWeights() {
 }//END: getnWeights
 
 int feedforward(float* input) {
-/*
-TODO: returns nan sometmes, check why
-< FLT_MAX ?
-https://stackoverflow.com/questions/5442526/c-float-number-to-nan
-*/
-
-//    int m = FLT_MAX;
+    /*
+    TODO: returns nan sometmes, check why
+    < FLT_MAX ?
+    https://stackoverflow.com/questions/5442526/c-float-number-to-nan
+    */
 
     int err = -1;
     int w = 0;
@@ -60,7 +56,7 @@ https://stackoverflow.com/questions/5442526/c-float-number-to-nan
     // compute hidden layer activations
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
 
-        response = hiddenWeights[INPUT_NODES][i] ;
+        response = 0;
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             response += input[j] * hiddenWeights[j][i] ;
             w++;
@@ -71,15 +67,15 @@ https://stackoverflow.com/questions/5442526/c-float-number-to-nan
 
     // compute output layer activations
     for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
-        response = outputWeights[HIDDEN_NODES][i] ;
+        response = 0;
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             response += hidden[j] * outputWeights[j][i] ;
             w++;
         }
 
-if(response < -FLT_MAX) {
-response = 0.0;
-}//END: ovf check
+        if(response < -FLT_MAX) {
+            response = 0.0;
+        }//END: ovf check
 
         output[i] = response;
     }//END:  OUTPUT_NODES loop
