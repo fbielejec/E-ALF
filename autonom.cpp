@@ -252,8 +252,8 @@ void run() {
 #endif /* DEBUG */
 
    // debounce
-//   delay(50);
-   delay(500);
+   delay(50);
+//   delay(500);
     tick++;
 }//END: run
 
