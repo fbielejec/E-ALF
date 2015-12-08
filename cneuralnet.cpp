@@ -8,47 +8,57 @@ float hidden[HIDDEN_NODES];
 float output[OUTPUT_NODES];
 
 float hiddenWeights[INPUT_NODES][HIDDEN_NODES];
+float hiddenBiasWeights[HIDDEN_NODES];
+
 float outputWeights[HIDDEN_NODES][OUTPUT_NODES];
+float outputBiasWeights[OUTPUT_NODES];
 
 int createNetwork() {
 
     int err = -1;
 
+    // Initialize hidden bias weights
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        hiddenBiasWeights[i] = static_cast<float> (N_WEIGHTS++);
+    }
+
     // Initialize hidden weights
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
-            hiddenWeights[j][i] = N_WEIGHTS;
-            N_WEIGHTS++;
+            hiddenWeights[j][i] =static_cast<float> (N_WEIGHTS++);
         }
     }
 
-    // Initialize output Weights
+    // Initialize output bias weights
+    for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
+        outputBiasWeights[i] =static_cast<float> (N_WEIGHTS++);
+    }
+
+    // Initialize output weights
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
-            outputWeights[j][i] = N_WEIGHTS;
-            N_WEIGHTS++;
+            outputWeights[j][i] = static_cast<float> (N_WEIGHTS++);
         }
     }
 
     err = 0;
 
-//    if( N_WEIGHTS != (INPUT_NODES * HIDDEN_NODES + OUTPUT_NODES * HIDDEN_NODES ) ) {
-//        err = -1;
-//    }
+    if( N_WEIGHTS != ( // #weights
+                INPUT_NODES * HIDDEN_NODES + OUTPUT_NODES * HIDDEN_NODES
+                // #bias
+                + HIDDEN_NODES + OUTPUT_NODES) ) {
+        err = -1;
+    }
 
     return err;
 }//END: createNetwork
+
 
 int getnWeights() {
     return N_WEIGHTS;
 }//END: getnWeights
 
 int feedforward(float* input) {
-    /*
-    TODO: returns nan sometmes, check why
-    < FLT_MAX ?
-    https://stackoverflow.com/questions/5442526/c-float-number-to-nan
-    */
 
     int err = -1;
     int w = 0;
@@ -56,29 +66,31 @@ int feedforward(float* input) {
     // compute hidden layer activations
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
 
-        response = 0;
+        response = bias * hiddenBiasWeights[i];
+        w++;
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             response += input[j] * hiddenWeights[j][i] ;
             w++;
         }
 
-        hidden[i] = response;
-    }//END: HIDDEN_NODES loop
+        hidden[i] = sigmoid(response);
+    }
+
+//std::cout << "Hidden response:" << std::endl;
+//std::cout << hidden[0] << std::endl;
 
     // compute output layer activations
     for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
-        response = 0;
+
+        response = bias * outputBiasWeights[i];
+        w++;
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
             response += hidden[j] * outputWeights[j][i] ;
             w++;
         }
 
-        if(response < -FLT_MAX) {
-            response = 0.0;
-        }//END: ovf check
-
-        output[i] = response;
-    }//END:  OUTPUT_NODES loop
+        output[i] = (response);
+    }
 
     err = 0;
 
@@ -100,10 +112,19 @@ int setWeights(float* weights) {
 
     int k = 0;
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        hiddenBiasWeights[i] = weights[k++];
+    }//END: i loop
+
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             hiddenWeights[j][i] = weights[k++];
         }//END: j loop
     }//END: i loop
+
+    for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
+        outputBiasWeights[i] = weights[k++];
+    }//END: i loop
+
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
@@ -112,6 +133,10 @@ int setWeights(float* weights) {
     }//END: i loop
 
     err = 0;
+
+    if( k !=  N_WEIGHTS ) {
+        err = -1;
+    }
 
     return err;
 }//END: setWeights
@@ -123,9 +148,18 @@ float* getWeights() {
 
     int k = 0;
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+        weights[k++] = hiddenBiasWeights[i];
+    }//END: i loop
+
+
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
             weights[k++] = hiddenWeights[j][i];
         }//END: j loop
+    }//END: i loop
+
+    for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
+        weights[k++] = outputBiasWeights[i];
     }//END: i loop
 
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
@@ -133,6 +167,8 @@ float* getWeights() {
             weights[k++] = outputWeights[j][i];
         }//END: j loop
     }//END: i loop
+
+//    assert( k ==  N_WEIGHTS );
 
     return weights;
 }//END: getWeights
@@ -142,22 +178,41 @@ float* getWeights() {
 
 void printWeights() {
 
+     Serial.print("Hidden bias weights\n");
+     Serial.print("| ");
     for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
-        Serial.print("|");
+         Serial.print(hiddenBiasWeights[i] );
+           Serial.print(" ");
+    }
+     Serial.print("|\n");
+
+     Serial.print("Hidden weights\n");
+    for( i = 0 ; i < HIDDEN_NODES ; i++ ) {
+         Serial.print("| ");
         for( j = 0 ; j < INPUT_NODES ; j++ ) {
-            Serial.print( hiddenWeights[j][i]  );
-            Serial.print(" ");
+             Serial.print(hiddenWeights[j][i] );
+               Serial.print(" ");
         }
-        Serial.print("|\n");
+         Serial.print("|\n");
     }
 
+     Serial.print("Output bias weights\n");
+     Serial.print("| ");
+    for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
+         Serial.print(  outputBiasWeights[i] );
+           Serial.print(" ");
+    }
+     Serial.print("|\n");
+
+     Serial.print("Output weights\n");
     for( i = 0 ; i < OUTPUT_NODES ; i ++ ) {
-        Serial.print("|");
+         Serial.print("| ");
         for( j = 0 ; j < HIDDEN_NODES ; j++ ) {
-            Serial.print( outputWeights[j][i] );
-            Serial.print(" ");
+             Serial.print(  outputWeights[j][i] );
+               Serial.print(" ");
         }
-        Serial.print("|\n");
+         Serial.print("|\n");
     }
 
 }//END: printWeights
+

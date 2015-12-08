@@ -18,14 +18,8 @@ public class Population {
 	private LinkedHashMap<Integer, float[]> population;
 	private LinkedList<float[]> matingPool;
 
-	private int nInputNodes = Settings.INPUT_NODES;
-	private int nHiddenNodes = Settings.HIDDEN_NODES;
-	private int nOutputNodes = Settings.OUTPUT_NODES;
-	private int nWeights = (nInputNodes * nHiddenNodes)
-			+ (nHiddenNodes * nOutputNodes);
-
-//	 private int nWeights = (nInputNodes + 1) * nHiddenNodes + (nHiddenNodes +
-//	 1) * nOutputNodes;
+	private int nWeights = (Settings.INPUT_NODES * Settings.HIDDEN_NODES)
+			+ (Settings.HIDDEN_NODES * Settings.OUTPUT_NODES) + Settings.HIDDEN_NODES + Settings.OUTPUT_NODES;
 
 	public Population() {
 

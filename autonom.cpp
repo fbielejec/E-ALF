@@ -25,7 +25,6 @@ boolean online = false;
 
 int err;
 
-float bias = -1;
 int nWeights;
 
 float fitness = 0;
@@ -80,6 +79,7 @@ void init_io(void) {
     Serial.print("-- Neural network with ");
     Serial.print(getnWeights());
     Serial.println(" weights is initialized.");
+    printWeights();
 
     Serial.println("-- All systems functional.");
 
@@ -197,7 +197,7 @@ void run() {
     }//END: collision check
 
     float *readings = senseLine();
-    readings[INPUT_NODES - 1] = bias;
+//    readings[INPUT_NODES - 1] = bias;
 
 #if DEBUG
     Serial.println("-- NN inputs:");
@@ -252,7 +252,8 @@ void run() {
 #endif /* DEBUG */
 
    // debounce
-   delay(50);
+//   delay(50);
+   delay(500);
     tick++;
 }//END: run
 
@@ -324,10 +325,10 @@ boolean isAlive() {
 
     boolean alive = true;
 
-    boolean collision = checkCollision();
-    if(collision) {
-        alive = false;
-    }
+//    boolean collision = checkCollision();
+//    if(collision) {
+//        alive = false;
+//    }
 
     if(tick > LIFE_LENGTH) {
         alive = false;

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CONTROLLER_PATH=dist/controller.jar
+RXTX_PATH=lib/
+
+java -Djava.library.path=$RXTX_PATH -jar $CONTROLLER_PATH
+
+exit $?

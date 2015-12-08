@@ -20,7 +20,7 @@ float* senseLine() {
      * compress them to continuous (0,1) range
      * @return compressed sensor readings
      */
-    float *readings = (float *) malloc(sizeof(float) * (INPUT_NODES-1));
+    float *readings = (float *) malloc(sizeof(float) * (INPUT_NODES));
 
     float leftVal = (float) analogRead(LINE_SENSOR_LEFT);
     float centerVal = (float) analogRead(LINE_SENSOR_CENTER);
