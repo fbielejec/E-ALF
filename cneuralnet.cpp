@@ -76,9 +76,6 @@ int feedforward(float* input) {
         hidden[i] = sigmoid(response);
     }
 
-//std::cout << "Hidden response:" << std::endl;
-//std::cout << hidden[0] << std::endl;
-
     // compute output layer activations
     for( i = 0 ; i < OUTPUT_NODES ; i++ ) {
 
@@ -89,7 +86,7 @@ int feedforward(float* input) {
             w++;
         }
 
-        output[i] = (response);
+        output[i] = sigmoid(response);
     }
 
     err = 0;

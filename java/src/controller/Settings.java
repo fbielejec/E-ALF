@@ -6,7 +6,7 @@ public class Settings {
 	
 	// -- GENETIC ALGORITHM -- //
 	
-	public static final int POPULATION_SIZE = 80;
+	public static final int POPULATION_SIZE = 50;
 	public static int N_FITTEST = 100;
 	public static float MUTATION_RATE = (float) 0.2;
 

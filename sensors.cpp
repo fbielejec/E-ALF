@@ -48,9 +48,9 @@ float* senseLine() {
     float centerVal = (float) analogRead(LINE_SENSOR_CENTER);
     float rightVal = (float) analogRead(LINE_SENSOR_RIGHT);
 
-    float dl = mapFloat(leftVal, LEFT_SENSOR_AMBIENT, LINE_SENSOR_MAX, 0, 1);
+    float dl = mapFloat(leftVal, LEFT_SENSOR_AMBIENT, 1000, 0, 1);
     float dc = mapFloat(centerVal, CENTER_SENSOR_AMBIENT, 900, 0, 1);
-    float dr = mapFloat(rightVal, RIGHT_SENSOR_AMBIENT, LINE_SENSOR_MAX, 0, 1);
+    float dr = mapFloat(rightVal, RIGHT_SENSOR_AMBIENT, 1000, 0, 1);
 
     dl = clipFloat(dl, 0, 1);
     dc = clipFloat(dc, 0, 1);

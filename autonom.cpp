@@ -198,7 +198,6 @@ void run() {
     }//END: collision check
 
     float *readings = senseLine();
-//    readings[INPUT_NODES - 1] = bias;
 
 #if DEBUG
     Serial.println("-- NN inputs:");
@@ -219,18 +218,9 @@ void run() {
     }
 #endif /* DEBUG */
 
-    float leftSpeed = sigmoid(output[MOTOR_LEFT]);
-    float rightSpeed = sigmoid(output[MOTOR_RIGHT]);
-
-#if DEBUG
-    Serial.println("-- sigmoid transformed NN response:" );
-    Serial.println(leftSpeed, 2);
-    Serial.println(rightSpeed, 2);
-#endif /* DEBUG */
-
-   // sigmoid output is (0,1)
-    leftSpeed = static_cast<int> (mapFloat(leftSpeed, 0, 0.999, MIN_SPEED, MAX_SPEED) );
-    rightSpeed = static_cast<int> (mapFloat(rightSpeed, 0, 0.999, MIN_SPEED, MAX_SPEED) );
+    // sigmoid output is (0,1)
+    int leftSpeed = static_cast<int> (mapFloat(output[MOTOR_LEFT], 0, 1, MIN_SPEED, MAX_SPEED) );
+    int rightSpeed = static_cast<int> (mapFloat(output[MOTOR_RIGHT], 0, 1, MIN_SPEED, MAX_SPEED) );
 
 #if DEBUG
     Serial.println("-- NN response mapped to wheel speed:" );
@@ -238,7 +228,6 @@ void run() {
     Serial.println(rightSpeed );
 #endif /* DEBUG */
 
-    // TODO: compress whell speeds to [0,1] & pass to fitness calculation
     err = updateFitness(readings);
     assert(err == 0);
 
@@ -252,9 +241,10 @@ void run() {
     Serial.println(tick);
 #endif /* DEBUG */
 
-   // debounce
-//   delay(50);
-   delay(1000);
+    // debounce
+    delay(50);
+//   delay(1000);
+
     tick++;
 }//END: run
 
