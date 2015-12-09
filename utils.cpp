@@ -4,10 +4,7 @@ float sigmoid(float input) {
     /**
      * @return number in [0, 1.0]
      * */
-//     float activation = 0.5
-//    return ((1 / (1 + pow(E, -input))) - activation) * 2;
-    float activation = 1; // 0.5
-    return ( 1 / ( 1 + (float)exp( - input / activation)));
+    return ( 1 / ( 1 + exp( - input ) ) );
 }//END: sigmoid
 
 float mapFloat(float value, float fromLow, float fromHigh,
@@ -16,6 +13,10 @@ float mapFloat(float value, float fromLow, float fromHigh,
 //      return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
     return( toLow + (toHigh - toLow ) * ((value - fromLow) / (fromHigh - fromLow)) );
 }// END: mapFloat
+
+float clipFloat(float value, float lower, float upper) {
+  return max(lower, min(value, upper));
+}
 
 int randomInt(int N) {
   // int number in [0, N]

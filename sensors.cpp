@@ -5,6 +5,11 @@
 
 /**---CONSTANTS---*/
 
+int LEFT_SENSOR_AMBIENT = 0;
+int CENTER_SENSOR_AMBIENT = 0;
+int RIGHT_SENSOR_AMBIENT = 0;
+
+
 //const byte NBR_LINE_SENSORS = 3;
 int COLLISION_DIRECTION = COLLISION_DIRECTION_LEFT;
 
@@ -13,6 +18,23 @@ int COLLISION_DIRECTION = COLLISION_DIRECTION_LEFT;
 
 
 /**---METHODS---*/
+
+void lineSensorBegin() {
+    /**
+     * @return: ambient (white background) values for sensors
+     */
+    LEFT_SENSOR_AMBIENT = analogRead(LINE_SENSOR_LEFT);
+    Serial.print("-- Left sensor ambient level set to ");
+    Serial.println(LEFT_SENSOR_AMBIENT );
+
+    CENTER_SENSOR_AMBIENT = analogRead(LINE_SENSOR_CENTER);
+    Serial.print("-- Center sensor ambient level set to ");
+    Serial.println(CENTER_SENSOR_AMBIENT );
+
+    RIGHT_SENSOR_AMBIENT = analogRead(LINE_SENSOR_RIGHT);
+    Serial.print("-- Right sensor ambient level set to ");
+    Serial.println(RIGHT_SENSOR_AMBIENT );
+}//END: lineSensorBegin
 
 float* senseLine() {
     /**
@@ -26,9 +48,13 @@ float* senseLine() {
     float centerVal = (float) analogRead(LINE_SENSOR_CENTER);
     float rightVal = (float) analogRead(LINE_SENSOR_RIGHT);
 
-    float dl = leftVal / LINE_SENSOR_MAX; // mapFloat(leftVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-    float dc =  centerVal / LINE_SENSOR_MAX; // mapFloat(centerVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
-    float dr = rightVal / LINE_SENSOR_MAX; // mapFloat(rightVal, LINE_SENSOR_MIN, LINE_SENSOR_MAX, 0, 1);
+    float dl = mapFloat(leftVal, LEFT_SENSOR_AMBIENT, LINE_SENSOR_MAX, 0, 1);
+    float dc = mapFloat(centerVal, CENTER_SENSOR_AMBIENT, 900, 0, 1);
+    float dr = mapFloat(rightVal, RIGHT_SENSOR_AMBIENT, LINE_SENSOR_MAX, 0, 1);
+
+    dl = clipFloat(dl, 0, 1);
+    dc = clipFloat(dc, 0, 1);
+    dr = clipFloat(dr, 0, 1);
 
     readings[LINE_SENSOR_LEFT] = dl;
     readings[LINE_SENSOR_CENTER] = dc;
@@ -37,10 +63,12 @@ float* senseLine() {
     return(readings);
 }//END: senseLine
 
+
 void collisionSensorsBegin() {
     pinMode(COLLISION_SENSOR_LEFT, INPUT);
     pinMode(COLLISION_SENSOR_RIGHT, INPUT);
 }//END: collisionSensorsBegin
+
 
 boolean senseCollision(int sensor) {
     boolean collision = false;

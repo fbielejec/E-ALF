@@ -69,6 +69,7 @@ void init_io(void) {
 
     // initialize sensors
     pauseButtonBegin();
+    lineSensorBegin();
     collisionSensorsBegin();
     Serial.println("-- Sensors activated.");
 
@@ -252,8 +253,8 @@ void run() {
 #endif /* DEBUG */
 
    // debounce
-   delay(50);
-//   delay(500);
+//   delay(50);
+   delay(1000);
     tick++;
 }//END: run
 
@@ -325,10 +326,10 @@ boolean isAlive() {
 
     boolean alive = true;
 
-//    boolean collision = checkCollision();
-//    if(collision) {
-//        alive = false;
-//    }
+    boolean collision = checkCollision();
+    if(collision) {
+        alive = false;
+    }
 
     if(tick > LIFE_LENGTH) {
         alive = false;

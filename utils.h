@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include<stdio.h>
 #include <string.h>
+#include <string.h>
+#include <Arduino.h>
 
 //#define E (2.7182818284590452353602874713526624977572470937L )
 
@@ -13,6 +15,8 @@ float sigmoid(float input);
 
 float mapFloat(float value, float fromLow, float fromHigh,
                float toLow, float toHigh);
+
+float clipFloat(float value, float lower, float upper);
 
 // random int between (0,N)
 int randomInt(int N);
